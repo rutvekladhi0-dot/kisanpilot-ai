@@ -151,3 +151,56 @@ Stage Summary:
 - Total i18n keys: ~320+ across 3 languages
 - Zero lint errors, zero runtime errors
 
+---
+Task ID: 4
+Agent: Main Agent + Sub-agents
+Task: Add personal farm memory, farmer photo, voice chatbot, season score card
+
+Work Log:
+- Added ~90 new i18n translation keys across EN/HI/MR for: farm memory, farmer photo, chatbot voice, season score card
+- Created FarmMemoryScreen with 9-field questionnaire: soil type, irrigation source, farming experience, land ownership toggle, last crop, harvest month, livestock, fertilizer brand, seed source
+- Created SeasonScoreCardScreen with circular overall score (78/100), 6 individual metrics, highlights, alerts, tips
+- Added farmer photo upload to ProfileScreen with clickable avatar, stored in localStorage
+- Added farmer photo display in Dashboard welcome greeting
+- Added voice mic to Chatbot with Web Speech API, continuous recognition, live transcript, auto-typing
+- Wired farmmemory + seasonscorecard screens into routing and dashboard
+- Zero lint errors, zero runtime errors, Agent Browser verified all screens
+
+Stage Summary:
+- 4 new features, 2 new screens, total 21 screens
+- Total i18n keys: ~410+ across 3 languages
+- Zero lint errors, zero runtime errors
+
+---
+Task ID: 4-a
+Agent: Frontend Developer
+Task: Create FarmMemoryScreen
+
+Work Log:
+- Created FarmMemoryScreen with 9 farm detail fields
+- Added localStorage persistence (key: kp_farm_memory)
+- Added farmer photo display at top (reads from kp_farmer_photo, falls back to default avatar)
+- Added staggered animations for each field (FieldCard component with delay * index)
+- Added toggle buttons for Own/Leased land with green highlight for selected state
+- Added success modal with animated checkmark SVG (pathLength animation)
+- Added sticky header with back button and 🧠 icon
+- Pre-fills all fields from localStorage if data exists
+- Save button text changes to editFarmMemory when data is already present
+
+Stage Summary:
+- New FarmMemoryScreen.tsx created with detailed farm questionnaire
+- 9 fields: soil type, irrigation source, farming experience, land ownership, last crop, expected harvest month, livestock count, fertilizer brand, seed source
+
+---
+Task ID: 4-b
+Agent: Frontend Developer
+Task: Create SeasonScoreCardScreen
+
+Work Log:
+- Created SeasonScoreCardScreen with circular overall score
+- Added 6 individual score metrics with progress bars
+- Added season highlights, alerts, and tips sections
+- Color-coded ratings based on score thresholds
+
+Stage Summary:
+- New SeasonScoreCardScreen.tsx created with season performance metrics

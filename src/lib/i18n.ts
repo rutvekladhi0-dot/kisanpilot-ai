@@ -366,6 +366,94 @@ export interface Translations {
   krushiKendraList: string;
   findNearest: string;
   directions: string;
+
+  // Farm Memory
+  farmMemory: string;
+  farmMemoryDesc: string;
+  tellUsAboutFarm: string;
+  soilType: string;
+  soilTypePlaceholder: string;
+  irrigationSource: string;
+  irrigationSourcePlaceholder: string;
+  farmingExperience: string;
+  farmingExperiencePlaceholder: string;
+  ownOrLeased: string;
+  ownLand: string;
+  leasedLand: string;
+  lastCrop: string;
+  lastCropPlaceholder: string;
+  expectedHarvestMonth: string;
+  expectedHarvestPlaceholder: string;
+  livestockCount: string;
+  livestockCountPlaceholder: string;
+  fertilizerBrand: string;
+  fertilizerBrandPlaceholder: string;
+  seedSource: string;
+  seedSourcePlaceholder: string;
+  saveFarmMemory: string;
+  farmMemorySaved: string;
+  editFarmMemory: string;
+  soilLoamy: string;
+  soilClay: string;
+  soilSandy: string;
+  soilBlack: string;
+  soilRed: string;
+  irrigationWell: string;
+  irrigationCanal: string;
+  irrigationRain: string;
+  irrigationDrip: string;
+  seedSourceLocal: string;
+  seedSourceGovt: string;
+  seedSourcePrivate: string;
+  seedSourceOwn: string;
+  farmMemoryComplete: string;
+  farmMemorySection: string;
+  yearOfFarming: string;
+
+  // Farmer Photo
+  changePhoto: string;
+  uploadPhotoLabel: string;
+  removePhoto: string;
+  takeSelfie: string;
+  profilePhoto: string;
+
+  // Chatbot Voice
+  voiceChat: string;
+  voiceChatDesc: string;
+  tapMicToTalk: string;
+  listeningChat: string;
+  voiceMessageSent: string;
+  startVoiceChat: string;
+  stopVoiceChat: string;
+
+  // Season Score Card
+  seasonScoreCard: string;
+  seasonScoreCardDesc: string;
+  currentSeason: string;
+  seasonPerformance: string;
+  overallScore: string;
+  cropHealthScore: string;
+  irrigationScore: string;
+  pestManagementScore: string;
+  soilHealthScore: string;
+  profitScore: string;
+  timelyActionsScore: string;
+  excellent: string;
+  good: string;
+  average: string;
+  needsImprovement: string;
+  seasonHighlights: string;
+  seasonAlerts: string;
+  rabiSeason: string;
+  kharifSeason: string;
+  seasonTip: string;
+  seasonBreakdown: string;
+  scoreOutOf: string;
+  viewSeasonCard: string;
+
+  // Voice Chat in Chatbot
+  micButton: string;
+  stopTalking: string;
 }
 
 const en: Translations = {
@@ -724,6 +812,94 @@ const en: Translations = {
   krushiKendraList: 'Agricultural Centers Near You',
   findNearest: 'Find Nearest Center',
   directions: 'Get Directions',
+
+  // Farm Memory
+  farmMemory: 'Farm Memory',
+  farmMemoryDesc: 'Tell us about your farm in detail',
+  tellUsAboutFarm: 'Tell us about your farm',
+  soilType: 'Soil Type',
+  soilTypePlaceholder: 'e.g. Loamy, Black, Sandy',
+  irrigationSource: 'Irrigation Source',
+  irrigationSourcePlaceholder: 'e.g. Well, Canal, Drip',
+  farmingExperience: 'Farming Experience',
+  farmingExperiencePlaceholder: 'e.g. 15 years',
+  ownOrLeased: 'Land Ownership',
+  ownLand: 'Own Land',
+  leasedLand: 'Leased Land',
+  lastCrop: 'Last Harvested Crop',
+  lastCropPlaceholder: 'e.g. Cotton, Wheat',
+  expectedHarvestMonth: 'Expected Harvest Month',
+  expectedHarvestPlaceholder: 'e.g. March 2025',
+  livestockCount: 'Livestock Count',
+  livestockCountPlaceholder: 'e.g. 2 cows, 5 goats',
+  fertilizerBrand: 'Preferred Fertilizer Brand',
+  fertilizerBrandPlaceholder: 'e.g. IFFCO, Tata Kisan',
+  seedSource: 'Seed Source',
+  seedSourcePlaceholder: 'e.g. Local market, Govt. center',
+  saveFarmMemory: 'Save Farm Memory',
+  farmMemorySaved: 'Farm memory saved!',
+  editFarmMemory: 'Edit Farm Memory',
+  soilLoamy: 'Loamy',
+  soilClay: 'Clay',
+  soilSandy: 'Sandy',
+  soilBlack: 'Black (Regur)',
+  soilRed: 'Red Soil',
+  irrigationWell: 'Well/Borewell',
+  irrigationCanal: 'Canal',
+  irrigationRain: 'Rainfed Only',
+  irrigationDrip: 'Drip Irrigation',
+  seedSourceLocal: 'Local Market',
+  seedSourceGovt: 'Govt. Center',
+  seedSourcePrivate: 'Private Dealer',
+  seedSourceOwn: 'Own Saved Seeds',
+  farmMemoryComplete: 'Your farm profile is complete!',
+  farmMemorySection: 'Farm Details',
+  yearOfFarming: 'years of farming',
+
+  // Farmer Photo
+  changePhoto: 'Change Photo',
+  uploadPhotoLabel: 'Upload or take a photo',
+  removePhoto: 'Remove Photo',
+  takeSelfie: 'Take Selfie',
+  profilePhoto: 'Profile Photo',
+
+  // Chatbot Voice
+  voiceChat: 'Voice Chat',
+  voiceChatDesc: 'Talk to AI Assistant',
+  tapMicToTalk: 'Tap mic to talk',
+  listeningChat: 'Listening... speak now',
+  voiceMessageSent: 'Voice message sent',
+  startVoiceChat: 'Start voice chat',
+  stopVoiceChat: 'Stop voice chat',
+
+  // Season Score Card
+  seasonScoreCard: 'Season Score Card',
+  seasonScoreCardDesc: 'Track your seasonal farming performance',
+  currentSeason: 'Current Season',
+  seasonPerformance: 'Season Performance',
+  overallScore: 'Overall Score',
+  cropHealthScore: 'Crop Health',
+  irrigationScore: 'Irrigation',
+  pestManagementScore: 'Pest Management',
+  soilHealthScore: 'Soil Health',
+  profitScore: 'Profitability',
+  timelyActionsScore: 'Timely Actions',
+  excellent: 'Excellent',
+  good: 'Good',
+  average: 'Average',
+  needsImprovement: 'Needs Improvement',
+  seasonHighlights: 'Season Highlights',
+  seasonAlerts: 'Season Alerts',
+  rabiSeason: 'Rabi 2025-26',
+  kharifSeason: 'Kharif 2025',
+  seasonTip: 'Season Tip',
+  seasonBreakdown: 'Score Breakdown',
+  scoreOutOf: '/100',
+  viewSeasonCard: 'View Season Card',
+
+  // Voice Chat in Chatbot
+  micButton: 'Mic',
+  stopTalking: 'Stop',
 };
 
 const hi: Translations = {
@@ -1082,6 +1258,94 @@ const hi: Translations = {
   krushiKendraList: 'आपके पास कृषि केंद्र',
   findNearest: 'निकटतम केंद्र खोजें',
   directions: 'दिशा-निर्देश प्राप्त करें',
+
+  // Farm Memory
+  farmMemory: 'खेत स्मृति',
+  farmMemoryDesc: 'अपने खेत के बारे में विस्तार से बताएं',
+  tellUsAboutFarm: 'अपने खेत के बारे में बताएं',
+  soilType: 'मिट्टी का प्रकार',
+  soilTypePlaceholder: 'जैसे दोमट, काली, बलुई',
+  irrigationSource: 'सिंचाई का स्रोत',
+  irrigationSourcePlaceholder: 'जैसे कुआं, नहर, ड्रिप',
+  farmingExperience: 'खेती का अनुभव',
+  farmingExperiencePlaceholder: 'जैसे 15 वर्ष',
+  ownOrLeased: 'ज़मीन का स्वामित्व',
+  ownLand: 'अपनी ज़मीन',
+  leasedLand: 'किराये की ज़मीन',
+  lastCrop: 'पिछली कटाई फसल',
+  lastCropPlaceholder: 'जैसे कपास, गेहूं',
+  expectedHarvestMonth: 'अपेक्षित कटाई का महीना',
+  expectedHarvestPlaceholder: 'जैसे मार्च 2025',
+  livestockCount: 'पशुओं की संख्या',
+  livestockCountPlaceholder: 'जैसे 2 गाय, 5 बकरी',
+  fertilizerBrand: 'पसंदीदा उर्वरक ब्रांड',
+  fertilizerBrandPlaceholder: 'जैसे इफ्को, टाटा किसान',
+  seedSource: 'बीज का स्रोत',
+  seedSourcePlaceholder: 'जैसे स्थानीय बाजार, सरकारी केंद्र',
+  saveFarmMemory: 'खेत स्मृति सहेजें',
+  farmMemorySaved: 'खेत स्मृति सहेजी गई!',
+  editFarmMemory: 'खेत स्मृति संपादित करें',
+  soilLoamy: 'दोमट',
+  soilClay: 'चिकनी मिट्टी',
+  soilSandy: 'बलुई',
+  soilBlack: 'काली (रेगुर)',
+  soilRed: 'लाल मिट्टी',
+  irrigationWell: 'कुआं/बोरवेल',
+  irrigationCanal: 'नहर',
+  irrigationRain: 'केवल बारिश पर निर्भर',
+  irrigationDrip: 'ड्रिप सिंचाई',
+  seedSourceLocal: 'स्थानीय बाजार',
+  seedSourceGovt: 'सरकारी केंद्र',
+  seedSourcePrivate: 'प्राइवेट डीलर',
+  seedSourceOwn: 'अपने बचाए बीज',
+  farmMemoryComplete: 'आपका खेत प्रोफ़ाइल पूरा है!',
+  farmMemorySection: 'खेत विवरण',
+  yearOfFarming: 'वर्ष की खेती',
+
+  // Farmer Photo
+  changePhoto: 'फोटो बदलें',
+  uploadPhotoLabel: 'फोटो अपलोड करें या लें',
+  removePhoto: 'फोटो हटाएं',
+  takeSelfie: 'सेल्फी लें',
+  profilePhoto: 'प्रोफ़ाइल फोटो',
+
+  // Chatbot Voice
+  voiceChat: 'वॉइस चैट',
+  voiceChatDesc: 'AI सहायक से बात करें',
+  tapMicToTalk: 'बोलने के लिए माइक टैप करें',
+  listeningChat: 'सुन रहा है... बोलें',
+  voiceMessageSent: 'वॉइस मैसेज भेजा गया',
+  startVoiceChat: 'वॉइस चैट शुरू करें',
+  stopVoiceChat: 'वॉइस चैट बंद करें',
+
+  // Season Score Card
+  seasonScoreCard: 'सीज़न स्कोर कार्ड',
+  seasonScoreCardDesc: 'अपनी मौसमी खेती प्रदर्शन ट्रैक करें',
+  currentSeason: 'वर्तमान मौसम',
+  seasonPerformance: 'मौसम प्रदर्शन',
+  overallScore: 'कुल स्कोर',
+  cropHealthScore: 'फसल स्वास्थ्य',
+  irrigationScore: 'सिंचाई',
+  pestManagementScore: 'कीट प्रबंधन',
+  soilHealthScore: 'मिट्टी स्वास्थ्य',
+  profitScore: 'लाभपरकता',
+  timelyActionsScore: 'समय पर कार्य',
+  excellent: 'उत्कृष्ट',
+  good: 'अच्छा',
+  average: 'औसत',
+  needsImprovement: 'सुधार आवश्यक',
+  seasonHighlights: 'मौसम की उपलब्धियां',
+  seasonAlerts: 'मौसम अलर्ट',
+  rabiSeason: 'रबी 2025-26',
+  kharifSeason: 'खरीफ 2025',
+  seasonTip: 'मौसम सुझाव',
+  seasonBreakdown: 'स्कोर विवरण',
+  scoreOutOf: '/100',
+  viewSeasonCard: 'सीज़न कार्ड देखें',
+
+  // Voice Chat in Chatbot
+  micButton: 'माइक',
+  stopTalking: 'बंद करें',
 };
 
 const mr: Translations = {
@@ -1440,6 +1704,94 @@ const mr: Translations = {
   krushiKendraList: 'तुमच्या जवळ कृषी केंद्रे',
   findNearest: 'जवळचे केंद्र शोधा',
   directions: 'दिशा मिळवा',
+
+  // Farm Memory
+  farmMemory: 'शेत स्मृती',
+  farmMemoryDesc: 'तुमच्या शेताबद्दल तपशीलवार सांगा',
+  tellUsAboutFarm: 'तुमच्या शेताबद्दल सांगा',
+  soilType: 'मातीचा प्रकार',
+  soilTypePlaceholder: 'उदा. दोमट, काळी, वाळू',
+  irrigationSource: 'सिंचाई स्रोत',
+  irrigationSourcePlaceholder: 'उदा. विहिर, कालवा, ड्रिप',
+  farmingExperience: 'शेतीचा अनुभव',
+  farmingExperiencePlaceholder: 'उदा. 15 वर्षे',
+  ownOrLeased: 'जमीन मालकी',
+  ownLand: 'स्वतःची जमीन',
+  leasedLand: 'किराय्याची जमीन',
+  lastCrop: 'शेवटची कापलेली पीक',
+  lastCropPlaceholder: 'उदा. कापूस, गहू',
+  expectedHarvestMonth: 'अपेक्षित कापणीचा महिना',
+  expectedHarvestPlaceholder: 'उदा. मार्च 2025',
+  livestockCount: 'पशुसंख्या',
+  livestockCountPlaceholder: 'उदा. 2 गायी, 5 शेळ्या',
+  fertilizerBrand: 'पसंदीदा खत ब्रँड',
+  fertilizerBrandPlaceholder: 'उदा. इफ्को, टाटा किसान',
+  seedSource: 'बियाणे स्रोत',
+  seedSourcePlaceholder: 'उदा. स्थानिक बाजार, सरकारी केंद्र',
+  saveFarmMemory: 'शेत स्मृती जतन करा',
+  farmMemorySaved: 'शेत स्मृती जतन झाली!',
+  editFarmMemory: 'शेत स्मृती संपादित करा',
+  soilLoamy: 'दोमट',
+  soilClay: 'चिकणमाती',
+  soilSandy: 'वाळू',
+  soilBlack: 'काळी (रेगुर)',
+  soilRed: 'लाल माती',
+  irrigationWell: 'विहिर/बोअरवेल',
+  irrigationCanal: 'कालवा',
+  irrigationRain: 'फक्त पावसावर अवलंबून',
+  irrigationDrip: 'ड्रिप सिंचाई',
+  seedSourceLocal: 'स्थानिक बाजार',
+  seedSourceGovt: 'सरकारी केंद्र',
+  seedSourcePrivate: 'प्रायव्हेट डीलर',
+  seedSourceOwn: 'स्वतःचे जतन केलेले बियाणे',
+  farmMemoryComplete: 'तुमचे शेत प्रोफाइल पूर्ण आहे!',
+  farmMemorySection: 'शेत तपशील',
+  yearOfFarming: 'वर्षांची शेती',
+
+  // Farmer Photo
+  changePhoto: 'फोटो बदला',
+  uploadPhotoLabel: 'फोटो अपलोड करा किंवा घ्या',
+  removePhoto: 'फोटो काढा',
+  takeSelfie: 'सेल्फी घ्या',
+  profilePhoto: 'प्रोफाइल फोटो',
+
+  // Chatbot Voice
+  voiceChat: 'व्हॉइस चॅट',
+  voiceChatDesc: 'AI सहाय्यकाशी बोला',
+  tapMicToTalk: 'बोलण्यासाठी माइक टॅप करा',
+  listeningChat: 'ऐकत आहे... बोला',
+  voiceMessageSent: 'व्हॉइस मेसेज पाठवला',
+  startVoiceChat: 'व्हॉइस चॅट सुरू करा',
+  stopVoiceChat: 'व्हॉइस चॅट बंद करा',
+
+  // Season Score Card
+  seasonScoreCard: 'हंगाम स्कोअर कार्ड',
+  seasonScoreCardDesc: 'तुमचे हंगामी शेती कामगिरी ट्रॅक करा',
+  currentSeason: 'सध्याचा हंगाम',
+  seasonPerformance: 'हंगाम कामगिरी',
+  overallScore: 'एकूण स्कोअर',
+  cropHealthScore: 'पीक आरोग्य',
+  irrigationScore: 'सिंचाई',
+  pestManagementScore: 'कीड व्यवस्थापन',
+  soilHealthScore: 'माती आरोग्य',
+  profitScore: 'नफा',
+  timelyActionsScore: 'वेळेवर कृती',
+  excellent: 'उत्कृष्ट',
+  good: 'चांगले',
+  average: 'सरासरी',
+  needsImprovement: 'सुधारा आवश्यक',
+  seasonHighlights: 'हंगाम उल्लेखनीय',
+  seasonAlerts: 'हंगाम अलर्ट',
+  rabiSeason: 'रबी 2025-26',
+  kharifSeason: 'खरीफ 2025',
+  seasonTip: 'हंगाम सल्ला',
+  seasonBreakdown: 'स्कोअर तपशील',
+  scoreOutOf: '/100',
+  viewSeasonCard: 'हंगाम कार्ड पहा',
+
+  // Voice Chat in Chatbot
+  micButton: 'माइक',
+  stopTalking: 'बंद करा',
 };
 
 const translations: Record<Language, Translations> = { en, hi, mr };

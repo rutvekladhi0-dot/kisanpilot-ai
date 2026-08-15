@@ -12,11 +12,13 @@ import PMFBYScreen from './screens/PMFBYScreen';
 import FarmGoalsScreen from './screens/FarmGoalsScreen';
 import NextBestActionScreen from './screens/NextBestActionScreen';
 import MonthlyPhotoTrackerScreen from './screens/MonthlyPhotoTrackerScreen';
+import FarmMemoryScreen from './screens/FarmMemoryScreen';
+import SeasonScoreCardScreen from './screens/SeasonScoreCardScreen';
 
 // ============================================================
 // Types
 // ============================================================
-export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction' | 'phototracker';
+export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction' | 'phototracker' | 'farmmemory' | 'seasonscorecard';
 
 export interface FarmerProfile {
   name: string;
@@ -157,6 +159,8 @@ export default function KisanPilotApp() {
           {screen === 'farmgoals' && <FarmGoalsScreen key="farmgoals" />}
           {screen === 'nextbestaction' && <NextBestActionScreen key="nextbestaction" />}
           {screen === 'phototracker' && <MonthlyPhotoTrackerScreen key="phototracker" />}
+          {screen === 'farmmemory' && <FarmMemoryScreen key="farmmemory" />}
+          {screen === 'seasonscorecard' && <SeasonScoreCardScreen key="seasonscorecard" />}
         </AnimatePresence>
       </div>
     </AppContext.Provider>
@@ -276,7 +280,9 @@ function ProfileScreen() {
   const [village, setVillage] = useState('');
   const [farmSize, setFarmSize] = useState('');
   const [mainCrop, setMainCrop] = useState('');
+  const [photo, setPhoto] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ name?: string; village?: string }>({});
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const farmSizes = [
     { value: '<1', label: t.lessThanOneAcre },
@@ -301,17 +307,70 @@ function ProfileScreen() {
       farmSize: farmSize || t.lessThanOneAcre,
       mainCrop: mainCrop || t.cropWheat,
     });
+    if (photo) {
+      localStorage.setItem('kp_farmer_photo', photo);
+    }
     navigate('dashboard');
+  };
+
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setPhoto(ev.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    setPhoto(null);
+    localStorage.removeItem('kp_farmer_photo');
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
     <PageWrapper className="flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-lg mx-auto mb-3">
-            <span className="text-2xl">👨‍🌾</span>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            onClick={() => fileInputRef.current?.click()}
+            className="w-24 h-24 rounded-full bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-lg mx-auto mb-3 cursor-pointer overflow-hidden border-4 border-white shadow-green-200"
+          >
+            {photo ? (
+              <img src={photo} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-4xl">👨‍🌾</span>
+            )}
+          </motion.div>
+          <div className="flex items-center justify-center gap-3 mb-1">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="text-xs text-green-600 font-semibold hover:text-green-800"
+            >
+              {t.changePhoto}
+            </button>
+            {photo && (
+              <button
+                onClick={removePhoto}
+                className="text-xs text-red-500 font-semibold hover:text-red-700"
+              >
+                {t.removePhoto}
+              </button>
+            )}
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">{t.setupProfile}</h1>
+          <p className="text-xs text-gray-400">{t.uploadPhotoLabel}</p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            capture="user"
+            onChange={handlePhotoSelect}
+            className="hidden"
+          />
+          <h1 className="text-2xl font-bold text-gray-800 mt-4">{t.setupProfile}</h1>
           <p className="text-gray-500 mt-1">{t.setupProfileSubtitle}</p>
         </div>
 
@@ -403,6 +462,14 @@ function ProfileScreen() {
 // ============================================================
 function DashboardScreen() {
   const { t, profile, navigate, lang } = useApp();
+  const [farmerPhoto, setFarmerPhoto] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kp_farmer_photo');
+      if (saved) setFarmerPhoto(saved);
+    }
+  }, []);
 
   if (!profile) return null;
 
@@ -420,6 +487,8 @@ function DashboardScreen() {
     { id: 'farmgoals' as Screen, icon: '🎯', title: t.farmGoals, desc: t.farmGoalsDesc, color: 'from-teal-500 to-cyan-600' },
     { id: 'nextbestaction' as Screen, icon: '✨', title: t.nextBestAction, desc: t.nextBestActionDesc, color: 'from-lime-500 to-green-600' },
     { id: 'phototracker' as Screen, icon: '📸', title: t.monthlyPhotoTracker, desc: t.monthlyPhotoTrackerDesc, color: 'from-pink-500 to-rose-600' },
+    { id: 'farmmemory' as Screen, icon: '🧠', title: t.farmMemory, desc: t.farmMemoryDesc, color: 'from-emerald-500 to-teal-600' },
+    { id: 'seasonscorecard' as Screen, icon: '🏆', title: t.seasonScoreCard, desc: t.seasonScoreCardDesc, color: 'from-amber-500 to-yellow-600' },
     { id: 'insights' as Screen, icon: '📊', title: t.farmInsights, desc: t.farmInsightsDesc, color: 'from-cyan-500 to-teal-600' },
     { id: 'alerts' as Screen, icon: '🔔', title: t.smartAlerts, desc: t.smartAlertsDesc, color: 'from-red-500 to-rose-600' },
   ];
@@ -455,8 +524,15 @@ function DashboardScreen() {
       <main className="max-w-5xl mx-auto px-4 pb-8">
         {/* Welcome */}
         <div className="mt-6 mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-            {t.welcomeBack}, {profile.name} 👋
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center overflow-hidden border-2 border-white shadow-md">
+              {farmerPhoto ? (
+                <img src={farmerPhoto} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-base">👨‍🌾</span>
+              )}
+            </div>
+            <span>{t.welcomeBack}, {profile.name} 👋</span>
           </h2>
           <p className="text-gray-500 mt-1">{t.smarterDecisions}</p>
         </div>
@@ -596,7 +672,10 @@ function ChatbotScreen() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [voiceState, setVoiceState] = useState<'idle' | 'listening'>('idle');
+  const [liveTranscript, setLiveTranscript] = useState('');
   const chatEndRef = React.useRef<HTMLDivElement>(null);
+  const recognitionRef = React.useRef<any>(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -620,6 +699,64 @@ function ChatbotScreen() {
       return t.weatherResponse;
     }
     return t.defaultResponse;
+  };
+
+  const startVoice = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+    const recognition = new SpeechRecognition();
+    recognition.lang = lang === 'hi' ? 'hi-IN' : lang === 'mr' ? 'mr-IN' : 'en-IN';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.onresult = (event: any) => {
+      let final = '';
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          final += event.results[i][0].transcript;
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+      if (final) {
+        setInput(final);
+        setLiveTranscript('');
+      } else if (interim) {
+        setInput(interim);
+        setLiveTranscript(interim);
+      }
+    };
+    recognition.onerror = () => {
+      setVoiceState('idle');
+    };
+    recognition.onend = () => {
+      if (voiceState === 'listening') {
+        recognition.start();
+      }
+    };
+    recognitionRef.current = recognition;
+    recognition.start();
+    setVoiceState('listening');
+  };
+
+  const stopVoice = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
+    setVoiceState('idle');
+    setLiveTranscript('');
+    if (input.trim()) {
+      sendMessage();
+    }
+  };
+
+  const toggleVoice = () => {
+    if (voiceState === 'listening') {
+      stopVoice();
+    } else {
+      startVoice();
+    }
   };
 
   const sendMessage = (text?: string) => {
@@ -720,6 +857,22 @@ function ChatbotScreen() {
       {/* Input */}
       <div className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t border-green-100">
         <div className="max-w-2xl mx-auto px-4 py-3">
+          {/* Voice status indicator */}
+          {voiceState === 'listening' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2 mb-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 w-fit"
+            >
+              <motion.span
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ repeat: Infinity, duration: 1 }}
+                className="w-2.5 h-2.5 bg-red-500 rounded-full"
+              />
+              <span className="text-xs font-medium text-red-600">{t.listeningChat}</span>
+              <span className="text-xs text-red-400">{liveTranscript && `→ "${liveTranscript.slice(-40)}${liveTranscript.length > 40 ? '...' : ''}"`}</span>
+            </motion.div>
+          )}
           <div className="flex gap-2">
             <input
               type="text"
@@ -729,6 +882,31 @@ function ChatbotScreen() {
               placeholder={t.typeMessage}
               className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800 text-sm"
             />
+            <button
+              onClick={toggleVoice}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+                voiceState === 'listening'
+                  ? 'bg-red-500 shadow-lg shadow-red-200'
+                  : 'bg-gray-100 hover:bg-green-50'
+              }`}
+              title={voiceState === 'listening' ? t.stopVoiceChat : t.startVoiceChat}
+            >
+              {voiceState === 'listening' ? (
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ repeat: Infinity, duration: 0.8 }}
+                  className="w-6 h-6 rounded-full bg-white flex items-center justify-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.5 12.75a6 6 0 0111.57 2.25M12 18.75a2.25 2.25 0 01-2.25-2.25V6.108c0-1.135.845-2.098 1.976-2.192a4.503 4.503 0 018.048 0c1.13.094 1.976 1.057 1.976 2.192V16.5a2.25 2.25 0 01-2.25 2.25H12z" clipRule="evenodd" />
+                  </svg>
+                </motion.div>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+                </svg>
+              )}
+            </button>
             <button
               onClick={() => sendMessage()}
               disabled={!input.trim() || isTyping}
