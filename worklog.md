@@ -67,3 +67,87 @@ Stage Summary:
 - What-If Simulator with live crop comparison
 - All data persisted in localStorage
 - Competition-ready prototype
+---
+Task ID: 2-a
+Agent: Frontend Developer
+Task: Add mic button to Voice Khata screen
+
+Work Log:
+- Added `useRef` to React imports
+- Added voice state management (idle, listening, processing, error) with `VoiceState` type
+- Added `recognitionRef` and `mediaRecorderRef` refs
+- Implemented `startListening` callback using Web Speech API (SpeechRecognition/webkitSpeechRecognition)
+- Implemented `stopListening` callback to stop active recognition
+- Implemented `toggleListening` callback to toggle between states
+- Added circular mic button with SVG microphone icon next to Save Entry button
+- Added pulsing red glow animation (framer-motion) during listening state
+- Added state-dependent button styling: green (idle), red (listening), yellow (processing), red-border (error)
+- Added small status text below button using t.speakNow, t.voiceDetected, and error text
+- Handled browser SpeechRecognition not supported case
+- Set language based on `lang` prop (hi-IN / en-IN)
+- All existing functionality preserved unchanged
+
+Stage Summary:
+- VoiceKhataScreen now has mic button for voice input with 4 visual states
+
+---
+Task ID: 2-b
+Agent: Frontend Developer
+Task: Create Monthly Photo Tracker screen
+
+Work Log:
+- Created MonthlyPhotoTrackerScreen with 4 weekly photo slots
+- Added progress tracking and localStorage persistence
+- Added photo history section
+
+Stage Summary:
+- New MonthlyPhotoTrackerScreen.tsx created
+
+---
+Task ID: 2-c
+Agent: Frontend Developer
+Task: Rewrite SimulatorScreen as AI Decision Explainer
+
+Work Log:
+- Replaced crop comparison with single-crop AI decision explainer
+- Added AI confidence score with CSS-based circular progress indicator (framer-motion animated)
+- Added market analysis card with detailed reasoning for each crop
+- Added risk factors card with disease, weather, and market risks
+- Added season context card with current season suitability
+- Added water requirement recommendation card
+- Added soil suitability assessment card
+- Added best practice recommendation card
+- Added staggered result animations using framer-motion variants
+- Added 2s loading animation with skeleton placeholders
+- Added investment details summary bar
+- Added expected yield and market price summary card
+- Added disclaimer at the bottom
+- Created comprehensive mock analysis data for all 6 crops (Wheat, Cotton, Soybean, Rice, Sugarcane, Onion)
+- Used all required i18n translation keys
+
+Stage Summary:
+- SimulatorScreen now shows AI reasoning behind decisions instead of crop comparison
+- Features CSS circular progress, staggered animations, and detailed crop analysis data
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Add mic in Voice Khata, monthly photo tracker, fix simulator, add expert consultation & Krushi Kendra in Crop Doctor
+
+Work Log:
+- Updated i18n.ts with ~70 new translation keys across all 3 languages (EN/HI/MR) for: mic, photo tracker, AI explainer, expert consultation, Krushi Kendra
+- Updated VoiceKhataScreen with mic button using Web Speech API (SpeechRecognition), 4 visual states (idle/listening/processing/error), pulsing animation
+- Created MonthlyPhotoTrackerScreen with 4 weekly photo slots (Week 1-4, dates 7th/14th/21st/28th), progress bar, photo history, localStorage persistence
+- Rewrote SimulatorScreen as "AI Decision Explainer" - single crop analysis with AI confidence circle, market analysis, risk factors, season context, water requirement, soil suitability, best practice
+- Updated CropDoctor analysis result section with Expert Consultation panel (3 demo experts with phone numbers, specialties, availability) and Nearby Krushi Kendra panel (3 agri centers with address, phone, hours, services, call & directions buttons)
+- Added 'phototracker' screen type and MonthlyPhotoTrackerScreen import/route in KisanPilotApp
+- Added photo tracker card to dashboard feature grid
+- All lint checks pass, zero runtime errors, zero browser console errors
+- Agent Browser verified: dashboard with all features, Voice Khata with mic button, Photo Tracker with 4 slots, Simulator with AI reasoning sections
+
+Stage Summary:
+- 5 new features added/modified across 5 files
+- Total screen count: 19 (18 previous + 1 new phototracker)
+- Total i18n keys: ~320+ across 3 languages
+- Zero lint errors, zero runtime errors
+

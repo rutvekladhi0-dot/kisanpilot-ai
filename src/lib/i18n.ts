@@ -296,6 +296,76 @@ export interface Translations {
   farmBriefing: string;
   riskSummary: string;
   quickActions: string;
+
+  // Voice Khata Mic
+  tapToSpeak: string;
+  listening: string;
+  voiceError: string;
+  couldNotHear: string;
+  recordingStopped: string;
+  voiceDetected: string;
+  speakNow: string;
+
+  // Monthly Photo Tracker
+  monthlyPhotoTracker: string;
+  monthlyPhotoTrackerDesc: string;
+  week1: string;
+  week2: string;
+  week3: string;
+  week4: string;
+  takePhoto: string;
+  photoTaken: string;
+  noPhotoYet: string;
+  scheduledDate: string;
+  capturePhoto: string;
+  photoHistory: string;
+  photosThisMonth: string;
+  monthlyProgress: string;
+  allPhotosDone: string;
+  photosRemaining: string;
+  viewPhotoTracker: string;
+  cropGrowthTimeline: string;
+
+  // AI Decision Explainer (Simulator)
+  aiDecisionExplainer: string;
+  aiDecisionDesc: string;
+  yourCrop: string;
+  whyThisDecision: string;
+  aiConfidence: string;
+  marketAnalysis: string;
+  riskFactors: string;
+  seasonContext: string;
+  getAiAnalysis: string;
+  aiReasonTitle: string;
+  aiReasonDetail: string;
+  investmentDetails: string;
+  expectedYieldDetails: string;
+  marketPriceDetails: string;
+  waterRequirement: string;
+  soilSuitability: string;
+  bestPractice: string;
+  disclaimer: string;
+
+  // Expert Consultation
+  expertConsultation: string;
+  expertConsultationDesc: string;
+  consultExpert: string;
+  expertSpecialty: string;
+  expertAvailable: string;
+  callExpert: string;
+  expertNote: string;
+  bookConsultation: string;
+
+  // Krushi Kendra
+  nearbyKrushiKendra: string;
+  krushiKendraDesc: string;
+  krushiKendraAddress: string;
+  krushiKendraPhone: string;
+  krushiKendraHours: string;
+  krushiKendraServices: string;
+  krushiKendraList: string;
+  findNearest: string;
+  directions: string;
 }
 
 const en: Translations = {
@@ -584,6 +654,76 @@ const en: Translations = {
   farmBriefing: 'Farm Briefing',
   riskSummary: 'Risk Summary',
   quickActions: 'Quick Actions',
+
+  // Voice Khata Mic
+  tapToSpeak: 'Tap to Speak',
+  listening: 'Listening...',
+  voiceError: 'Voice not supported',
+  couldNotHear: 'Could not hear. Try again.',
+  recordingStopped: 'Recording stopped',
+  voiceDetected: 'Voice detected!',
+  speakNow: 'Speak now...',
+
+  // Monthly Photo Tracker
+  monthlyPhotoTracker: 'Monthly Photo Tracker',
+  monthlyPhotoTrackerDesc: 'Track crop growth with 4 photos every month',
+  week1: 'Week 1',
+  week2: 'Week 2',
+  week3: 'Week 3',
+  week4: 'Week 4',
+  takePhoto: 'Take Photo',
+  photoTaken: 'Photo Taken',
+  noPhotoYet: 'No photo yet',
+  scheduledDate: 'Scheduled Date',
+  capturePhoto: 'Capture Crop Photo',
+  photoHistory: 'Photo History',
+  photosThisMonth: 'Photos This Month',
+  monthlyProgress: 'Monthly Progress',
+  allPhotosDone: 'All 4 photos captured this month!',
+  photosRemaining: 'photos remaining',
+  viewPhotoTracker: 'View Photo Tracker',
+  cropGrowthTimeline: 'Crop Growth Timeline',
+
+  // AI Decision Explainer (Simulator)
+  aiDecisionExplainer: 'AI Decision Explainer',
+  aiDecisionDesc: 'Understand why AI recommends this farming decision',
+  yourCrop: 'Your Crop',
+  whyThisDecision: 'Why This Decision?',
+  aiConfidence: 'AI Confidence',
+  marketAnalysis: 'Market Analysis',
+  riskFactors: 'Risk Factors',
+  seasonContext: 'Season Context',
+  getAiAnalysis: 'Get AI Analysis',
+  aiReasonTitle: 'AI Reasoning',
+  aiReasonDetail: 'Detailed reasoning behind this recommendation',
+  investmentDetails: 'Investment Details',
+  expectedYieldDetails: 'Expected Yield',
+  marketPriceDetails: 'Market Price Analysis',
+  waterRequirement: 'Water Requirement',
+  soilSuitability: 'Soil Suitability',
+  bestPractice: 'Best Practice',
+  disclaimer: 'This is AI-generated advice. Consult a local expert for critical decisions.',
+
+  // Expert Consultation
+  expertConsultation: 'Expert Consultation',
+  expertConsultationDesc: 'Connect with agricultural experts for personalized advice',
+  consultExpert: 'Consult an Expert',
+  expertSpecialty: 'Specialty',
+  expertAvailable: 'Available Now',
+  callExpert: 'Call Expert',
+  expertNote: 'Experts available Mon-Sat, 9AM-6PM',
+  bookConsultation: 'Book Consultation',
+
+  // Krushi Kendra
+  nearbyKrushiKendra: 'Nearby Krushi Kendra',
+  krushiKendraDesc: 'Agricultural input centers near you for seeds, fertilizers & pesticides',
+  krushiKendraAddress: 'Address',
+  krushiKendraPhone: 'Phone',
+  krushiKendraHours: 'Hours',
+  krushiKendraServices: 'Services',
+  krushiKendraList: 'Agricultural Centers Near You',
+  findNearest: 'Find Nearest Center',
+  directions: 'Get Directions',
 };
 
 const hi: Translations = {
@@ -872,6 +1012,76 @@ const hi: Translations = {
   farmBriefing: 'खेत संक्षिप्त जानकारी',
   riskSummary: 'जोखिम सारांश',
   quickActions: 'त्वरित कार्य',
+
+  // Voice Khata Mic
+  tapToSpeak: 'बोलने के लिए टैप करें',
+  listening: 'सुन रहा है...',
+  voiceError: 'आवाज़ समर्थित नहीं',
+  couldNotHear: 'सुनाई नहीं दिया। फिर कोशिश करें।',
+  recordingStopped: 'रिकॉर्डिंग बंद',
+  voiceDetected: 'आवाज़ पहचाना गया!',
+  speakNow: 'अभी बोलें...',
+
+  // Monthly Photo Tracker
+  monthlyPhotoTracker: 'मासिक फोटो ट्रैकर',
+  monthlyPhotoTrackerDesc: 'हर महीने 4 फोटो से फसल की वृद्धि ट्रैक करें',
+  week1: 'सप्ताह 1',
+  week2: 'सप्ताह 2',
+  week3: 'सप्ताह 3',
+  week4: 'सप्ताह 4',
+  takePhoto: 'फोटो लें',
+  photoTaken: 'फोटो लिया गया',
+  noPhotoYet: 'अभी तक कोई फोटो नहीं',
+  scheduledDate: 'निर्धारित तारीख',
+  capturePhoto: 'फसल का फोटो लें',
+  photoHistory: 'फोटो इतिहास',
+  photosThisMonth: 'इस महीने के फोटो',
+  monthlyProgress: 'मासिक प्रगति',
+  allPhotosDone: 'इस महीने सभी 4 फोटो लिए गए!',
+  photosRemaining: 'फोटो बाकी',
+  viewPhotoTracker: 'फोटो ट्रैकर देखें',
+  cropGrowthTimeline: 'फसल वृद्धि समयरेखा',
+
+  // AI Decision Explainer
+  aiDecisionExplainer: 'AI निर्णय व्याख्याता',
+  aiDecisionDesc: 'समझें AI ने यह खेती निर्णय क्यों अनुशंसित किया',
+  yourCrop: 'आपकी फसल',
+  whyThisDecision: 'यह निर्णय क्यों?',
+  aiConfidence: 'AI विश्वास',
+  marketAnalysis: 'बाजार विश्लेषण',
+  riskFactors: 'जोखिम कारक',
+  seasonContext: 'मौसम संदर्भ',
+  getAiAnalysis: 'AI विश्लेषण प्राप्त करें',
+  aiReasonTitle: 'AI तर्क',
+  aiReasonDetail: 'इस सिफारिश के पीछे विस्तृत तर्क',
+  investmentDetails: 'निवेश विवरण',
+  expectedYieldDetails: 'अपेक्षित उपज',
+  marketPriceDetails: 'बाजार भाव विश्लेषण',
+  waterRequirement: 'पानी की आवश्यकता',
+  soilSuitability: 'मिट्टी उपयुक्तता',
+  bestPractice: 'सर्वोत्तम अभ्यास',
+  disclaimer: 'यह AI-जनित सलाह है। महत्वपूर्ण निर्णयों के लिए स्थानीय विशेषज्ञ से परामर्श करें।',
+
+  // Expert Consultation
+  expertConsultation: 'विशेषज्ञ परामर्श',
+  expertConsultationDesc: 'व्यक्तिगत सलाह के लिए कृषि विशेषज्ञों से जुड़ें',
+  consultExpert: 'विशेषज्ञ से परामर्श करें',
+  expertSpecialty: 'विशेषता',
+  expertAvailable: 'अभी उपलब्ध',
+  callExpert: 'विशेषज्ञ को कॉल करें',
+  expertNote: 'विशेषज्ञ सोम-शनि, सुबह 9-शाम 6 बजे उपलब्ध',
+  bookConsultation: 'परामर्श बुक करें',
+
+  // Krushi Kendra
+  nearbyKrushiKendra: 'निकटतम कृषि केंद्र',
+  krushiKendraDesc: 'बीज, उर्वरक और कीटनाशक के लिए आपके पास कृषि इनपुट केंद्र',
+  krushiKendraAddress: 'पता',
+  krushiKendraPhone: 'फोन',
+  krushiKendraHours: 'समय',
+  krushiKendraServices: 'सेवाएं',
+  krushiKendraList: 'आपके पास कृषि केंद्र',
+  findNearest: 'निकटतम केंद्र खोजें',
+  directions: 'दिशा-निर्देश प्राप्त करें',
 };
 
 const mr: Translations = {
@@ -1160,6 +1370,76 @@ const mr: Translations = {
   farmBriefing: 'शेत संक्षिप्त माहिती',
   riskSummary: 'धोका सारांश',
   quickActions: 'द्रुत कृत्या',
+
+  // Voice Khata Mic
+  tapToSpeak: 'बोलण्यासाठी टॅप करा',
+  listening: 'ऐकत आहे...',
+  voiceError: 'आवाज समर्थित नाही',
+  couldNotHear: 'ऐकू आले नाही. पुन्हा प्रयत्न करा.',
+  recordingStopped: 'रेकॉर्डिंग थांबले',
+  voiceDetected: 'आवाज ओळखला!',
+  speakNow: 'आता बोला...',
+
+  // Monthly Photo Tracker
+  monthlyPhotoTracker: 'मासिक फोटो ट्रॅकर',
+  monthlyPhotoTrackerDesc: 'दर महिना 4 फोटोंनी पीकाची वाढ ट्रॅक करा',
+  week1: 'आठवडा 1',
+  week2: 'आठवडा 2',
+  week3: 'आठवडा 3',
+  week4: 'आठवडा 4',
+  takePhoto: 'फोटो काढा',
+  photoTaken: 'फोटो घेतला',
+  noPhotoYet: 'अद्याप फोटो नाही',
+  scheduledDate: 'निर्धारित दिनांक',
+  capturePhoto: 'पिकाचा फोटो काढा',
+  photoHistory: 'फोटो इतिहास',
+  photosThisMonth: 'या महिन्यातील फोटो',
+  monthlyProgress: 'मासिक प्रगती',
+  allPhotosDone: 'या महिन्यातील सर्व 4 फोटो घेतले!',
+  photosRemaining: 'फोटो शिल्लक',
+  viewPhotoTracker: 'फोटो ट्रॅकर पहा',
+  cropGrowthTimeline: 'पिकाची वाढ टाइमलाइन',
+
+  // AI Decision Explainer
+  aiDecisionExplainer: 'AI निर्णय स्पष्टीकारक',
+  aiDecisionDesc: 'AI ने हा शेती निर्णय का शिफारस केला ते समझा',
+  yourCrop: 'तुमचे पीक',
+  whyThisDecision: 'हा निर्णाय का?',
+  aiConfidence: 'AI विश्वास',
+  marketAnalysis: 'बाजार विश्लेषण',
+  riskFactors: 'धोका घटक',
+  seasonContext: 'हंगाम संदर्भ',
+  getAiAnalysis: 'AI विश्लेषण मिळवा',
+  aiReasonTitle: 'AI तर्क',
+  aiReasonDetail: 'या शिफारसींमागचे तपशीलवार तर्क',
+  investmentDetails: 'गुंतवणूक तपशील',
+  expectedYieldDetails: 'अपेक्षित उत्पादन',
+  marketPriceDetails: 'बाजार भाव विश्लेषण',
+  waterRequirement: 'पाण्याची गरज',
+  soilSuitability: 'मातीची योग्यता',
+  bestPractice: 'सर्वोत्तम पद्धत',
+  disclaimer: 'हे AI-निर्मित सल्ला आहे. महत्त्वाच्या निर्णयांसाठी स्थानिक तज्ञांशी भेटा.',
+
+  // Expert Consultation
+  expertConsultation: 'तज्ञ परामर्श',
+  expertConsultationDesc: 'वैयक्तिक सल्ल्यासाठी कृषी तज्ञांशी जोडा',
+  consultExpert: 'तज्ञांशी भेटा',
+  expertSpecialty: 'विशेषता',
+  expertAvailable: 'आता उपलब्ध',
+  callExpert: 'तज्ञांना कॉल करा',
+  expertNote: 'तज्ञ सोम-शनि, सकाळी 9-संध्या. 6 वाजेपर्यंत उपलब्ध',
+  bookConsultation: 'परामर्श बुक करा',
+
+  // Krushi Kendra
+  nearbyKrushiKendra: 'जवळचे कृषी केंद्र',
+  krushiKendraDesc: 'बियाणे, खते आणि कीडनाशकांसाठी तुमच्या जवळची कृषी इनपुट केंद्रे',
+  krushiKendraAddress: 'पत्ता',
+  krushiKendraPhone: 'फोन',
+  krushiKendraHours: 'वेळ',
+  krushiKendraServices: 'सेवा',
+  krushiKendraList: 'तुमच्या जवळ कृषी केंद्रे',
+  findNearest: 'जवळचे केंद्र शोधा',
+  directions: 'दिशा मिळवा',
 };
 
 const translations: Record<Language, Translations> = { en, hi, mr };

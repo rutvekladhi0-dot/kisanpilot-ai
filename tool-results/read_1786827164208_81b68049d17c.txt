@@ -1,0 +1,1472 @@
+     1→     1→'use client';
+     2→     2→
+     3→     3→import React, { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
+     4→     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→     5→import { getTranslations, getLanguageLabel, type Language, type Translations } from '@/lib/i18n';
+     6→     6→import VoiceKhataScreen from './screens/VoiceKhataScreen';
+     7→     7→import FarmEconomicsScreen from './screens/FarmEconomicsScreen';
+     8→     8→import BajarBhavScreen from './screens/BajarBhavScreen';
+     9→     9→import RiskRadarScreen from './screens/RiskRadarScreen';
+    10→    10→import SimulatorScreen from './screens/SimulatorScreen';
+    11→    11→import PMFBYScreen from './screens/PMFBYScreen';
+    12→    12→import FarmGoalsScreen from './screens/FarmGoalsScreen';
+    13→    13→import NextBestActionScreen from './screens/NextBestActionScreen';
+    14→    14→
+    15→    15→// ============================================================
+    16→    16→// Types
+    17→    17→// ============================================================
+    18→    18→export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction';
+    19→    19→
+    20→    20→export interface FarmerProfile {
+    21→    21→  name: string;
+    22→    22→  village: string;
+    23→    23→  farmSize: string;
+    24→    24→  mainCrop: string;
+    25→    25→}
+    26→    26→
+    27→    27→export interface AlertItem {
+    28→    28→  id: number;
+    29→    29→  text: string;
+    30→    30→  icon: string;
+    31→    31→  read: boolean;
+    32→    32→}
+    33→    33→
+    34→    34→// ============================================================
+    35→    35→// App Context
+    36→    36→// ============================================================
+    37→    37→interface AppContextType {
+    38→    38→  lang: Language;
+    39→    39→  t: Translations;
+    40→    40→  setLang: (l: Language) => void;
+    41→    41→  profile: FarmerProfile | null;
+    42→    42→  setProfile: (p: FarmerProfile) => void;
+    43→    43→  screen: Screen;
+    44→    44→  navigate: (s: Screen) => void;
+    45→    45→  alerts: AlertItem[];
+    46→    46→  setAlerts: (a: AlertItem[]) => void;
+    47→    47→}
+    48→    48→
+    49→    49→const AppContext = createContext<AppContextType>({} as AppContextType);
+    50→    50→
+    51→    51→export function useApp() {
+    52→    52→  return useContext(AppContext);
+    53→    53→}
+    54→    54→
+    55→    55→const defaultAlerts: AlertItem[] = [
+    56→    56→  { id: 1, icon: '🌧', text: 'rainExpected', read: false },
+    57→    57→  { id: 2, icon: '💧', text: 'monitorSoil', read: false },
+    58→    58→  { id: 3, icon: '🐛', text: 'checkPestSigns', read: false },
+    59→    59→  { id: 4, icon: '🧪', text: 'fertilizerReminder', read: false },
+    60→    60→];
+    61→    61→
+    62→    62→// ============================================================
+    63→    63→// Main App Component
+    64→    64→// ============================================================
+    65→    65→export default function KisanPilotApp() {
+    66→    66→  const initialized = useRef(false);
+    67→    67→  const [lang, setLangState] = useState<Language>(() => {
+    68→    68→    if (typeof window !== 'undefined') {
+    69→    69→      return (localStorage.getItem('kp_lang') as Language) || 'en';
+    70→    70→    }
+    71→    71→    return 'en';
+    72→    72→  });
+    73→    73→  const [profile, setProfileState] = useState<FarmerProfile | null>(() => {
+    74→    74→    if (typeof window !== 'undefined') {
+    75→    75→      try {
+    76→    76→        const saved = localStorage.getItem('kp_profile');
+    77→    77→        return saved ? JSON.parse(saved) : null;
+    78→    78→      } catch { return null; }
+    79→    79→    }
+    80→    80→    return null;
+    81→    81→  });
+    82→    82→  const [screen, setScreen] = useState<Screen>(() => {
+    83→    83→    if (typeof window !== 'undefined') {
+    84→    84→      const savedLang = localStorage.getItem('kp_lang');
+    85→    85→      const savedProfile = localStorage.getItem('kp_profile');
+    86→    86→      if (savedLang && savedProfile) return 'dashboard';
+    87→    87→      if (savedLang) return 'profile';
+    88→    88→    }
+    89→    89→    return 'language';
+    90→    90→  });
+    91→    91→  const [alerts, setAlertsState] = useState<AlertItem[]>(() => {
+    92→    92→    if (typeof window !== 'undefined') {
+    93→    93→      try {
+    94→    94→        const saved = localStorage.getItem('kp_alerts');
+    95→    95→        return saved ? JSON.parse(saved) : defaultAlerts;
+    96→    96→      } catch { return defaultAlerts; }
+    97→    97→    }
+    98→    98→    return defaultAlerts;
+    99→    99→  });
+   100→   100→
+   101→   101→  const [mounted, setMounted] = useState(false);
+   102→   102→
+   103→   103→  useEffect(() => {
+   104→   104→    if (!initialized.current) {
+   105→   105→      initialized.current = true;
+   106→   106→      requestAnimationFrame(() => setMounted(true));
+   107→   107→    }
+   108→   108→  }, []);
+   109→   109→
+   110→   110→  const t = getTranslations(lang);
+   111→   111→
+   112→   112→  const setLang = useCallback((l: Language) => {
+   113→   113→    setLangState(l);
+   114→   114→    localStorage.setItem('kp_lang', l);
+   115→   115→  }, []);
+   116→   116→
+   117→   117→  const setProfile = useCallback((p: FarmerProfile) => {
+   118→   118→    setProfileState(p);
+   119→   119→    localStorage.setItem('kp_profile', JSON.stringify(p));
+   120→   120→  }, []);
+   121→   121→
+   122→   122→  const navigate = useCallback((s: Screen) => {
+   123→   123→    setScreen(s);
+   124→   124→    window.scrollTo(0, 0);
+   125→   125→  }, []);
+   126→   126→
+   127→   127→  const setAlerts = useCallback((a: AlertItem[]) => {
+   128→   128→    setAlertsState(a);
+   129→   129→    localStorage.setItem('kp_alerts', JSON.stringify(a));
+   130→   130→  }, []);
+   131→   131→
+   132→   132→  if (!mounted) {
+   133→   133→    return null;
+   134→   134→  }
+   135→   135→
+   136→   136→  return (
+   137→   137→    <AppContext.Provider value={{ lang, t, setLang, profile, setProfile, screen, navigate, alerts, setAlerts }}>
+   138→   138→      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+   139→   139→        <AnimatePresence mode="wait">
+   140→   140→          {screen === 'language' && <LanguageScreen key="language" />}
+   141→   141→          {screen === 'profile' && <ProfileScreen key="profile" />}
+   142→   142→          {screen === 'dashboard' && <DashboardScreen key="dashboard" />}
+   143→   143→          {screen === 'chatbot' && <ChatbotScreen key="chatbot" />}
+   144→   144→          {screen === 'myfarm' && <MyFarmScreen key="myfarm" />}
+   145→   145→          {screen === 'cropdoctor' && <CropDoctorScreen key="cropdoctor" />}
+   146→   146→          {screen === 'weather' && <WeatherScreen key="weather" />}
+   147→   147→          {screen === 'insights' && <InsightsScreen key="insights" />}
+   148→   148→          {screen === 'alerts' && <AlertsScreen key="alerts" />}
+   149→   149→          {screen === 'settings' && <SettingsScreen key="settings" />}
+   150→   150→          {screen === 'voicekhata' && <VoiceKhataScreen key="voicekhata" />}
+   151→   151→          {screen === 'farmeconomics' && <FarmEconomicsScreen key="farmeconomics" />}
+   152→   152→          {screen === 'bajarbhav' && <BajarBhavScreen key="bajarbhav" />}
+   153→   153→          {screen === 'riskradar' && <RiskRadarScreen key="riskradar" />}
+   154→   154→          {screen === 'simulator' && <SimulatorScreen key="simulator" />}
+   155→   155→          {screen === 'pmfby' && <PMFBYScreen key="pmfby" />}
+   156→   156→          {screen === 'farmgoals' && <FarmGoalsScreen key="farmgoals" />}
+   157→   157→          {screen === 'nextbestaction' && <NextBestActionScreen key="nextbestaction" />}
+   158→   158→        </AnimatePresence>
+   159→   159→      </div>
+   160→   160→    </AppContext.Provider>
+   161→   161→  );
+   162→   162→}
+   163→   163→
+   164→   164→// ============================================================
+   165→   165→// Shared Animation Variants
+   166→   166→// ============================================================
+   167→   167→const pageVariants = {
+   168→   168→  initial: { opacity: 0, y: 20 },
+   169→   169→  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+   170→   170→  exit: { opacity: 0, y: -20, transition: { duration: 0.2, ease: 'easeIn' } },
+   171→   171→};
+   172→   172→
+   173→   173→function PageWrapper({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+   174→   174→  return (
+   175→   175→    <motion.div
+   176→   176→      variants={pageVariants}
+   177→   177→      initial="initial"
+   178→   178→      animate="animate"
+   179→   179→      exit="exit"
+   180→   180→      className={`min-h-screen ${className}`}
+   181→   181→    >
+   182→   182→      {children}
+   183→   183→    </motion.div>
+   184→   184→  );
+   185→   185→}
+   186→   186→
+   187→   187→// ============================================================
+   188→   188→// Shared Back Button Component
+   189→   189→// ============================================================
+   190→   190→function BackButton({ target, label }: { target: Screen; label: string }) {
+   191→   191→  const { navigate } = useApp();
+   192→   192→  return (
+   193→   193→    <button
+   194→   194→      onClick={() => navigate(target)}
+   195→   195→      className="flex items-center gap-2 text-green-700 hover:text-green-900 font-medium transition-colors px-3 py-2 rounded-lg hover:bg-green-50"
+   196→   196→    >
+   197→   197→      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+   198→   198→        <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+   199→   199→      </svg>
+   200→   200→      {label}
+   201→   201→    </button>
+   202→   202→  );
+   203→   203→}
+   204→   204→
+   205→   205→// ============================================================
+   206→   206→// LANGUAGE SELECTION SCREEN
+   207→   207→// ============================================================
+   208→   208→function LanguageScreen() {
+   209→   209→  const { setLang, navigate } = useApp();
+   210→   210→  const t = getTranslations('en');
+   211→   211→
+   212→   212→  const languages = [
+   213→   213→    { code: 'mr' as Language, flag: '🇮🇳', label: t.marathi },
+   214→   214→    { code: 'hi' as Language, flag: '🇮🇳', label: t.hindi },
+   215→   215→    { code: 'en' as Language, flag: '🌐', label: t.english },
+   216→   216→  ];
+   217→   217→
+   218→   218→  const handleSelect = (code: Language) => {
+   219→   219→    setLang(code);
+   220→   220→    navigate('profile');
+   221→   221→  };
+   222→   222→
+   223→   223→  return (
+   224→   224→    <PageWrapper className="flex items-center justify-center px-4">
+   225→   225→      <div className="w-full max-w-lg text-center">
+   226→   226→        {/* Logo */}
+   227→   227→        <motion.div
+   228→   228→          initial={{ scale: 0.8, opacity: 0 }}
+   229→   229→          animate={{ scale: 1, opacity: 1 }}
+   230→   230→          transition={{ duration: 0.5 }}
+   231→   231→          className="mb-8"
+   232→   232→        >
+   233→   233→          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-2xl mx-auto mb-4">
+   234→   234→            <span className="text-4xl">🌾</span>
+   235→   235→          </div>
+   236→   236→          <h1 className="text-3xl md:text-4xl font-bold text-green-800 mb-2">KisanPilot AI</h1>
+   237→   237→          <p className="text-green-600 font-medium text-lg">{t.yourPersonalAi}</p>
+   238→   238→        </motion.div>
+   239→   239→
+   240→   240→        {/* Language Cards */}
+   241→   241→        <div className="space-y-4 mb-8">
+   242→   242→          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.chooseYourLanguage}</h2>
+   243→   243→          <p className="text-gray-500 text-sm mb-6">{t.languageSubtitle[0]}</p>
+   244→   244→          {languages.map((lang, i) => (
+   245→   245→            <motion.button
+   246→   246→              key={lang.code}
+   247→   247→              initial={{ opacity: 0, x: -30 }}
+   248→   248→              animate={{ opacity: 1, x: 0 }}
+   249→   249→              transition={{ delay: i * 0.1, duration: 0.3 }}
+   250→   250→              onClick={() => handleSelect(lang.code)}
+   251→   251→              className="w-full flex items-center gap-4 p-5 bg-white rounded-2xl shadow-md hover:shadow-xl border-2 border-transparent hover:border-green-500 transition-all duration-200 group"
+   252→   252→            >
+   253→   253→              <span className="text-4xl group-hover:scale-110 transition-transform">{lang.flag}</span>
+   254→   254→              <span className="text-lg font-semibold text-gray-800 group-hover:text-green-700 transition-colors">
+   255→   255→                {lang.label}
+   256→   256→              </span>
+   257→   257→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-auto text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" viewBox="0 0 20 20" fill="currentColor">
+   258→   258→                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+   259→   259→              </svg>
+   260→   260→            </motion.button>
+   261→   261→          ))}
+   262→   262→        </div>
+   263→   263→      </div>
+   264→   264→    </PageWrapper>
+   265→   265→  );
+   266→   266→}
+   267→   267→
+   268→   268→// ============================================================
+   269→   269→// PROFILE SETUP SCREEN
+   270→   270→// ============================================================
+   271→   271→function ProfileScreen() {
+   272→   272→  const { t, navigate, setProfile } = useApp();
+   273→   273→  const [name, setName] = useState('');
+   274→   274→  const [village, setVillage] = useState('');
+   275→   275→  const [farmSize, setFarmSize] = useState('');
+   276→   276→  const [mainCrop, setMainCrop] = useState('');
+   277→   277→  const [errors, setErrors] = useState<{ name?: string; village?: string }>({});
+   278→   278→
+   279→   279→  const farmSizes = [
+   280→   280→    { value: '<1', label: t.lessThanOneAcre },
+   281→   281→    { value: '1-5', label: t.oneToFiveAcres },
+   282→   282→    { value: '5-10', label: t.fiveToTenAcres },
+   283→   283→    { value: '>10', label: t.moreThanTenAcres },
+   284→   284→  ];
+   285→   285→
+   286→   286→  const crops = [t.cropWheat, t.cropRice, t.cropCotton, t.cropSoybean, t.cropSugarcane, t.cropTomato, t.cropOnion, t.cropOther];
+   287→   287→
+   288→   288→  const handleSave = () => {
+   289→   289→    const newErrors: { name?: string; village?: string } = {};
+   290→   290→    if (!name.trim()) newErrors.name = t.nameRequired;
+   291→   291→    if (!village.trim()) newErrors.village = t.villageRequired;
+   292→   292→    if (Object.keys(newErrors).length > 0) {
+   293→   293→      setErrors(newErrors);
+   294→   294→      return;
+   295→   295→    }
+   296→   296→    setProfile({
+   297→   297→      name: name.trim(),
+   298→   298→      village: village.trim(),
+   299→   299→      farmSize: farmSize || t.lessThanOneAcre,
+   300→   300→      mainCrop: mainCrop || t.cropWheat,
+   301→   301→    });
+   302→   302→    navigate('dashboard');
+   303→   303→  };
+   304→   304→
+   305→   305→  return (
+   306→   306→    <PageWrapper className="flex items-center justify-center px-4 py-8">
+   307→   307→      <div className="w-full max-w-md">
+   308→   308→        <div className="text-center mb-8">
+   309→   309→          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-lg mx-auto mb-3">
+   310→   310→            <span className="text-2xl">👨‍🌾</span>
+   311→   311→          </div>
+   312→   312→          <h1 className="text-2xl font-bold text-gray-800">{t.setupProfile}</h1>
+   313→   313→          <p className="text-gray-500 mt-1">{t.setupProfileSubtitle}</p>
+   314→   314→        </div>
+   315→   315→
+   316→   316→        <div className="bg-white rounded-3xl shadow-lg p-6 md:p-8 space-y-5">
+   317→   317→          {/* Farmer Name */}
+   318→   318→          <div>
+   319→   319→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.farmerName}</label>
+   320→   320→            <input
+   321→   321→              type="text"
+   322→   322→              value={name}
+   323→   323→              onChange={(e) => { setName(e.target.value); setErrors(p => ({ ...p, name: undefined })); }}
+   324→   324→              placeholder={t.farmerNamePlaceholder}
+   325→   325→              className={`w-full px-4 py-3 rounded-xl border-2 ${errors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+   326→   326→            />
+   327→   327→            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+   328→   328→          </div>
+   329→   329→
+   330→   330→          {/* Village Name */}
+   331→   331→          <div>
+   332→   332→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.villageName}</label>
+   333→   333→            <input
+   334→   334→              type="text"
+   335→   335→              value={village}
+   336→   336→              onChange={(e) => { setVillage(e.target.value); setErrors(p => ({ ...p, village: undefined })); }}
+   337→   337→              placeholder={t.villageNamePlaceholder}
+   338→   338→              className={`w-full px-4 py-3 rounded-xl border-2 ${errors.village ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+   339→   339→            />
+   340→   340→            {errors.village && <p className="text-red-500 text-sm mt-1">{errors.village}</p>}
+   341→   341→          </div>
+   342→   342→
+   343→   343→          {/* Farm Size */}
+   344→   344→          <div>
+   345→   345→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.farmSize}</label>
+   346→   346→            <div className="grid grid-cols-2 gap-2">
+   347→   347→              {farmSizes.map((fs) => (
+   348→   348→                <button
+   349→   349→                  key={fs.value}
+   350→   350→                  onClick={() => setFarmSize(fs.label)}
+   351→   351→                  className={`px-3 py-2.5 rounded-xl text-sm font-medium border-2 transition-all ${
+   352→   352→                    farmSize === fs.label
+   353→   353→                      ? 'border-green-500 bg-green-50 text-green-700'
+   354→   354→                      : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300'
+   355→   355→                  }`}
+   356→   356→                >
+   357→   357→                  {fs.label}
+   358→   358→                </button>
+   359→   359→              ))}
+   360→   360→            </div>
+   361→   361→          </div>
+   362→   362→
+   363→   363→          {/* Main Crop */}
+   364→   364→          <div>
+   365→   365→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.mainCrop}</label>
+   366→   366→            <select
+   367→   367→              value={mainCrop}
+   368→   368→              onChange={(e) => setMainCrop(e.target.value)}
+   369→   369→              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800"
+   370→   370→            >
+   371→   371→              <option value="">{t.selectCrop}</option>
+   372→   372→              {crops.map((c) => (
+   373→   373→                <option key={c} value={c}>{c}</option>
+   374→   374→              ))}
+   375→   375→            </select>
+   376→   376→          </div>
+   377→   377→
+   378→   378→          {/* Buttons */}
+   379→   379→          <div className="flex gap-3 pt-2">
+   380→   380→            <button
+   381→   381→              onClick={() => navigate('language')}
+   382→   382→              className="flex-1 py-3 px-4 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all"
+   383→   383→            >
+   384→   384→              {t.back}
+   385→   385→            </button>
+   386→   386→            <button
+   387→   387→              onClick={handleSave}
+   388→   388→              className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all"
+   389→   389→            >
+   390→   390→              {t.saveAndContinue}
+   391→   391→            </button>
+   392→   392→          </div>
+   393→   393→        </div>
+   394→   394→      </div>
+   395→   395→    </PageWrapper>
+   396→   396→  );
+   397→   397→}
+   398→   398→
+   399→   399→// ============================================================
+   400→   400→// DASHBOARD SCREEN
+   401→   401→// ============================================================
+   402→   402→function DashboardScreen() {
+   403→   403→  const { t, profile, navigate, lang } = useApp();
+   404→   404→
+   405→   405→  if (!profile) return null;
+   406→   406→
+   407→   407→  const features = [
+   408→   408→    { id: 'chatbot' as Screen, icon: '🤖', title: t.aiChatbot, desc: t.aiChatbotDesc, color: 'from-violet-500 to-purple-600' },
+   409→   409→    { id: 'myfarm' as Screen, icon: '🌾', title: t.myFarm, desc: t.myFarmDesc, color: 'from-amber-500 to-orange-600' },
+   410→   410→    { id: 'cropdoctor' as Screen, icon: '📷', title: t.cropDoctor, desc: t.cropDoctorDesc, color: 'from-rose-500 to-pink-600' },
+   411→   411→    { id: 'weather' as Screen, icon: '🌦', title: t.weather, desc: t.weatherDesc, color: 'from-sky-500 to-blue-600' },
+   412→   412→    { id: 'voicekhata' as Screen, icon: '🎙', title: t.voiceKhata, desc: t.voiceKhataDesc, color: 'from-emerald-500 to-green-600' },
+   413→   413→    { id: 'farmeconomics' as Screen, icon: '💰', title: t.farmEconomics, desc: t.farmEconomicsDesc, color: 'from-green-500 to-emerald-600' },
+   414→   414→    { id: 'bajarbhav' as Screen, icon: '🏪', title: t.bajarBhav, desc: t.bajarBhavDesc, color: 'from-yellow-500 to-amber-600' },
+   415→   415→    { id: 'riskradar' as Screen, icon: '🎯', title: t.riskRadar, desc: t.riskRadarDesc, color: 'from-orange-500 to-red-600' },
+   416→   416→    { id: 'simulator' as Screen, icon: '⚖️', title: t.whatIfSimulator, desc: t.whatIfDesc, color: 'from-indigo-500 to-violet-600' },
+   417→   417→    { id: 'pmfby' as Screen, icon: '🏛', title: t.pmfbySchemes, desc: t.pmfbyDesc, color: 'from-blue-500 to-indigo-600' },
+   418→   418→    { id: 'farmgoals' as Screen, icon: '🎯', title: t.farmGoals, desc: t.farmGoalsDesc, color: 'from-teal-500 to-cyan-600' },
+   419→   419→    { id: 'nextbestaction' as Screen, icon: '✨', title: t.nextBestAction, desc: t.nextBestActionDesc, color: 'from-lime-500 to-green-600' },
+   420→   420→    { id: 'insights' as Screen, icon: '📊', title: t.farmInsights, desc: t.farmInsightsDesc, color: 'from-cyan-500 to-teal-600' },
+   421→   421→    { id: 'alerts' as Screen, icon: '🔔', title: t.smartAlerts, desc: t.smartAlertsDesc, color: 'from-red-500 to-rose-600' },
+   422→   422→  ];
+   423→   423→
+   424→   424→  return (
+   425→   425→    <PageWrapper>
+   426→   426→      {/* Header */}
+   427→   427→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   428→   428→        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+   429→   429→          <div className="flex items-center gap-3">
+   430→   430→            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-md">
+   431→   431→              <span className="text-lg">🌾</span>
+   432→   432→            </div>
+   433→   433→            <div>
+   434→   434→              <h1 className="text-lg font-bold text-green-800 leading-tight">KisanPilot AI</h1>
+   435→   435→              <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-medium">
+   436→   436→                {getLanguageLabel(lang)}
+   437→   437→              </span>
+   438→   438→            </div>
+   439→   439→          </div>
+   440→   440→          <div className="flex items-center gap-2">
+   441→   441→            <button
+   442→   442→              onClick={() => navigate('settings')}
+   443→   443→              className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+   444→   444→              aria-label={t.settings}
+   445→   445→            >
+   446→   446→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+   447→   447→            </button>
+   448→   448→          </div>
+   449→   449→        </div>
+   450→   450→      </header>
+   451→   451→
+   452→   452→      <main className="max-w-5xl mx-auto px-4 pb-8">
+   453→   453→        {/* Welcome */}
+   454→   454→        <div className="mt-6 mb-6">
+   455→   455→          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+   456→   456→            {t.welcomeBack}, {profile.name} 👋
+   457→   457→          </h2>
+   458→   458→          <p className="text-gray-500 mt-1">{t.smarterDecisions}</p>
+   459→   459→        </div>
+   460→   460→
+   461→   461→        {/* Farm Summary Cards */}
+   462→   462→        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+   463→   463→          {[
+   464→   464→            { icon: '📍', label: t.village, value: profile.village },
+   465→   465→            { icon: '🌾', label: t.mainCrop, value: profile.mainCrop },
+   466→   466→            { icon: '📏', label: t.farmSizeLabel, value: profile.farmSize },
+   467→   467→            { icon: '🌱', label: t.farmStatus, value: t.good },
+   468→   468→          ].map((card) => (
+   469→   469→            <div key={card.label} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
+   470→   470→              <div className="text-2xl mb-2">{card.icon}</div>
+   471→   471→              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">{card.label}</p>
+   472→   472→              <p className="text-sm font-bold text-gray-800 mt-1 truncate">{card.value}</p>
+   473→   473→            </div>
+   474→   474→          ))}
+   475→   475→        </div>
+   476→   476→
+   477→   477→        {/* Next Best Action Card */}
+   478→   478→        <motion.button
+   479→   479→          initial={{ opacity: 0, y: 20 }}
+   480→   480→          animate={{ opacity: 1, y: 0 }}
+   481→   481→          transition={{ delay: 0.1 }}
+   482→   482→          onClick={() => navigate('nextbestaction')}
+   483→   483→          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 mb-4 shadow-md text-left hover:shadow-lg transition-all"
+   484→   484→        >
+   485→   485→          <div className="flex items-center gap-3 mb-2">
+   486→   486→            <span className="text-2xl">✨</span>
+   487→   487→            <h3 className="text-white font-bold">{t.nextBestAction}</h3>
+   488→   488→            <span className="ml-auto text-white/70 text-xs">→</span>
+   489→   489→          </div>
+   490→   490→          <p className="text-green-100 text-sm">{t.action1}</p>
+   491→   491→          <p className="text-green-200/60 text-xs mt-1">{t.action1Reason}</p>
+   492→   492→        </motion.button>
+   493→   493→
+   494→   494→        {/* Hero Section */}
+   495→   495→        <div className="relative rounded-3xl overflow-hidden mb-6 shadow-lg">
+   496→   496→          <img src="/images/hero-farm.png" alt="Farm landscape" className="w-full h-44 md:h-56 object-cover" />
+   497→   497→          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+   498→   498→          <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+   499→   499→            <h3 className="text-white text-xl md:text-2xl font-bold">{t.yourPersonalAi}</h3>
+   500→   500→            <p className="text-white/80 text-sm mt-1">{t.smarterDecisions}</p>
+   501→   501→          </div>
+   502→   502→        </div>
+   503→   503→
+   504→   504→        {/* Risk Radar Summary Strip */}
+   505→   505→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
+   506→   506→          <div className="flex items-center justify-between mb-3">
+   507→   507→            <h3 className="text-sm font-bold text-gray-700">🎯 {t.riskSummary}</h3>
+   508→   508→            <button onClick={() => navigate('riskradar')} className="text-xs text-green-600 font-semibold hover:text-green-800">View All →</button>
+   509→   509→          </div>
+   510→   510→          <div className="flex gap-2 overflow-x-auto pb-1">
+   511→   511→            {[
+   512→   512→              { label: t.rainRisk, level: 'medium' as const, icon: '🌧' },
+   513→   513→              { label: t.waterStressRisk, level: 'low' as const, icon: '💧' },
+   514→   514→              { label: t.diseaseRisk, level: 'low' as const, icon: '🐛' },
+   515→   515→              { label: t.heatRisk, level: 'low' as const, icon: '🌡' },
+   516→   516→              { label: t.costRisk, level: 'medium' as const, icon: '💸' },
+   517→   517→              { label: t.insuranceReady, level: 'high' as const, icon: '🛡' },
+   518→   518→            ].map((risk) => (
+   519→   519→              <div key={risk.label} className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${
+   520→   520→                risk.level === 'low' ? 'bg-green-100 text-green-700' : risk.level === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+   521→   521→              }`}>
+   522→   522→                <span>{risk.icon}</span>
+   523→   523→                <span>{risk.label.split(' ')[0]}</span>
+   524→   524→              </div>
+   525→   525→            ))}
+   526→   526→          </div>
+   527→   527→        </div>
+   528→   528→
+   529→   529→        {/* Feature Cards */}
+   530→   530→        <div className="mb-4">
+   531→   531→          <h3 className="text-lg font-bold text-gray-800 mb-4">{t.exploreFeatures}</h3>
+   532→   532→          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+   533→   533→            {features.map((feature, i) => (
+   534→   534→              <motion.button
+   535→   535→                key={feature.id}
+   536→   536→                initial={{ opacity: 0, y: 20 }}
+   537→   537→                animate={{ opacity: 1, y: 0 }}
+   538→   538→                transition={{ delay: i * 0.05, duration: 0.3 }}
+   539→   539→                onClick={() => navigate(feature.id)}
+   540→   540→                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group"
+   541→   541→              >
+   542→   542→                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-md mb-3 group-hover:scale-110 transition-transform`}>
+   543→   543→                  <span className="text-2xl">{feature.icon}</span>
+   544→   544→                </div>
+   545→   545→                <h4 className="font-bold text-gray-800 text-sm md:text-base">{feature.title}</h4>
+   546→   546→                <p className="text-gray-500 text-xs mt-1">{feature.desc}</p>
+   547→   547→              </motion.button>
+   548→   548→            ))}
+   549→   549→          </div>
+   550→   550→        </div>
+   551→   551→
+   552→   552→        {/* AI Agriculture Banner */}
+   553→   553→        <div className="relative rounded-3xl overflow-hidden mt-8 shadow-lg">
+   554→   554→          <img src="/images/ai-agriculture.png" alt="AI Agriculture" className="w-full h-40 md:h-56 object-cover" />
+   555→   555→          <div className="absolute inset-0 bg-gradient-to-r from-green-900/70 to-transparent" />
+   556→   556→          <div className="absolute inset-0 flex items-center p-5 md:p-8">
+   557→   557→            <div className="max-w-sm">
+   558→   558→              <h3 className="text-white text-lg md:text-xl font-bold">AI-Powered Farming</h3>
+   559→   559→              <p className="text-white/80 text-sm mt-1">Leverage artificial intelligence for smarter agricultural decisions.</p>
+   560→   560→              <button
+   561→   561→                onClick={() => navigate('insights')}
+   562→   562→                className="mt-3 px-4 py-2 bg-white/90 text-green-800 rounded-xl font-semibold text-sm hover:bg-white transition-colors"
+   563→   563→              >
+   564→   564→                {t.farmInsights} →
+   565→   565→              </button>
+   566→   566→            </div>
+   567→   567→          </div>
+   568→   568→        </div>
+   569→   569→      </main>
+   570→   570→
+   571→   571→      {/* Sticky Footer */}
+   572→   572→      <footer className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t border-green-100 mt-4">
+   573→   573→        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+   574→   574→          <span className="text-xs text-gray-400">KisanPilot AI v1.0</span>
+   575→   575→          <span className="text-xs text-green-600 font-medium">🌱 {t.tagline}</span>
+   576→   576→        </div>
+   577→   577→      </footer>
+   578→   578→    </PageWrapper>
+   579→   579→  );
+   580→   580→}
+   581→   581→
+   582→   582→// ============================================================
+   583→   583→// CHATBOT SCREEN
+   584→   584→// ============================================================
+   585→   585→interface ChatMessage {
+   586→   586→  id: number;
+   587→   587→  role: 'user' | 'bot';
+   588→   588→  text: string;
+   589→   589→}
+   590→   590→
+   591→   591→function ChatbotScreen() {
+   592→   592→  const { t, lang } = useApp();
+   593→   593→  const [messages, setMessages] = useState<ChatMessage[]>([]);
+   594→   594→  const [input, setInput] = useState('');
+   595→   595→  const [isTyping, setIsTyping] = useState(false);
+   596→   596→  const chatEndRef = React.useRef<HTMLDivElement>(null);
+   597→   597→
+   598→   598→  useEffect(() => {
+   599→   599→    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+   600→   600→  }, [messages, isTyping]);
+   601→   601→
+   602→   602→  const generateResponse = (userMsg: string): string => {
+   603→   603→    const lower = userMsg.toLowerCase();
+   604→   604→    if (lower.includes('water') || lower.includes('irrigat') || lower.includes('watering') || lower.includes('पानी') || lower.includes('सिंचाई')) {
+   605→   605→      return t.waterResponse;
+   606→   606→    }
+   607→   607→    if (lower.includes('yellow') || lower.includes('पील') || lower.includes('पिवळ')) {
+   608→   608→      return t.yellowLeavesResponse;
+   609→   609→    }
+   610→   610→    if (lower.includes('pest') || lower.includes('insect') || lower.includes('कीट') || lower.includes('bug')) {
+   611→   611→      return t.pestResponse;
+   612→   612→    }
+   613→   613→    if (lower.includes('fertilizer') || lower.includes('nutrient') || lower.includes('उर्वरक') || lower.includes('पोषक') || lower.includes('खत')) {
+   614→   614→      return t.fertilizerResponse;
+   615→   615→    }
+   616→   616→    if (lower.includes('weather') || lower.includes('मौसम') || lower.includes('हवामान')) {
+   617→   617→      return t.weatherResponse;
+   618→   618→    }
+   619→   619→    return t.defaultResponse;
+   620→   620→  };
+   621→   621→
+   622→   622→  const sendMessage = (text?: string) => {
+   623→   623→    const msgText = text || input.trim();
+   624→   624→    if (!msgText) return;
+   625→   625→
+   626→   626→    const userMsg: ChatMessage = { id: Date.now(), role: 'user', text: msgText };
+   627→   627→    setMessages(prev => [...prev, userMsg]);
+   628→   628→    setInput('');
+   629→   629→    setIsTyping(true);
+   630→   630→
+   631→   631→    setTimeout(() => {
+   632→   632→      const botReply: ChatMessage = { id: Date.now() + 1, role: 'bot', text: generateResponse(msgText) };
+   633→   633→      setIsTyping(false);
+   634→   634→      setMessages(prev => [...prev, botReply]);
+   635→   635→    }, 800 + Math.random() * 700);
+   636→   636→  };
+   637→   637→
+   638→   638→  const handleKeyDown = (e: React.KeyboardEvent) => {
+   639→   639→    if (e.key === 'Enter' && !e.shiftKey) {
+   640→   640→      e.preventDefault();
+   641→   641→      sendMessage();
+   642→   642→    }
+   643→   643→  };
+   644→   644→
+   645→   645→  return (
+   646→   646→    <PageWrapper className="flex flex-col">
+   647→   647→      {/* Header */}
+   648→   648→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   649→   649→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+   650→   650→          <BackButton target="dashboard" label={t.backToDashboard} />
+   651→   651→          <div className="flex-1 flex items-center gap-2 justify-center">
+   652→   652→            <span className="text-xl">🤖</span>
+   653→   653→            <h1 className="text-lg font-bold text-green-800">{t.aiAssistant}</h1>
+   654→   654→          </div>
+   655→   655→        </div>
+   656→   656→      </header>
+   657→   657→
+   658→   658→      {/* Messages */}
+   659→   659→      <div className="flex-1 max-w-2xl mx-auto w-full px-4 py-4 overflow-y-auto">
+   660→   660→        {messages.length === 0 && (
+   661→   661→          <div className="text-center py-12">
+   662→   662→            <div className="text-5xl mb-4">🤖</div>
+   663→   663→            <h3 className="text-xl font-bold text-gray-800 mb-2">{t.aiAssistant}</h3>
+   664→   664→            <p className="text-gray-500 text-sm mb-8 max-w-sm mx-auto">{t.defaultResponse}</p>
+   665→   665→
+   666→   666→            {/* Quick Suggestions */}
+   667→   667→            <div className="space-y-2">
+   668→   668→              <p className="text-sm font-semibold text-gray-600 mb-3">{t.quickSuggestions}</p>
+   669→   669→              {[t.suggestion1, t.suggestion2, t.suggestion3, t.suggestion4].map((s, i) => (
+   670→   670→                <motion.button
+   671→   671→                  key={i}
+   672→   672→                  initial={{ opacity: 0, y: 10 }}
+   673→   673→                  animate={{ opacity: 1, y: 0 }}
+   674→   674→                  transition={{ delay: i * 0.1 }}
+   675→   675→                  onClick={() => sendMessage(s)}
+   676→   676→                  className="w-full text-left px-4 py-3 bg-white rounded-xl border border-green-200 text-sm text-green-800 hover:bg-green-50 hover:border-green-300 transition-all shadow-sm"
+   677→   677→                >
+   678→   678→                  {s}
+   679→   679→                </motion.button>
+   680→   680→              ))}
+   681→   681→            </div>
+   682→   682→          </div>
+   683→   683→        )}
+   684→   684→
+   685→   685→        {/* Message List */}
+   686→   686→        {messages.map((msg) => (
+   687→   687→          <motion.div
+   688→   688→            key={msg.id}
+   689→   689→            initial={{ opacity: 0, y: 10 }}
+   690→   690→            animate={{ opacity: 1, y: 0 }}
+   691→   691→            className={`flex mb-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+   692→   692→          >
+   693→   693→            <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+   694→   694→              msg.role === 'user'
+   695→   695→                ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-br-md'
+   696→   696→                : 'bg-white border border-gray-200 text-gray-800 shadow-sm rounded-bl-md'
+   697→   697→            }`}>
+   698→   698→              <div className="whitespace-pre-wrap break-words">{msg.text}</div>
+   699→   699→            </div>
+   700→   700→          </motion.div>
+   701→   701→        ))}
+   702→   702→
+   703→   703→        {isTyping && (
+   704→   704→          <div className="flex mb-4 justify-start">
+   705→   705→            <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+   706→   706→              <div className="flex gap-1.5">
+   707→   707→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+   708→   708→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+   709→   709→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+   710→   710→              </div>
+   711→   711→            </div>
+   712→   712→          </div>
+   713→   713→        )}
+   714→   714→        <div ref={chatEndRef} />
+   715→   715→      </div>
+   716→   716→
+   717→   717→      {/* Input */}
+   718→   718→      <div className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t border-green-100">
+   719→   719→        <div className="max-w-2xl mx-auto px-4 py-3">
+   720→   720→          <div className="flex gap-2">
+   721→   721→            <input
+   722→   722→              type="text"
+   723→   723→              value={input}
+   724→   724→              onChange={(e) => setInput(e.target.value)}
+   725→   725→              onKeyDown={handleKeyDown}
+   726→   726→              placeholder={t.typeMessage}
+   727→   727→              className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800 text-sm"
+   728→   728→            />
+   729→   729→            <button
+   730→   730→              onClick={() => sendMessage()}
+   731→   731→              disabled={!input.trim() || isTyping}
+   732→   732→              className="px-5 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+   733→   733→            >
+   734→   734→              {t.send}
+   735→   735→            </button>
+   736→   736→          </div>
+   737→   737→        </div>
+   738→   738→      </div>
+   739→   739→    </PageWrapper>
+   740→   740→  );
+   741→   741→}
+   742→   742→
+   743→   743→// ============================================================
+   744→   744→// CROP DOCTOR SCREEN
+   745→   745→// ============================================================
+   746→   746→function CropDoctorScreen() {
+   747→   747→  const { t } = useApp();
+   748→   748→  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+   749→   749→  const [analyzing, setAnalyzing] = useState(false);
+   750→   750→  const [result, setResult] = useState<boolean>(false);
+   751→   751→  const fileInputRef = React.useRef<HTMLInputElement>(null);
+   752→   752→
+   753→   753→  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+   754→   754→    const file = e.target.files?.[0];
+   755→   755→    if (file) {
+   756→   756→      const reader = new FileReader();
+   757→   757→      reader.onload = (ev) => {
+   758→   758→        setSelectedImage(ev.target?.result as string);
+   759→   759→        setResult(false);
+   760→   760→      };
+   761→   761→      reader.readAsDataURL(file);
+   762→   762→    }
+   763→   763→  };
+   764→   764→
+   765→   765→  const handleAnalyze = () => {
+   766→   766→    setAnalyzing(true);
+   767→   767→    setTimeout(() => {
+   768→   768→      setAnalyzing(false);
+   769→   769→      setResult(true);
+   770→   770→    }, 2000);
+   771→   771→  };
+   772→   772→
+   773→   773→  const handleAnalyzeAnother = () => {
+   774→   774→    setSelectedImage(null);
+   775→   775→    setResult(false);
+   776→   776→    if (fileInputRef.current) fileInputRef.current.value = '';
+   777→   777→  };
+   778→   778→
+   779→   779→  return (
+   780→   780→    <PageWrapper className="flex flex-col">
+   781→   781→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   782→   782→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+   783→   783→          <BackButton target="dashboard" label={t.backToDashboard} />
+   784→   784→          <div className="flex-1 flex items-center gap-2 justify-center">
+   785→   785→            <span className="text-xl">📷</span>
+   786→   786→            <h1 className="text-lg font-bold text-green-800">{t.cropDoctorTitle}</h1>
+   787→   787→          </div>
+   788→   788→        </div>
+   789→   789→      </header>
+   790→   790→
+   791→   791→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+   792→   792→        <p className="text-gray-500 text-center mb-6">{t.cropDoctorSubtitle}</p>
+   793→   793→
+   794→   794→        {/* Default State */}
+   795→   795→        {!selectedImage && !result && (
+   796→   796→          <div className="space-y-6">
+   797→   797→            <div className="rounded-3xl overflow-hidden shadow-md">
+   798→   798→              <img src="/images/crop-doctor.png" alt="Crop health" className="w-full h-64 object-cover" />
+   799→   799→            </div>
+   800→   800→            <div
+   801→   801→              onClick={() => fileInputRef.current?.click()}
+   802→   802→              className="border-2 border-dashed border-green-300 rounded-3xl p-10 text-center hover:border-green-500 hover:bg-green-50/50 transition-all cursor-pointer"
+   803→   803→            >
+   804→   804→              <div className="text-5xl mb-3">📷</div>
+   805→   805→              <h3 className="text-lg font-bold text-gray-800">{t.uploadPhoto}</h3>
+   806→   806→              <p className="text-gray-500 text-sm mt-1">{t.uploadPhotoDesc}</p>
+   807→   807→            </div>
+   808→   808→            <input
+   809→   809→              ref={fileInputRef}
+   810→   810→              type="file"
+   811→   811→              accept="image/*"
+   812→   812→              onChange={handleFileSelect}
+   813→   813→              className="hidden"
+   814→   814→            />
+   815→   815→          </div>
+   816→   816→        )}
+   817→   817→
+   818→   818→        {/* Image Selected */}
+   819→   819→        {selectedImage && !result && (
+   820→   820→          <div className="space-y-6">
+   821→   821→            <div className="rounded-3xl overflow-hidden shadow-md">
+   822→   822→              <img src={selectedImage} alt="Selected crop" className="w-full h-64 object-cover" />
+   823→   823→            </div>
+   824→   824→            <button
+   825→   825→              onClick={handleAnalyze}
+   826→   826→              disabled={analyzing}
+   827→   827→              className="w-full py-4 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold text-lg shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-70 transition-all"
+   828→   828→            >
+   829→   829→              {analyzing ? (
+   830→   830→                <span className="flex items-center justify-center gap-3">
+   831→   831→                  <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+   832→   832→                  {t.analyzing}
+   833→   833→                </span>
+   834→   834→              ) : (
+   835→   835→                t.analyzeCrop
+   836→   836→              )}
+   837→   837→            </button>
+   838→   838→            <button
+   839→   839→              onClick={() => { setSelectedImage(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
+   840→   840→              className="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all"
+   841→   841→            >
+   842→   842→              {t.back}
+   843→   843→            </button>
+   844→   844→          </div>
+   845→   845→        )}
+   846→   846→
+   847→   847→        {/* Analysis Result */}
+   848→   848→        {result && (
+   849→   849→          <div className="space-y-5">
+   850→   850→            <div className="rounded-3xl overflow-hidden shadow-md">
+   851→   851→              <img src={selectedImage!} alt="Analyzed crop" className="w-full h-48 object-cover" />
+   852→   852→            </div>
+   853→   853→
+   854→   854→            {/* Health Score */}
+   855→   855→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+   856→   856→              <div className="flex items-center justify-between mb-3">
+   857→   857→                <span className="text-sm font-semibold text-gray-600">{t.cropHealthScore}</span>
+   858→   858→                <span className="text-2xl font-bold text-green-600">82%</span>
+   859→   859→              </div>
+   860→   860→              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+   861→   861→                <motion.div
+   862→   862→                  initial={{ width: 0 }}
+   863→   863→                  animate={{ width: '82%' }}
+   864→   864→                  transition={{ duration: 1, ease: 'easeOut' }}
+   865→   865→                  className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+   866→   866→                />
+   867→   867→              </div>
+   868→   868→            </div>
+   869→   869→
+   870→   870→            {/* Observation */}
+   871→   871→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+   872→   872→              <h4 className="text-sm font-semibold text-gray-600 mb-2">{t.possibleObservation}</h4>
+   873→   873→              <p className="text-gray-800">{t.mildNutrientStress}</p>
+   874→   874→            </div>
+   875→   875→
+   876→   876→            {/* Recommendations */}
+   877→   877→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+   878→   878→              <h4 className="text-sm font-semibold text-gray-600 mb-3">{t.recommendations}</h4>
+   879→   879→              <ul className="space-y-2">
+   880→   880→                {[
+   881→   881→                  { icon: '🧪', text: t.rec1 },
+   882→   882→                  { icon: '👁', text: t.rec2 },
+   883→   883→                  { icon: '💧', text: t.rec3 },
+   884→   884→                  { icon: '👨‍🔬', text: t.rec4 },
+   885→   885→                ].map((r, i) => (
+   886→   886→                  <motion.li
+   887→   887→                    key={i}
+   888→   888→                    initial={{ opacity: 0, x: -10 }}
+   889→   889→                    animate={{ opacity: 1, x: 0 }}
+   890→   890→                    transition={{ delay: i * 0.15 }}
+   891→   891→                    className="flex items-start gap-3 text-sm text-gray-700"
+   892→   892→                  >
+   893→   893→                    <span className="text-lg">{r.icon}</span>
+   894→   894→                    <span>{r.text}</span>
+   895→   895→                  </motion.li>
+   896→   896→                ))}
+   897→   897→              </ul>
+   898→   898→            </div>
+   899→   899→
+   900→   900→            <button
+   901→   901→              onClick={handleAnalyzeAnother}
+   902→   902→              className="w-full py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+   903→   903→            >
+   904→   904→              {t.analyzeAnother}
+   905→   905→            </button>
+   906→   906→            <BackButton target="dashboard" label={t.backToDashboard} />
+   907→   907→          </div>
+   908→   908→        )}
+   909→   909→      </main>
+   910→   910→    </PageWrapper>
+   911→   911→  );
+   912→   912→}
+   913→   913→
+   914→   914→// ============================================================
+   915→   915→// WEATHER SCREEN
+   916→   916→// ============================================================
+   917→   917→function WeatherScreen() {
+   918→   918→  const { t } = useApp();
+   919→   919→
+   920→   920→  const forecast = [
+   921→   921→    { day: t.monday, icon: '☀️', temp: '30°C' },
+   922→   922→    { day: t.tuesday, icon: '🌤', temp: '29°C' },
+   923→   923→    { day: t.wednesday, icon: '🌧', temp: '26°C' },
+   924→   924→    { day: t.thursday, icon: '⛅', temp: '28°C' },
+   925→   925→    { day: t.friday, icon: '☀️', temp: '31°C' },
+   926→   926→  ];
+   927→   927→
+   928→   928→  return (
+   929→   929→    <PageWrapper className="flex flex-col">
+   930→   930→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   931→   931→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+   932→   932→          <BackButton target="dashboard" label={t.backToDashboard} />
+   933→   933→          <div className="flex-1 flex items-center gap-2 justify-center">
+   934→   934→            <span className="text-xl">🌦</span>
+   935→   935→            <h1 className="text-lg font-bold text-green-800">{t.weatherTitle}</h1>
+   936→   936→          </div>
+   937→   937→        </div>
+   938→   938→      </header>
+   939→   939→
+   940→   940→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+   941→   941→        {/* Weather Hero Image */}
+   942→   942→        <div className="relative rounded-3xl overflow-hidden mb-6 shadow-lg">
+   943→   943→          <img src="/images/weather-farm.png" alt="Farm weather" className="w-full h-48 object-cover" />
+   944→   944→          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+   945→   945→          <div className="absolute bottom-4 left-4">
+   946→   946→            <span className="text-4xl font-bold text-white">28°C</span>
+   947→   947→            <span className="text-white/80 text-sm ml-2">{t.partlyCloudy}</span>
+   948→   948→          </div>
+   949→   949→        </div>
+   950→   950→
+   951→   951→        {/* Current Conditions */}
+   952→   952→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+   953→   953→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.currentWeather}</h3>
+   954→   954→          <div className="grid grid-cols-2 gap-4">
+   955→   955→            {[
+   956→   956→              { label: t.temperature, value: '28°C', icon: '🌡' },
+   957→   957→              { label: t.condition, value: t.partlyCloudy, icon: '⛅' },
+   958→   958→              { label: t.humidity, value: '65%', icon: '💧' },
+   959→   959→              { label: t.wind, value: '12 km/h', icon: '💨' },
+   960→   960→              { label: t.rainChance, value: '30%', icon: '🌧' },
+   961→   961→            ].map((item) => (
+   962→   962→              <div key={item.label} className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
+   963→   963→                <span className="text-2xl">{item.icon}</span>
+   964→   964→                <div>
+   965→   965→                  <p className="text-xs text-gray-500">{item.label}</p>
+   966→   966→                  <p className="text-sm font-bold text-gray-800">{item.value}</p>
+   967→   967→                </div>
+   968→   968→              </div>
+   969→   969→            ))}
+   970→   970→          </div>
+   971→   971→        </div>
+   972→   972→
+   973→   973→        {/* 5-Day Forecast */}
+   974→   974→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+   975→   975→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.fiveDayForecast}</h3>
+   976→   976→          <div className="space-y-3">
+   977→   977→            {forecast.map((day, i) => (
+   978→   978→              <motion.div
+   979→   979→                key={day.day}
+   980→   980→                initial={{ opacity: 0, x: -20 }}
+   981→   981→                animate={{ opacity: 1, x: 0 }}
+   982→   982→                transition={{ delay: i * 0.08 }}
+   983→   983→                className="flex items-center justify-between py-2 px-3 rounded-xl hover:bg-gray-50 transition-colors"
+   984→   984→              >
+   985→   985→                <span className="text-sm font-medium text-gray-700 w-24">{day.day}</span>
+   986→   986→                <span className="text-2xl">{day.icon}</span>
+   987→   987→                <span className="text-sm font-bold text-gray-800">{day.temp}</span>
+   988→   988→              </motion.div>
+   989→   989→            ))}
+   990→   990→          </div>
+   991→   991→        </div>
+   992→   992→
+   993→   993→        {/* Farming Advice */}
+   994→   994→        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 shadow-md text-white">
+   995→   995→          <div className="flex items-start gap-3">
+   996→   996→            <span className="text-2xl">💡</span>
+   997→   997→            <div>
+   998→   998→              <h3 className="font-bold mb-1">{t.farmingAdvice}</h3>
+   999→   999→              <p className="text-green-100 text-sm leading-relaxed">{t.rainAdvice}</p>
+  1000→  1000→            </div>
+  1001→  1001→          </div>
+  1002→  1002→        </div>
+  1003→  1003→      </main>
+  1004→  1004→    </PageWrapper>
+  1005→  1005→  );
+  1006→  1006→}
+  1007→  1007→
+  1008→  1008→// ============================================================
+  1009→  1009→// MY FARM SCREEN
+  1010→  1010→// ============================================================
+  1011→  1011→function MyFarmScreen() {
+  1012→  1012→  const { t, profile, setProfile } = useApp();
+  1013→  1013→  const [editing, setEditing] = useState(false);
+  1014→  1014→  const [name, setName] = useState(profile?.name || '');
+  1015→  1015→  const [village, setVillage] = useState(profile?.village || '');
+  1016→  1016→  const [farmSize, setFarmSize] = useState(profile?.farmSize || '');
+  1017→  1017→  const [mainCrop, setMainCrop] = useState(profile?.mainCrop || '');
+  1018→  1018→
+  1019→  1019→  const handleSave = () => {
+  1020→  1020→    setProfile({ name, village, farmSize, mainCrop });
+  1021→  1021→    setEditing(false);
+  1022→  1022→  };
+  1023→  1023→
+  1024→  1024→  const handleCancel = () => {
+  1025→  1025→    if (profile) {
+  1026→  1026→      setName(profile.name);
+  1027→  1027→      setVillage(profile.village);
+  1028→  1028→      setFarmSize(profile.farmSize);
+  1029→  1029→      setMainCrop(profile.mainCrop);
+  1030→  1030→    }
+  1031→  1031→    setEditing(false);
+  1032→  1032→  };
+  1033→  1033→
+  1034→  1034→  if (!profile) return null;
+  1035→  1035→
+  1036→  1036→  return (
+  1037→  1037→    <PageWrapper className="flex flex-col">
+  1038→  1038→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1039→  1039→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1040→  1040→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1041→  1041→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1042→  1042→            <span className="text-xl">🌾</span>
+  1043→  1043→            <h1 className="text-lg font-bold text-green-800">{t.myFarmTitle}</h1>
+  1044→  1044→          </div>
+  1045→  1045→        </div>
+  1046→  1046→      </header>
+  1047→  1047→
+  1048→  1048→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1049→  1049→        {/* Farm Details */}
+  1050→  1050→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1051→  1051→          <div className="flex items-center justify-between mb-4">
+  1052→  1052→            <h3 className="text-sm font-semibold text-gray-600">{t.farmDetails}</h3>
+  1053→  1053→            {!editing && (
+  1054→  1054→              <button
+  1055→  1055→                onClick={() => setEditing(true)}
+  1056→  1056→                className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-sm font-semibold hover:bg-green-200 transition-colors"
+  1057→  1057→              >
+  1058→  1058→                {t.editProfile}
+  1059→  1059→              </button>
+  1060→  1060→            )}
+  1061→  1061→          </div>
+  1062→  1062→
+  1063→  1063→          {editing ? (
+  1064→  1064→            <div className="space-y-4">
+  1065→  1065→              <div>
+  1066→  1066→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.farmerName}</label>
+  1067→  1067→                <input
+  1068→  1068→                  type="text"
+  1069→  1069→                  value={name}
+  1070→  1070→                  onChange={(e) => setName(e.target.value)}
+  1071→  1071→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1072→  1072→                />
+  1073→  1073→              </div>
+  1074→  1074→              <div>
+  1075→  1075→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.villageName}</label>
+  1076→  1076→                <input
+  1077→  1077→                  type="text"
+  1078→  1078→                  value={village}
+  1079→  1079→                  onChange={(e) => setVillage(e.target.value)}
+  1080→  1080→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1081→  1081→                />
+  1082→  1082→              </div>
+  1083→  1083→              <div>
+  1084→  1084→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.farmSize}</label>
+  1085→  1085→                <input
+  1086→  1086→                  type="text"
+  1087→  1087→                  value={farmSize}
+  1088→  1088→                  onChange={(e) => setFarmSize(e.target.value)}
+  1089→  1089→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1090→  1090→                />
+  1091→  1091→              </div>
+  1092→  1092→              <div>
+  1093→  1093→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.mainCrop}</label>
+  1094→  1094→                <input
+  1095→  1095→                  type="text"
+  1096→  1096→                  value={mainCrop}
+  1097→  1097→                  onChange={(e) => setMainCrop(e.target.value)}
+  1098→  1098→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1099→  1099→                />
+  1100→  1100→              </div>
+  1101→  1101→              <div className="flex gap-3">
+  1102→  1102→                <button
+  1103→  1103→                  onClick={handleCancel}
+  1104→  1104→                  className="flex-1 py-2.5 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all"
+  1105→  1105→                >
+  1106→  1106→                  {t.cancel}
+  1107→  1107→                </button>
+  1108→  1108→                <button
+  1109→  1109→                  onClick={handleSave}
+  1110→  1110→                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all"
+  1111→  1111→                >
+  1112→  1112→                  {t.saveChanges}
+  1113→  1113→                </button>
+  1114→  1114→              </div>
+  1115→  1115→            </div>
+  1116→  1116→          ) : (
+  1117→  1117→            <div className="space-y-3">
+  1118→  1118→              {[
+  1119→  1119→                { icon: '👨‍🌾', label: t.farmerName, value: profile.name },
+  1120→  1120→                { icon: '📍', label: t.villageName, value: profile.village },
+  1121→  1121→                { icon: '📏', label: t.farmSizeLabel, value: profile.farmSize },
+  1122→  1122→                { icon: '🌾', label: t.mainCrop, value: profile.mainCrop },
+  1123→  1123→              ].map((item) => (
+  1124→  1124→                <div key={item.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+  1125→  1125→                  <div className="flex items-center gap-3">
+  1126→  1126→                    <span className="text-lg">{item.icon}</span>
+  1127→  1127→                    <span className="text-sm text-gray-500">{item.label}</span>
+  1128→  1128→                  </div>
+  1129→  1129→                  <span className="text-sm font-bold text-gray-800">{item.value}</span>
+  1130→  1130→                </div>
+  1131→  1131→              ))}
+  1132→  1132→            </div>
+  1133→  1133→          )}
+  1134→  1134→        </div>
+  1135→  1135→
+  1136→  1136→        {/* Farm Status */}
+  1137→  1137→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+  1138→  1138→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.farmStatusSection}</h3>
+  1139→  1139→          <div className="space-y-4">
+  1140→  1140→            {[
+  1141→  1141→              { icon: '🌱', label: t.cropHealth, value: t.good, color: 'green' },
+  1142→  1142→              { icon: '💧', label: t.soilMoisture, value: t.moderate, color: 'yellow' },
+  1143→  1143→              { icon: '🚰', label: t.irrigationStatus, value: t.onTrack, color: 'blue' },
+  1144→  1144→            ].map((status) => (
+  1145→  1145→              <div key={status.label} className="flex items-center justify-between">
+  1146→  1146→                <div className="flex items-center gap-3">
+  1147→  1147→                  <span className="text-xl">{status.icon}</span>
+  1148→  1148→                  <span className="text-sm text-gray-700">{status.label}</span>
+  1149→  1149→                </div>
+  1150→  1150→                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+  1151→  1151→                  status.color === 'green' ? 'bg-green-100 text-green-700' :
+  1152→  1152→                  status.color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
+  1153→  1153→                  'bg-blue-100 text-blue-700'
+  1154→  1154→                }`}>
+  1155→  1155→                  {status.value}
+  1156→  1156→                </span>
+  1157→  1157→              </div>
+  1158→  1158→            ))}
+  1159→  1159→          </div>
+  1160→  1160→        </div>
+  1161→  1161→      </main>
+  1162→  1162→    </PageWrapper>
+  1163→  1163→  );
+  1164→  1164→}
+  1165→  1165→
+  1166→  1166→// ============================================================
+  1167→  1167→// FARM INSIGHTS SCREEN
+  1168→  1168→// ============================================================
+  1169→  1169→function InsightsScreen() {
+  1170→  1170→  const { t } = useApp();
+  1171→  1171→  const [insightIndex, setInsightIndex] = useState(0);
+  1172→  1172→  const [animatedValues, setAnimatedValues] = useState({ health: 0, moisture: 0, irrigation: 0 });
+  1173→  1173→
+  1174→  1174→  useEffect(() => {
+  1175→  1175→    const timer = setTimeout(() => {
+  1176→  1176→      setAnimatedValues({ health: 82, moisture: 68, irrigation: 75 });
+  1177→  1177→    }, 300);
+  1178→  1178→    return () => clearTimeout(timer);
+  1179→  1179→  }, []);
+  1180→  1180→
+  1181→  1181→  const insights = [t.insight1, t.insight2, t.insight3, t.insight4, t.insight5, t.insight6];
+  1182→  1182→
+  1183→  1183→  const handleGenerate = () => {
+  1184→  1184→    setAnimatedValues({ health: 0, moisture: 0, irrigation: 0 });
+  1185→  1185→    setInsightIndex(prev => (prev + 1) % insights.length);
+  1186→  1186→    setTimeout(() => {
+  1187→  1187→      setAnimatedValues({ health: 82, moisture: 68, irrigation: 75 });
+  1188→  1188→    }, 300);
+  1189→  1189→  };
+  1190→  1190→
+  1191→  1191→  const bars = [
+  1192→  1192→    { label: t.cropHealthScore2, value: animatedValues.health, color: 'from-green-500 to-emerald-500', bgColor: 'bg-green-100' },
+  1193→  1193→    { label: t.soilMoisture2, value: animatedValues.moisture, color: 'from-sky-500 to-blue-500', bgColor: 'bg-sky-100' },
+  1194→  1194→    { label: t.irrigationEfficiency, value: animatedValues.irrigation, color: 'from-amber-500 to-orange-500', bgColor: 'bg-amber-100' },
+  1195→  1195→  ];
+  1196→  1196→
+  1197→  1197→  return (
+  1198→  1198→    <PageWrapper className="flex flex-col">
+  1199→  1199→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1200→  1200→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1201→  1201→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1202→  1202→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1203→  1203→            <span className="text-xl">📊</span>
+  1204→  1204→            <h1 className="text-lg font-bold text-green-800">{t.insightsTitle}</h1>
+  1205→  1205→          </div>
+  1206→  1206→        </div>
+  1207→  1207→      </header>
+  1208→  1208→
+  1209→  1209→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1210→  1210→        {/* Progress Bars */}
+  1211→  1211→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1212→  1212→          <h3 className="text-sm font-semibold text-gray-600 mb-5">Farm Analytics</h3>
+  1213→  1213→          <div className="space-y-5">
+  1214→  1214→            {bars.map((bar) => (
+  1215→  1215→              <div key={bar.label}>
+  1216→  1216→                <div className="flex items-center justify-between mb-2">
+  1217→  1217→                  <span className="text-sm text-gray-700 font-medium">{bar.label}</span>
+  1218→  1218→                  <span className="text-sm font-bold text-gray-800">{bar.value}%</span>
+  1219→  1219→                </div>
+  1220→  1220→                <div className={`w-full h-3 ${bar.bgColor} rounded-full overflow-hidden`}>
+  1221→  1221→                  <motion.div
+  1222→  1222→                    className={`h-full bg-gradient-to-r ${bar.color} rounded-full`}
+  1223→  1223→                    initial={{ width: 0 }}
+  1224→  1224→                    animate={{ width: `${bar.value}%` }}
+  1225→  1225→                    transition={{ duration: 1, ease: 'easeOut' }}
+  1226→  1226→                  />
+  1227→  1227→                </div>
+  1228→  1228→              </div>
+  1229→  1229→            ))}
+  1230→  1230→          </div>
+  1231→  1231→        </div>
+  1232→  1232→
+  1233→  1233→        {/* AI Insight */}
+  1234→  1234→        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 mb-6 shadow-md text-white">
+  1235→  1235→          <div className="flex items-start gap-3">
+  1236→  1236→            <span className="text-2xl">🧠</span>
+  1237→  1237→            <div>
+  1238→  1238→              <h3 className="font-bold mb-1">{t.aiInsights}</h3>
+  1239→  1239→              <motion.p
+  1240→  1240→                key={insightIndex}
+  1241→  1241→                initial={{ opacity: 0, y: 10 }}
+  1242→  1242→                animate={{ opacity: 1, y: 0 }}
+  1243→  1243→                className="text-green-100 text-sm leading-relaxed"
+  1244→  1244→              >
+  1245→  1245→                {insights[insightIndex]}
+  1246→  1246→              </motion.p>
+  1247→  1247→            </div>
+  1248→  1248→          </div>
+  1249→  1249→        </div>
+  1250→  1250→
+  1251→  1251→        <button
+  1252→  1252→          onClick={handleGenerate}
+  1253→  1253→          className="w-full py-3.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all"
+  1254→  1254→        >
+  1255→  1255→          ✨ {t.generateInsight}
+  1256→  1256→        </button>
+  1257→  1257→      </main>
+  1258→  1258→    </PageWrapper>
+  1259→  1259→  );
+  1260→  1260→}
+  1261→  1261→
+  1262→  1262→// ============================================================
+  1263→  1263→// SMART ALERTS SCREEN
+  1264→  1264→// ============================================================
+  1265→  1265→function AlertsScreen() {
+  1266→  1266→  const { t, alerts, setAlerts } = useApp();
+  1267→  1267→
+  1268→  1268→  const markAsRead = (id: number) => {
+  1269→  1269→    setAlerts(alerts.map(a => a.id === id ? { ...a, read: true } : a));
+  1270→  1270→  };
+  1271→  1271→
+  1272→  1272→  const markAllAsRead = () => {
+  1273→  1273→    setAlerts(alerts.map(a => ({ ...a, read: true })));
+  1274→  1274→  };
+  1275→  1275→
+  1276→  1276→  const unreadCount = alerts.filter(a => !a.read).length;
+  1277→  1277→
+  1278→  1278→  return (
+  1279→  1279→    <PageWrapper className="flex flex-col">
+  1280→  1280→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1281→  1281→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1282→  1282→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1283→  1283→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1284→  1284→            <span className="text-xl">🔔</span>
+  1285→  1285→            <h1 className="text-lg font-bold text-green-800">{t.alertsTitle}</h1>
+  1286→  1286→            {unreadCount > 0 && (
+  1287→  1287→              <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+  1288→  1288→                {unreadCount}
+  1289→  1289→              </span>
+  1290→  1290→            )}
+  1291→  1291→          </div>
+  1292→  1292→        </div>
+  1293→  1293→      </header>
+  1294→  1294→
+  1295→  1295→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1296→  1296→        {unreadCount > 0 && (
+  1297→  1297→          <button
+  1298→  1298→            onClick={markAllAsRead}
+  1299→  1299→            className="w-full py-3 rounded-xl bg-green-100 text-green-700 font-semibold text-sm hover:bg-green-200 transition-colors mb-5"
+  1300→  1300→          >
+  1301→  1301→            ✅ {t.markAllAsRead}
+  1302→  1302→          </button>
+  1303→  1303→        )}
+  1304→  1304→
+  1305→  1305→        {unreadCount === 0 && (
+  1306→  1306→          <div className="text-center py-10 mb-5">
+  1307→  1307→            <div className="text-4xl mb-2">✅</div>
+  1308→  1308→            <p className="text-gray-500">{t.noUnreadAlerts}</p>
+  1309→  1309→          </div>
+  1310→  1310→        )}
+  1311→  1311→
+  1312→  1312→        <div className="space-y-3">
+  1313→  1313→          {alerts.map((alert) => (
+  1314→  1314→            <motion.div
+  1315→  1315→              key={alert.id}
+  1316→  1316→              initial={{ opacity: 0, y: 10 }}
+  1317→  1317→              animate={{ opacity: 1, y: 0 }}
+  1318→  1318→              className={`flex items-start gap-4 p-4 rounded-2xl border transition-all ${
+  1319→  1319→                alert.read
+  1320→  1320→                  ? 'bg-gray-50 border-gray-100 opacity-60'
+  1321→  1321→                  : 'bg-white border-green-200 shadow-sm'
+  1322→  1322→              }`}
+  1323→  1323→            >
+  1324→  1324→              <div className="text-2xl">{alert.icon}</div>
+  1325→  1325→              <div className="flex-1">
+  1326→  1326→                <p className={`text-sm ${alert.read ? 'text-gray-500' : 'text-gray-800 font-medium'}`}>
+  1327→  1327→                  {t[alert.text as keyof Translations] || alert.text}
+  1328→  1328→                </p>
+  1329→  1329→              </div>
+  1330→  1330→              {!alert.read && (
+  1331→  1331→                <button
+  1332→  1332→                  onClick={() => markAsRead(alert.id)}
+  1333→  1333→                  className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 transition-colors whitespace-nowrap"
+  1334→  1334→                >
+  1335→  1335→                  {t.markAsRead}
+  1336→  1336→                </button>
+  1337→  1337→              )}
+  1338→  1338→              {alert.read && (
+  1339→  1339→                <span className="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-500 text-xs font-medium">
+  1340→  1340→                  ✓
+  1341→  1341→                </span>
+  1342→  1342→              )}
+  1343→  1343→            </motion.div>
+  1344→  1344→          ))}
+  1345→  1345→        </div>
+  1346→  1346→      </main>
+  1347→  1347→    </PageWrapper>
+  1348→  1348→  );
+  1349→  1349→}
+  1350→  1350→
+  1351→  1351→// ============================================================
+  1352→  1352→// SETTINGS SCREEN
+  1353→  1353→// ============================================================
+  1354→  1354→function SettingsScreen() {
+  1355→  1355→  const { t, navigate, setLang, lang, setProfile, setAlerts, profile } = useApp();
+  1356→  1356→  const [showConfirm, setShowConfirm] = useState(false);
+  1357→  1357→
+  1358→  1358→  const handleChangeLanguage = () => {
+  1359→  1359→    navigate('language');
+  1360→  1360→  };
+  1361→  1361→
+  1362→  1362→  const handleEditProfile = () => {
+  1363→  1363→    navigate('myfarm');
+  1364→  1364→  };
+  1365→  1365→
+  1366→  1366→  const handleReset = () => {
+  1367→  1367→    setShowConfirm(true);
+  1368→  1368→  };
+  1369→  1369→
+  1370→  1370→  const confirmReset = () => {
+  1371→  1371→    localStorage.removeItem('kp_lang');
+  1372→  1372→    localStorage.removeItem('kp_profile');
+  1373→  1373→    localStorage.removeItem('kp_alerts');
+  1374→  1374→    setLang('en');
+  1375→  1375→    setProfile(null!);
+  1376→  1376→    setAlerts(defaultAlerts);
+  1377→  1377→    navigate('language');
+  1378→  1378→  };
+  1379→  1379→
+  1380→  1380→  const settings = [
+  1381→  1381→    { icon: '🌐', label: t.changeLanguageOption, desc: getLanguageLabel(lang), action: handleChangeLanguage, color: 'bg-violet-100 text-violet-700' },
+  1382→  1382→    { icon: '👨‍🌾', label: t.editProfileOption, desc: profile?.name || '', action: handleEditProfile, color: 'bg-amber-100 text-amber-700' },
+  1383→  1383→    { icon: '🗑', label: t.resetData, desc: '', action: handleReset, color: 'bg-red-100 text-red-700' },
+  1384→  1384→  ];
+  1385→  1385→
+  1386→  1386→  return (
+  1387→  1387→    <PageWrapper className="flex flex-col">
+  1388→  1388→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1389→  1389→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1390→  1390→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1391→  1391→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1392→  1392→            <span className="text-xl">⚙️</span>
+  1393→  1393→            <h1 className="text-lg font-bold text-green-800">{t.settingsTitle}</h1>
+  1394→  1394→          </div>
+  1395→  1395→        </div>
+  1396→  1396→      </header>
+  1397→  1397→
+  1398→  1398→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1399→  1399→        {/* Confirm Reset Dialog */}
+  1400→  1400→        {showConfirm && (
+  1401→  1401→          <motion.div
+  1402→  1402→            initial={{ opacity: 0 }}
+  1403→  1403→            animate={{ opacity: 1 }}
+  1404→  1404→            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+  1405→  1405→            onClick={() => setShowConfirm(false)}
+  1406→  1406→          >
+  1407→  1407→            <motion.div
+  1408→  1408→              initial={{ scale: 0.9, opacity: 0 }}
+  1409→  1409→              animate={{ scale: 1, opacity: 1 }}
+  1410→  1410→              onClick={(e) => e.stopPropagation()}
+  1411→  1411→              className="bg-white rounded-3xl shadow-2xl p-6 max-w-sm w-full"
+  1412→  1412→            >
+  1413→  1413→              <div className="text-center mb-4">
+  1414→  1414→                <div className="text-4xl mb-2">⚠️</div>
+  1415→  1415→                <h3 className="text-lg font-bold text-gray-800">{t.resetData}</h3>
+  1416→  1416→              </div>
+  1417→  1417→              <p className="text-gray-600 text-sm text-center mb-6">{t.resetConfirm}</p>
+  1418→  1418→              <div className="flex gap-3">
+  1419→  1419→                <button
+  1420→  1420→                  onClick={() => setShowConfirm(false)}
+  1421→  1421→                  className="flex-1 py-2.5 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all"
+  1422→  1422→                >
+  1423→  1423→                  {t.cancelReset}
+  1424→  1424→                </button>
+  1425→  1425→                <button
+  1426→  1426→                  onClick={confirmReset}
+  1427→  1427→                  className="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-semibold text-sm shadow-md hover:bg-red-600 transition-all"
+  1428→  1428→                >
+  1429→  1429→                  {t.confirmReset}
+  1430→  1430→                </button>
+  1431→  1431→              </div>
+  1432→  1432→            </motion.div>
+  1433→  1433→          </motion.div>
+  1434→  1434→        )}
+  1435→  1435→
+  1436→  1436→        <div className="space-y-3">
+  1437→  1437→          {settings.map((setting, i) => (
+  1438→  1438→            <motion.button
+  1439→  1439→              key={setting.label}
+  1440→  1440→              initial={{ opacity: 0, y: 10 }}
+  1441→  1441→              animate={{ opacity: 1, y: 0 }}
+  1442→  1442→              transition={{ delay: i * 0.08 }}
+  1443→  1443→              onClick={setting.action}
+  1444→  1444→              className="w-full flex items-center gap-4 p-5 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all text-left"
+  1445→  1445→            >
+  1446→  1446→              <div className={`w-12 h-12 rounded-xl ${setting.color} flex items-center justify-center`}>
+  1447→  1447→                <span className="text-xl">{setting.icon}</span>
+  1448→  1448→              </div>
+  1449→  1449→              <div className="flex-1">
+  1450→  1450→                <h3 className="font-semibold text-gray-800">{setting.label}</h3>
+  1451→  1451→                {setting.desc && <p className="text-xs text-gray-500 mt-0.5">{setting.desc}</p>}
+  1452→  1452→              </div>
+  1453→  1453→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+  1454→  1454→                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+  1455→  1455→              </svg>
+  1456→  1456→            </motion.button>
+  1457→  1457→          ))}
+  1458→  1458→        </div>
+  1459→  1459→
+  1460→  1460→        {/* App Info */}
+  1461→  1461→        <div className="mt-8 text-center">
+  1462→  1462→          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-md mx-auto mb-3">
+  1463→  1463→            <span className="text-2xl">🌾</span>
+  1464→  1464→          </div>
+  1465→  1465→          <h3 className="font-bold text-green-800">KisanPilot AI</h3>
+  1466→  1466→          <p className="text-xs text-gray-500 mt-1">v1.0 — {t.tagline}</p>
+  1467→  1467→        </div>
+  1468→  1468→      </main>
+  1469→  1469→    </PageWrapper>
+  1470→  1470→  );
+  1471→  1471→}
+  1472→  1472→

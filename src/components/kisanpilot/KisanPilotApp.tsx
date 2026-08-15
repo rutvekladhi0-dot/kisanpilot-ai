@@ -11,11 +11,12 @@ import SimulatorScreen from './screens/SimulatorScreen';
 import PMFBYScreen from './screens/PMFBYScreen';
 import FarmGoalsScreen from './screens/FarmGoalsScreen';
 import NextBestActionScreen from './screens/NextBestActionScreen';
+import MonthlyPhotoTrackerScreen from './screens/MonthlyPhotoTrackerScreen';
 
 // ============================================================
 // Types
 // ============================================================
-export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction';
+export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction' | 'phototracker';
 
 export interface FarmerProfile {
   name: string;
@@ -155,6 +156,7 @@ export default function KisanPilotApp() {
           {screen === 'pmfby' && <PMFBYScreen key="pmfby" />}
           {screen === 'farmgoals' && <FarmGoalsScreen key="farmgoals" />}
           {screen === 'nextbestaction' && <NextBestActionScreen key="nextbestaction" />}
+          {screen === 'phototracker' && <MonthlyPhotoTrackerScreen key="phototracker" />}
         </AnimatePresence>
       </div>
     </AppContext.Provider>
@@ -417,6 +419,7 @@ function DashboardScreen() {
     { id: 'pmfby' as Screen, icon: '🏛', title: t.pmfbySchemes, desc: t.pmfbyDesc, color: 'from-blue-500 to-indigo-600' },
     { id: 'farmgoals' as Screen, icon: '🎯', title: t.farmGoals, desc: t.farmGoalsDesc, color: 'from-teal-500 to-cyan-600' },
     { id: 'nextbestaction' as Screen, icon: '✨', title: t.nextBestAction, desc: t.nextBestActionDesc, color: 'from-lime-500 to-green-600' },
+    { id: 'phototracker' as Screen, icon: '📸', title: t.monthlyPhotoTracker, desc: t.monthlyPhotoTrackerDesc, color: 'from-pink-500 to-rose-600' },
     { id: 'insights' as Screen, icon: '📊', title: t.farmInsights, desc: t.farmInsightsDesc, color: 'from-cyan-500 to-teal-600' },
     { id: 'alerts' as Screen, icon: '🔔', title: t.smartAlerts, desc: t.smartAlertsDesc, color: 'from-red-500 to-rose-600' },
   ];
@@ -896,6 +899,110 @@ function CropDoctorScreen() {
                 ))}
               </ul>
             </div>
+
+            {/* Expert Consultation */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5 space-y-4"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-xl">👨‍🔬</span>
+                <h3 className="text-sm font-bold text-amber-800">{t.expertConsultation}</h3>
+              </div>
+              <p className="text-xs text-amber-700">{t.expertConsultationDesc}</p>
+
+              <div className="space-y-3">
+                {[
+                  { name: 'Dr. Ramesh Patil', specialty: 'Crop Pathology & Disease', phone: '+91 98765 43210', available: true },
+                  { name: 'Shri. Sunil Deshmukh', specialty: 'Soil Science & Fertilizers', phone: '+91 87654 32109', available: true },
+                  { name: 'Dr. Meena Kulkarni', specialty: 'Pest Management & Organic Farming', phone: '+91 76543 21098', available: false },
+                ].map((expert, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.8 + i * 0.1 }}
+                    className="bg-white rounded-xl p-3 flex items-center gap-3"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                      {expert.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-800">{expert.name}</p>
+                      <p className="text-xs text-gray-500">{expert.specialty}</p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      {expert.available ? (
+                        <span className="inline-block px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-medium mb-1">{t.expertAvailable}</span>
+                      ) : (
+                        <span className="inline-block px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs font-medium mb-1">Busy</span>
+                      )}
+                      <a href={`tel:${expert.phone.replace(/\s/g, '')}`} className="block text-xs text-green-600 font-semibold hover:text-green-800">{t.callExpert}</a>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              <p className="text-xs text-amber-600 italic">💡 {t.expertNote}</p>
+            </motion.div>
+
+            {/* Nearby Krushi Kendra */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🏪</span>
+                <h3 className="text-sm font-bold text-gray-800">{t.nearbyKrushiKendra}</h3>
+              </div>
+              <p className="text-xs text-gray-500">{t.krushiKendraDesc}</p>
+
+              <div className="space-y-3">
+                {[
+                  { name: 'Krushi Kendra - Main Branch', address: 'Near Bus Stand, Taluka Road', phone: '+91 95553 44332', hours: '8:00 AM - 7:00 PM', services: 'Seeds, Fertilizers, Pesticides, Tools' },
+                  { name: 'Agri Service Center - West', address: 'NH-6 Highway, Village Entry Point', phone: '+91 84432 22119', hours: '7:00 AM - 6:30 PM', services: 'Seeds, Soil Testing, Spray Equipment' },
+                  { name: 'Gram Seva Kendra', address: 'Village Panchayat Office, Main Road', phone: '+91 73321 11008', hours: '9:00 AM - 5:00 PM', services: 'Subsidy Forms, Insurance, Seeds' },
+                ].map((center, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.0 + i * 0.1 }}
+                    className="border border-gray-100 rounded-xl p-3 space-y-2"
+                  >
+                    <div className="flex items-start gap-2">
+                      <span className="text-lg">📍</span>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-gray-800">{center.name}</p>
+                        <p className="text-xs text-gray-500">{center.address}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-gray-600 ml-7">
+                      <span className="flex items-center gap-1">📞 {center.phone}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-gray-500 ml-7">
+                      <span className="flex items-center gap-1">🕐 {center.hours}</span>
+                    </div>
+                    <div className="ml-7">
+                      <span className="inline-block px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-xs">
+                        {center.services}
+                      </span>
+                    </div>
+                    <div className="ml-7 flex gap-2">
+                      <a href={`tel:${center.phone.replace(/\s/g, '')}`} className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition-colors">
+                        📞 {t.callExpert}
+                      </a>
+                      <a href={`https://maps.google.com/?q=${encodeURIComponent(center.address)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 transition-colors">
+                        🗺️ {t.directions}
+                      </a>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
 
             <button
               onClick={handleAnalyzeAnother}
