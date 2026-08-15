@@ -161,6 +161,141 @@ export interface Translations {
   resetConfirm: string;
   confirmReset: string;
   cancelReset: string;
+
+  // Voice Khata
+  voiceKhata: string;
+  voiceKhataDesc: string;
+  addEntry: string;
+  entryType: string;
+  incomeLabel: string;
+  expenseLabel: string;
+  category: string;
+  amount: string;
+  description: string;
+  date: string;
+  totalIncome: string;
+  totalExpense: string;
+  netProfit: string;
+  recentEntries: string;
+  noEntries: string;
+  catLabour: string;
+  catFertilizer: string;
+  catSeeds: string;
+  catPesticides: string;
+  catIrrigation: string;
+  catTransport: string;
+  catCropSale: string;
+  catOther: string;
+  deleteEntry: string;
+  saveEntry: string;
+
+  // Farm Economics
+  farmEconomics: string;
+  farmEconomicsDesc: string;
+  seasonEconomics: string;
+  incomeVsExpense: string;
+  categoryBreakdown: string;
+  totalSpend: string;
+  totalEarned: string;
+  netReturn: string;
+
+  // Bajar Bhav (Market Prices)
+  bajarBhav: string;
+  bajarBhavDesc: string;
+  commodity: string;
+  minPrice: string;
+  maxPrice: string;
+  modalPrice: string;
+  priceSource: string;
+  lastUpdated: string;
+  priceTrend: string;
+  trendingUp: string;
+  trendingDown: string;
+  stable: string;
+  transportCost: string;
+  estNetReturn: string;
+  calculateReturn: string;
+  marketAdvice: string;
+
+  // Risk Radar
+  riskRadar: string;
+  riskRadarDesc: string;
+  rainRisk: string;
+  waterStressRisk: string;
+  diseaseRisk: string;
+  heatRisk: string;
+  costRisk: string;
+  insuranceReady: string;
+  low: string;
+  medium: string;
+  high: string;
+  riskAdvice: string;
+
+  // What-If Simulator
+  whatIfSimulator: string;
+  whatIfDesc: string;
+  compareCrops: string;
+  estimatedProfit: string;
+  estimatedCost: string;
+  recommendation: string;
+  simulate: string;
+  cropA: string;
+  cropB: string;
+  selectCropA: string;
+  selectCropB: string;
+  investmentPerAcre: string;
+  expectedYield: string;
+  marketPricePer: string;
+  cropAProfit: string;
+  cropBProfit: string;
+  betterChoice: string;
+
+  // PMFBY Schemes
+  pmfbySchemes: string;
+  pmfbyDesc: string;
+  schemeInfo: string;
+  eligibility: string;
+  requiredDocs: string;
+  deadlines: string;
+  officialPortal: string;
+  pmfbyTitle: string;
+  pmfbyDesc2: string;
+  cropInsurance: string;
+  kisanCreditCard: string;
+  subsidySchemes: string;
+  applyOnline: string;
+  viewDetails: string;
+  pmfbyNote: string;
+
+  // Farm Goals
+  farmGoals: string;
+  farmGoalsDesc: string;
+  seasonalTarget: string;
+  currentProgress: string;
+  remainingAmount: string;
+  setGoal: string;
+  editGoal: string;
+  goalAmount: string;
+  onTrackMsg: string;
+  behindMsg: string;
+
+  // Next Best Action
+  nextBestAction: string;
+  nextBestActionDesc: string;
+  priorityAction: string;
+  reason: string;
+  weatherContext: string;
+  action1: string;
+  action1Reason: string;
+  action2: string;
+  action2Reason: string;
+  action3: string;
+  action3Reason: string;
+
+  // Enhanced Dashboard
+  farmBriefing: string;
+  riskSummary: string;
+  quickActions: string;
 }
 
 const en: Translations = {
@@ -314,6 +449,141 @@ const en: Translations = {
   resetConfirm: 'This will clear all your saved data and return to the language selection screen. Are you sure?',
   confirmReset: 'Confirm Reset',
   cancelReset: 'Cancel',
+
+  // Voice Khata
+  voiceKhata: 'Voice Khata',
+  voiceKhataDesc: 'Voice-based farm accounting',
+  addEntry: 'Add Entry',
+  entryType: 'Entry Type',
+  incomeLabel: 'Income',
+  expenseLabel: 'Expense',
+  category: 'Category',
+  amount: 'Amount',
+  description: 'Description',
+  date: 'Date',
+  totalIncome: 'Total Income',
+  totalExpense: 'Total Expense',
+  netProfit: 'Net Profit',
+  recentEntries: 'Recent Entries',
+  noEntries: 'No entries yet',
+  catLabour: 'Labour',
+  catFertilizer: 'Fertilizer',
+  catSeeds: 'Seeds',
+  catPesticides: 'Pesticides',
+  catIrrigation: 'Irrigation',
+  catTransport: 'Transport',
+  catCropSale: 'Crop Sale',
+  catOther: 'Other',
+  deleteEntry: 'Delete',
+  saveEntry: 'Save Entry',
+
+  // Farm Economics
+  farmEconomics: 'Farm Economics',
+  farmEconomicsDesc: 'Income, expense & profit tracking',
+  seasonEconomics: 'Season Economics',
+  incomeVsExpense: 'Income vs Expense',
+  categoryBreakdown: 'Category Breakdown',
+  totalSpend: 'Total Spending',
+  totalEarned: 'Total Earned',
+  netReturn: 'Net Return',
+
+  // Bajar Bhav (Market Prices)
+  bajarBhav: 'Market Prices',
+  bajarBhavDesc: 'Live mandi prices & trends',
+  commodity: 'Commodity',
+  minPrice: 'Min Price',
+  maxPrice: 'Max Price',
+  modalPrice: 'Modal Price',
+  priceSource: 'Source',
+  lastUpdated: 'Last Updated',
+  priceTrend: 'Price Trend',
+  trendingUp: 'Trending Up',
+  trendingDown: 'Trending Down',
+  stable: 'Stable',
+  transportCost: 'Transport Cost',
+  estNetReturn: 'Estimated Net Return',
+  calculateReturn: 'Calculate Net Return',
+  marketAdvice: 'Market data is for reference. Verify with local mandi.',
+
+  // Risk Radar
+  riskRadar: 'Risk Radar',
+  riskRadarDesc: 'Monitor farm risks',
+  rainRisk: 'Rain Risk',
+  waterStressRisk: 'Water Stress',
+  diseaseRisk: 'Disease Risk',
+  heatRisk: 'Heat Risk',
+  costRisk: 'Cost Risk',
+  insuranceReady: 'Insurance Readiness',
+  low: 'Low',
+  medium: 'Medium',
+  high: 'High',
+  riskAdvice: 'Risk-based farming advice',
+
+  // What-If Simulator
+  whatIfSimulator: 'What-If Simulator',
+  whatIfDesc: 'Compare crop decisions',
+  compareCrops: 'Compare Crops',
+  estimatedProfit: 'Estimated Profit',
+  estimatedCost: 'Estimated Cost',
+  recommendation: 'Recommendation',
+  simulate: 'Simulate',
+  cropA: 'Crop A',
+  cropB: 'Crop B',
+  selectCropA: 'Select Crop A',
+  selectCropB: 'Select Crop B',
+  investmentPerAcre: 'Investment per Acre',
+  expectedYield: 'Expected Yield',
+  marketPricePer: 'Market Price per Quintal',
+  cropAProfit: 'Crop A Profit',
+  cropBProfit: 'Crop B Profit',
+  betterChoice: 'Better Choice',
+
+  // PMFBY Schemes
+  pmfbySchemes: 'PMFBY & Schemes',
+  pmfbyDesc: 'Insurance & govt schemes',
+  schemeInfo: 'Scheme Information',
+  eligibility: 'Eligibility',
+  requiredDocs: 'Required Documents',
+  deadlines: 'Deadlines',
+  officialPortal: 'Official Portal',
+  pmfbyTitle: 'Pradhan Mantri Fasal Bima Yojana',
+  pmfbyDesc2: 'Crop insurance by Government of India',
+  cropInsurance: 'Crop Insurance',
+  kisanCreditCard: 'Kisan Credit Card',
+  subsidySchemes: 'Subsidy Schemes',
+  applyOnline: 'Apply Online',
+  viewDetails: 'View Details',
+  pmfbyNote: 'Insurance does not guarantee claim. Verify with official sources.',
+
+  // Farm Goals
+  farmGoals: 'Farm Goals',
+  farmGoalsDesc: 'Track seasonal income targets',
+  seasonalTarget: 'Seasonal Income Target',
+  currentProgress: 'Current Progress',
+  remainingAmount: 'Remaining Amount',
+  setGoal: 'Set Goal',
+  editGoal: 'Edit Goal',
+  goalAmount: 'Goal Amount (₹)',
+  onTrackMsg: 'You are on track to meet your goal!',
+  behindMsg: 'You are behind your target. Review expenses.',
+
+  // Next Best Action
+  nextBestAction: 'Next Best Action',
+  nextBestActionDesc: 'AI-suggested priority action',
+  priorityAction: 'Priority Action',
+  reason: 'Reason',
+  weatherContext: 'Weather Context',
+  action1: 'Monitor soil moisture levels',
+  action1Reason: 'Rain expected Thursday. Check soil before and after rainfall.',
+  action2: 'Apply second dose of fertilizer',
+  action2Reason: 'Crop is in active growth phase. Balanced NPK now will boost yield.',
+  action3: 'Check crop leaves for early pest signs',
+  action3Reason: 'Warm, humid conditions increase pest risk this week.',
+
+  // Enhanced Dashboard
+  farmBriefing: 'Farm Briefing',
+  riskSummary: 'Risk Summary',
+  quickActions: 'Quick Actions',
 };
 
 const hi: Translations = {
@@ -467,6 +737,141 @@ const hi: Translations = {
   resetConfirm: 'यह आपका सारा डेटा मिटा देगा और भाषा चयन स्क्रीन पर लौट जाएगा। क्या आप सुनिश्चित हैं?',
   confirmReset: 'रीसेट की पुष्टि करें',
   cancelReset: 'रद्द करें',
+
+  // Voice Khata
+  voiceKhata: 'वॉइस खाता',
+  voiceKhataDesc: 'आवाज़ आधारित खेत लेखांकन',
+  addEntry: 'प्रविष्टि जोड़ें',
+  entryType: 'प्रविष्टि प्रकार',
+  incomeLabel: 'आय',
+  expenseLabel: 'खर्चा',
+  category: 'श्रेणी',
+  amount: 'राशि',
+  description: 'विवरण',
+  date: 'तारीख',
+  totalIncome: 'कुल आय',
+  totalExpense: 'कुल खर्चा',
+  netProfit: 'शुद्ध लाभ',
+  recentEntries: 'हाल की प्रविष्टियाँ',
+  noEntries: 'अभी कोई प्रविष्टि नहीं',
+  catLabour: 'मजदूरी',
+  catFertilizer: 'उर्वरक',
+  catSeeds: 'बीज',
+  catPesticides: 'कीटनाशक',
+  catIrrigation: 'सिंचाई',
+  catTransport: 'परिवहन',
+  catCropSale: 'फसल बिक्री',
+  catOther: 'अन्य',
+  deleteEntry: 'हटाएं',
+  saveEntry: 'प्रविष्टि सहेजें',
+
+  // Farm Economics
+  farmEconomics: 'खेत अर्थव्यवस्था',
+  farmEconomicsDesc: 'आय, खर्चा और लाभ ट्रैकिंग',
+  seasonEconomics: 'मौसम अर्थव्यवस्था',
+  incomeVsExpense: 'आय बनाम खर्चा',
+  categoryBreakdown: 'श्रेणी विवरण',
+  totalSpend: 'कुल खर्च',
+  totalEarned: 'कुल आय',
+  netReturn: 'शुद्ध लाभ',
+
+  // Bajar Bhav (Market Prices)
+  bajarBhav: 'बाजार भाव',
+  bajarBhavDesc: 'लाइव मंडी भाव और रुझान',
+  commodity: 'कमोडिटी',
+  minPrice: 'न्यूनतम भाव',
+  maxPrice: 'अधिकतम भाव',
+  modalPrice: 'मॉडल भाव',
+  priceSource: 'स्रोत',
+  lastUpdated: 'अंतिम अपडेट',
+  priceTrend: 'भाव रुझान',
+  trendingUp: 'बढ़ रहा',
+  trendingDown: 'घट रहा',
+  stable: 'स्थिर',
+  transportCost: 'परिवहन लागत',
+  estNetReturn: 'अनुमानित शुद्ध लाभ',
+  calculateReturn: 'शुद्ध लाभ गणना',
+  marketAdvice: 'बाजार डेटा संदर्भ के लिए है। स्थानीय मंडी से सत्यापित करें।',
+
+  // Risk Radar
+  riskRadar: 'जोखिम रडार',
+  riskRadarDesc: 'खेत जोखिम पर नजर रखें',
+  rainRisk: 'बारिश जोखिम',
+  waterStressRisk: 'जल तनाव',
+  diseaseRisk: 'रोग जोखिम',
+  heatRisk: 'गर्मी जोखिम',
+  costRisk: 'लागत जोखिम',
+  insuranceReady: 'बीमा तैयारी',
+  low: 'कम',
+  medium: 'मध्यम',
+  high: 'उच्च',
+  riskAdvice: 'जोखिम आधारित खेती सलाह',
+
+  // What-If Simulator
+  whatIfSimulator: 'क्या-यदि सिम्युलेटर',
+  whatIfDesc: 'फसल निर्णयों की तुलना',
+  compareCrops: 'फसलों की तुलना',
+  estimatedProfit: 'अनुमानित लाभ',
+  estimatedCost: 'अनुमानित लागत',
+  recommendation: 'सिफारिश',
+  simulate: 'सिम्युलेट करें',
+  cropA: 'फसल अ',
+  cropB: 'फसल ब',
+  selectCropA: 'फसल अ चुनें',
+  selectCropB: 'फसल ब चुनें',
+  investmentPerAcre: 'प्रति एकड़ निवेश',
+  expectedYield: 'अपेक्षित उपज',
+  marketPricePer: 'प्रति क्विंटल बाजार भाव',
+  cropAProfit: 'फसल अ लाभ',
+  cropBProfit: 'फसल ब लाभ',
+  betterChoice: 'बेहतर विकल्प',
+
+  // PMFBY Schemes
+  pmfbySchemes: 'पीएमएफबीवाई और योजनाएं',
+  pmfbyDesc: 'बीमा और सरकारी योजनाएं',
+  schemeInfo: 'योजना जानकारी',
+  eligibility: 'पात्रता',
+  requiredDocs: 'आवश्यक दस्तावेज',
+  deadlines: 'समय सीमा',
+  officialPortal: 'आधिकारिक पोर्टल',
+  pmfbyTitle: 'प्रधानमंत्री फसल बीमा योजना',
+  pmfbyDesc2: 'भारत सरकार द्वारा फसल बीमा',
+  cropInsurance: 'फसल बीमा',
+  kisanCreditCard: 'किसान क्रेडिट कार्ड',
+  subsidySchemes: 'सब्सिडी योजनाएं',
+  applyOnline: 'ऑनलाइन आवेदन',
+  viewDetails: 'विवरण देखें',
+  pmfbyNote: 'बीमा दावे की गारंटी नहीं देता। आधिकारिक स्रोतों से सत्यापित करें।',
+
+  // Farm Goals
+  farmGoals: 'खेत लक्ष्य',
+  farmGoalsDesc: 'मौसमिक आय लक्ष्य ट्रैक करें',
+  seasonalTarget: 'मौसमिक आय लक्ष्य',
+  currentProgress: 'वर्तमान प्रगति',
+  remainingAmount: 'शेष राशि',
+  setGoal: 'लक्ष्य सेट करें',
+  editGoal: 'लक्ष्य संपादित करें',
+  goalAmount: 'लक्ष्य राशि',
+  onTrackMsg: 'आप अपने लक्ष्य को पूरा करने के रास्ते पर हैं!',
+  behindMsg: 'आप अपने लक्ष्य से पीछे हैं। खर्चों की समीक्षा करें।',
+
+  // Next Best Action
+  nextBestAction: 'अगला सर्वोत्तम कार्य',
+  nextBestActionDesc: 'AI-सुझावित प्राथमिक कार्य',
+  priorityAction: 'प्राथमिक कार्य',
+  reason: 'कारण',
+  weatherContext: 'मौसम संदर्भ',
+  action1: 'मिट्टी की नमी स्तर की निगरानी करें',
+  action1Reason: 'गुरुवार को बारिश की उम्मीद। बारिश से पहले और बाद मिट्टी जांचें।',
+  action2: 'उर्वरक की दूसरी खुराक डालें',
+  action2Reason: 'फसल सक्रिय विकास चरण में है। अभी संतुलित NPK उपज बढ़ाएगी।',
+  action3: 'फसल की पत्तियों में कीट के शुरुआती लक्षण जांचें',
+  action3Reason: 'गर्म, नमी वाली स्थितियां इस हफ्ते कीट जोखिम बढ़ाती हैं।',
+
+  // Enhanced Dashboard
+  farmBriefing: 'खेत संक्षिप्त जानकारी',
+  riskSummary: 'जोखिम सारांश',
+  quickActions: 'त्वरित कार्य',
 };
 
 const mr: Translations = {
@@ -540,8 +945,8 @@ const mr: Translations = {
   suggestion3: 'पाने पिवळी झाल्यास मला काय करावे?',
   suggestion4: 'मी माझ्या पिकाचे कीड-मुक्यांपासून संरक्षण कसे करू?',
   waterResponse: '💧 **सिंचाई मार्गदर्शन:** पिकांना पहाटे लवकर किंवा संध्याकाळी उशिरा पाणी द्यावे जेणेकरून बाष्पीभवन कमी होईल. मातीची ओलावा तपासण्यासाठी तुमची बोटे मातीत 2-3 इंच घाला — जर कोरडी वाटत असेल तर पाणी देण्याची वेळ आली आहे. बहुतेक पिकांना दर आठवड्याला 1-2 इंच पाणी हवे असते. ड्रिप सिंचाई वापरा.',
-  yellowLeavesResponse: '🍂 **पिवळी पाने — संभाव्य कारणे:**\n\n1. **पोषक तत्वांची कमी:** नायट्रोजन, लोह किंवा मॅग्नेशियमची कमी पिवळेपणाचे कारण असू शकते.\n2. **जास्त पाणी:** मुळे दम चोकून आहेत. पाणी साचलेली माती तपासा.\n3. **कीड किंवा रोग:** पानांवर डाग, जाळे किंवा कीड तपासा.\n4. **नैसर्गिक वाढ:** खालची पाने नैसर्गिकरित्या पिवळी होतात.\n\n**सूचना:** मातीची पाण्याची निकास तपासा, कीडीसाठी पानांची बारीक तपासणी करा.',
-  pestResponse: '🐛 **कीट व्यवस्थापन:**\n\n1. **कीड ओळखा:** पानां, खेकड्यांवर आणि मातीत कीड किंवा नुकसानाचे चिन्ह तपासा.\n2. **नियमित निरीक्षण:** दर 2-3 दिवसांत पिकांची तपासणी करा.\n3. **नैसर्गिक पद्धती:** नीम तेल स्प्रे वापरा, लेडीबग सारखे उपयुक्त कीड आणा.\n4. **एकत्रित कीट व्यवस्थापन (IPM):** सांस्कृतिक, जैविक आणि रासायनिक पद्धती एकत्र करा.\n5. **स्थानिक तज्ञांशी सल्ला घ्या:** संक्रमण गंभीर असल्यास कृषी तज्ञांशी भेटा.',
+  yellowLeavesResponse: '🍂 **पिवळी पाने — संभाव्य कारणे:**\n\n1. **पोषक तत्वांची कमी:** नायट्रोजन, लोह किंवा मॅग्नेशियमची कमी पिवळेपणाचे कारण असू शकते.\n2. **जास्त पाणी:** मुळे दम चोकून आहेत. पाणी साचलेली माती तपासा.\n3. **कीड किंवा रोग:** पानांवर डाग, जाळे किंवा कीड तपसा.\n4. **नैसर्गिक वाढ:** खालची पाने नैसर्गिकरित्या पिवळी होतात.\n\n**सूचना:** मातीची पाण्याची निकास तपसा, कीडीसाठी पानांची बारीक तपासणी करा.',
+  pestResponse: '🐛 **कीट व्यवस्थापन:**\n\n1. **कीड ओळखा:** पानां, खेकड्यांवर आणि मातीत कीड किंवा नुकसानाचे चिन्ह तपसा.\n2. **नियमित निरीक्षण:** दर 2-3 दिवसांत पिकांची तपासणी करा.\n3. **नैसर्गिक पद्धती:** नीम तेल स्प्रे वापरा, लेडीबग सारखे उपयुक्त कीड आणा.\n4. **एकत्रित कीट व्यवस्थापन (IPM):** सांस्कृतिक, जैविक आणि रासायनिक पद्धती एकत्र करा.\n5. **स्थानिक तज्ञांशी सल्ला घ्या:** संक्रमण गंभीर असल्यास कृषी तज्ञांशी भेटा.',
   fertilizerResponse: '🧪 **खत आणि पोषक तत्व मार्गदर्शन:**\n\n1. **माती चाचणी:** स्थानिक प्रयोगशाळेत मातीची चाचणी करा.\n2. **संतुलित NPK:** नायट्रोजन, फॉस्फरस आणि पोटॅशियमच्या संतुलित प्रमाणाची खते वापरा.\n3. **जैविक पर्याय:** कम्पोस्ट, वर्मीकम्पोस्ट किंवा शेळी खाद वापरा.\n4. **सूक्ष्म पोषक तत्वे:** झिंक, लोह आणि बोरॉन विसरू नका.\n5. **खतांचा वेळ:** सक्रिय वाढीच्या टप्प्यात खते टाका.',
   weatherResponse: '🌦 **हवामान आणि शेती:**\n\nवर्तमान अंदाजानुसार तुमच्या शेती कृतींचे नियोजन करा:\n\n- पावसाची शक्यता असल्यास सिंचाई विलंबित करा.\n- उच्च ओलावा बुरशी रोगाचा धोका वाढवतो.\n- 20 किमी/तासापेक्षा जास्त वारा उंच पिकांना नुकसान करू शकतो.\n- शांत, कोरड्या दिवशी फवारणीचे नियोजन करा.\n- बहुतेक पिके 15°C पेक्षा वर चांगल्या प्रकारे अंकुरित होतात.',
   defaultResponse: '🌱 मी तुमचा किसानपायलट AI सहायक आहे. मी पीक काळजी, सिंचाई, कीड, मातीचे आरोग्य आणि शेती निर्णयांमध्ये तुम्हाला मदत करू शकतो. तुमच्या शेताबद्दल काहीही विचारा!',
@@ -552,10 +957,10 @@ const mr: Translations = {
   uploadPhotoDesc: 'फोटो काढा किंवा गॅलरीतून निवडा',
   analyzeCrop: 'पिकाचे विश्लेषण करा',
   analyzing: 'AI सह तुमचे पिक विश्लेषित केले जात आहे…',
-  cropHealthScore: 'पिक आरोग्य गुण',
+  cropHealthScore: 'पीक आरोग्य गुण',
   possibleObservation: 'संभाव्य निरीक्षण',
   recommendations: 'शिफारसी',
-  rec1: 'मातीतील पोषक तत्व पातळी तपासा',
+  rec1: 'मातीतील पोषक तत्व पातळी तपसा',
   rec2: 'पानांच्या रंग बदलावर लक्ष ठेवा',
   rec3: 'योग्य सिंचाई सुनिश्चित करा',
   rec4: 'पुष्टीकरणासाठी स्थानिक कृषी तज्ञांशी भेटा',
@@ -620,6 +1025,141 @@ const mr: Translations = {
   resetConfirm: 'हे तुमचा सर्व डेटा हटवेल आणि भाषा निवड स्क्रीनवर परत जाईल. तुम्हाला खात्री आहे का?',
   confirmReset: 'रीसेट पुष्टी करा',
   cancelReset: 'रद्द करा',
+
+  // Voice Khata
+  voiceKhata: 'व्हॉइस खाता',
+  voiceKhataDesc: 'आवाज आधारित शेत लेखापालन',
+  addEntry: 'प्रविष्टी जोडा',
+  entryType: 'प्रविष्टी प्रकार',
+  incomeLabel: 'उत्पन्न',
+  expenseLabel: 'खर्च',
+  category: 'श्रेणी',
+  amount: 'रक्कम',
+  description: 'वर्णन',
+  date: 'दिनांक',
+  totalIncome: 'एकूण उत्पन्न',
+  totalExpense: 'एकूण खर्च',
+  netProfit: 'एकूण नफा',
+  recentEntries: 'अलीकडील प्रविष्ट्या',
+  noEntries: 'अद्याप प्रविष्ट्या नाहीत',
+  catLabour: 'मजुरी',
+  catFertilizer: 'खत',
+  catSeeds: 'बियाणे',
+  catPesticides: 'कीडनाशक',
+  catIrrigation: 'सिंचाई',
+  catTransport: 'वाहतूक',
+  catCropSale: 'पीक विक्री',
+  catOther: 'इतर',
+  deleteEntry: 'हटवा',
+  saveEntry: 'प्रविष्टी जतन करा',
+
+  // Farm Economics
+  farmEconomics: 'शेत अर्थव्यवस्था',
+  farmEconomicsDesc: 'उत्पन्न, खर्च व नफा मागोवा',
+  seasonEconomics: 'हंगाम अर्थव्यवस्था',
+  incomeVsExpense: 'उत्पन्न व खर्च',
+  categoryBreakdown: 'श्रेणी विभाजन',
+  totalSpend: 'एकूण खर्च',
+  totalEarned: 'एकूण मिळवले',
+  netReturn: 'एकूण परतावा',
+
+  // Bajar Bhav (Market Prices)
+  bajarBhav: 'बाजारभाव',
+  bajarBhavDesc: 'थेट मांडी भाव व ट्रेंड',
+  commodity: 'वस्तू',
+  minPrice: 'किमान भाव',
+  maxPrice: 'कमाल भाव',
+  modalPrice: 'मॉडल भाव',
+  priceSource: 'स्रोत',
+  lastUpdated: 'शेवटी अपडेट',
+  priceTrend: 'भाव ट्रेंड',
+  trendingUp: 'वर चढतोय',
+  trendingDown: 'खाली उतरतोय',
+  stable: 'स्थिर',
+  transportCost: 'वाहतूक खर्च',
+  estNetReturn: 'अंदाजे एकूण परतावा',
+  calculateReturn: 'एकूण परतावा मोजा',
+  marketAdvice: 'बाजार डेटा संदर्भासाठी आहे. स्थानिक मांडीतून सत्यापित करा.',
+
+  // Risk Radar
+  riskRadar: 'धोका रडार',
+  riskRadarDesc: 'शेत धोक्यांवर नजर ठेवा',
+  rainRisk: 'पावसाचा धोका',
+  waterStressRisk: 'पाणी तणाव',
+  diseaseRisk: 'रोगाचा धोका',
+  heatRisk: 'उष्णतेचा धोका',
+  costRisk: 'खर्चाचा धोका',
+  insuranceReady: 'विमा तयारी',
+  low: 'कमी',
+  medium: 'मध्यम',
+  high: 'जास्त',
+  riskAdvice: 'धोका आधारित शेती सल्ला',
+
+  // What-If Simulator
+  whatIfSimulator: 'जर-तर-सिम्युलेटर',
+  whatIfDesc: 'पीक निर्णयांची तुलना',
+  compareCrops: 'पिकांची तुलना',
+  estimatedProfit: 'अंदाजे नफा',
+  estimatedCost: 'अंदाजे खर्च',
+  recommendation: 'शिफारस',
+  simulate: 'सिम्युलेट करा',
+  cropA: 'पीक अ',
+  cropB: 'पीक ब',
+  selectCropA: 'पीक अ निवडा',
+  selectCropB: 'पीक ब निवडा',
+  investmentPerAcre: 'एकरी गुंतवणूक',
+  expectedYield: 'अपेक्षित उत्पादन',
+  marketPricePer: 'क्विंटल बाजारभाव',
+  cropAProfit: 'पीक अ नफा',
+  cropBProfit: 'पीक ब नफा',
+  betterChoice: 'चांगला पर्याय',
+
+  // PMFBY Schemes
+  pmfbySchemes: 'पीएमएफबीवाय आणि योजना',
+  pmfbyDesc: 'विमा आणि सरकारी योजना',
+  schemeInfo: 'योजना माहिती',
+  eligibility: 'पात्रता',
+  requiredDocs: 'आवश्यक दस्तावेज',
+  deadlines: 'अंतिम तारीख',
+  officialPortal: 'अधिकृत पोर्टल',
+  pmfbyTitle: 'प्रधानमंत्री फसल बीमा योजना',
+  pmfbyDesc2: 'भारत सरकारचे पीक विमा',
+  cropInsurance: 'पीक विमा',
+  kisanCreditCard: 'शेतकरी क्रेडिट कार्ड',
+  subsidySchemes: 'अनुदान योजना',
+  applyOnline: 'ऑनलाइन अर्ज',
+  viewDetails: 'तपशील पहा',
+  pmfbyNote: 'विमा दाव्याची हमी देत नाही. अधिकृत स्रोतांकडून सत्यापित करा.',
+
+  // Farm Goals
+  farmGoals: 'शेत लक्ष्ये',
+  farmGoalsDesc: 'हंगामी उत्पन्न लक्ष्य मागवा',
+  seasonalTarget: 'हंगामी उत्पन्न लक्ष्य',
+  currentProgress: 'सध्याची प्रगती',
+  remainingAmount: 'शिल्लक रक्कम',
+  setGoal: 'लक्ष्य ठेवा',
+  editGoal: 'लक्ष्य संपादित करा',
+  goalAmount: 'लक्ष्य रक्कम',
+  onTrackMsg: 'तुम्ही तुमच्या लक्ष्यावर आहात!',
+  behindMsg: 'तुम्ही लक्ष्यापाठी आहात. खर्चाचा आढावा घ्या.',
+
+  // Next Best Action
+  nextBestAction: 'पुढील सर्वोत्तम कृती',
+  nextBestActionDesc: 'AI-सूचना प्राथमिक कृती',
+  priorityAction: 'प्राथमिक कृती',
+  reason: 'कारण',
+  weatherContext: 'हवामान संदर्भ',
+  action1: 'मातीच्या ओलाव्याची पातळी निरीक्षण करा',
+  action1Reason: 'गुरुवारी पाऊस अपेक्षित. पावसापूर्वी आणि नंतर माती तपसा.',
+  action2: 'खताची दुसरी डोस टाका',
+  action2Reason: 'पीक सक्रिय वाढीच्या टप्प्यात आहे. सध्याचे संतुलित NPK उत्पादन वाढवेल.',
+  action3: 'पिकाच्या पानांवर कीडीची सुरुवाती लक्षणे तपसा',
+  action3Reason: 'उष्ण, ओली परिस्थिती या आठवड्यात कीडीचा धोका वाढवतात.',
+
+  // Enhanced Dashboard
+  farmBriefing: 'शेत संक्षिप्त माहिती',
+  riskSummary: 'धोका सारांश',
+  quickActions: 'द्रुत कृत्या',
 };
 
 const translations: Record<Language, Translations> = { en, hi, mr };

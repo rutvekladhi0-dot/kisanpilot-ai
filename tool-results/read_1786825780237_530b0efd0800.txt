@@ -1,0 +1,1406 @@
+     1→'use client';
+     2→
+     3→import React, { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import { getTranslations, getLanguageLabel, type Language, type Translations } from '@/lib/i18n';
+     6→
+     7→// ============================================================
+     8→// Types
+     9→// ============================================================
+    10→export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings';
+    11→
+    12→export interface FarmerProfile {
+    13→  name: string;
+    14→  village: string;
+    15→  farmSize: string;
+    16→  mainCrop: string;
+    17→}
+    18→
+    19→export interface AlertItem {
+    20→  id: number;
+    21→  text: string;
+    22→  icon: string;
+    23→  read: boolean;
+    24→}
+    25→
+    26→// ============================================================
+    27→// App Context
+    28→// ============================================================
+    29→interface AppContextType {
+    30→  lang: Language;
+    31→  t: Translations;
+    32→  setLang: (l: Language) => void;
+    33→  profile: FarmerProfile | null;
+    34→  setProfile: (p: FarmerProfile) => void;
+    35→  screen: Screen;
+    36→  navigate: (s: Screen) => void;
+    37→  alerts: AlertItem[];
+    38→  setAlerts: (a: AlertItem[]) => void;
+    39→}
+    40→
+    41→const AppContext = createContext<AppContextType>({} as AppContextType);
+    42→
+    43→export function useApp() {
+    44→  return useContext(AppContext);
+    45→}
+    46→
+    47→const defaultAlerts: AlertItem[] = [
+    48→  { id: 1, icon: '🌧', text: 'rainExpected', read: false },
+    49→  { id: 2, icon: '💧', text: 'monitorSoil', read: false },
+    50→  { id: 3, icon: '🐛', text: 'checkPestSigns', read: false },
+    51→  { id: 4, icon: '🧪', text: 'fertilizerReminder', read: false },
+    52→];
+    53→
+    54→// ============================================================
+    55→// Main App Component
+    56→// ============================================================
+    57→export default function KisanPilotApp() {
+    58→  const initialized = useRef(false);
+    59→  const [lang, setLangState] = useState<Language>(() => {
+    60→    if (typeof window !== 'undefined') {
+    61→      return (localStorage.getItem('kp_lang') as Language) || 'en';
+    62→    }
+    63→    return 'en';
+    64→  });
+    65→  const [profile, setProfileState] = useState<FarmerProfile | null>(() => {
+    66→    if (typeof window !== 'undefined') {
+    67→      try {
+    68→        const saved = localStorage.getItem('kp_profile');
+    69→        return saved ? JSON.parse(saved) : null;
+    70→      } catch { return null; }
+    71→    }
+    72→    return null;
+    73→  });
+    74→  const [screen, setScreen] = useState<Screen>(() => {
+    75→    if (typeof window !== 'undefined') {
+    76→      const savedLang = localStorage.getItem('kp_lang');
+    77→      const savedProfile = localStorage.getItem('kp_profile');
+    78→      if (savedLang && savedProfile) return 'dashboard';
+    79→      if (savedLang) return 'profile';
+    80→    }
+    81→    return 'language';
+    82→  });
+    83→  const [alerts, setAlertsState] = useState<AlertItem[]>(() => {
+    84→    if (typeof window !== 'undefined') {
+    85→      try {
+    86→        const saved = localStorage.getItem('kp_alerts');
+    87→        return saved ? JSON.parse(saved) : defaultAlerts;
+    88→      } catch { return defaultAlerts; }
+    89→    }
+    90→    return defaultAlerts;
+    91→  });
+    92→
+    93→  const [mounted, setMounted] = useState(false);
+    94→
+    95→  useEffect(() => {
+    96→    if (!initialized.current) {
+    97→      initialized.current = true;
+    98→      requestAnimationFrame(() => setMounted(true));
+    99→    }
+   100→  }, []);
+   101→
+   102→  const t = getTranslations(lang);
+   103→
+   104→  const setLang = useCallback((l: Language) => {
+   105→    setLangState(l);
+   106→    localStorage.setItem('kp_lang', l);
+   107→  }, []);
+   108→
+   109→  const setProfile = useCallback((p: FarmerProfile) => {
+   110→    setProfileState(p);
+   111→    localStorage.setItem('kp_profile', JSON.stringify(p));
+   112→  }, []);
+   113→
+   114→  const navigate = useCallback((s: Screen) => {
+   115→    setScreen(s);
+   116→    window.scrollTo(0, 0);
+   117→  }, []);
+   118→
+   119→  const setAlerts = useCallback((a: AlertItem[]) => {
+   120→    setAlertsState(a);
+   121→    localStorage.setItem('kp_alerts', JSON.stringify(a));
+   122→  }, []);
+   123→
+   124→  if (!mounted) {
+   125→    return null;
+   126→  }
+   127→
+   128→  return (
+   129→    <AppContext.Provider value={{ lang, t, setLang, profile, setProfile, screen, navigate, alerts, setAlerts }}>
+   130→      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+   131→        <AnimatePresence mode="wait">
+   132→          {screen === 'language' && <LanguageScreen key="language" />}
+   133→          {screen === 'profile' && <ProfileScreen key="profile" />}
+   134→          {screen === 'dashboard' && <DashboardScreen key="dashboard" />}
+   135→          {screen === 'chatbot' && <ChatbotScreen key="chatbot" />}
+   136→          {screen === 'myfarm' && <MyFarmScreen key="myfarm" />}
+   137→          {screen === 'cropdoctor' && <CropDoctorScreen key="cropdoctor" />}
+   138→          {screen === 'weather' && <WeatherScreen key="weather" />}
+   139→          {screen === 'insights' && <InsightsScreen key="insights" />}
+   140→          {screen === 'alerts' && <AlertsScreen key="alerts" />}
+   141→          {screen === 'settings' && <SettingsScreen key="settings" />}
+   142→        </AnimatePresence>
+   143→      </div>
+   144→    </AppContext.Provider>
+   145→  );
+   146→}
+   147→
+   148→// ============================================================
+   149→// Shared Animation Variants
+   150→// ============================================================
+   151→const pageVariants = {
+   152→  initial: { opacity: 0, y: 20 },
+   153→  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+   154→  exit: { opacity: 0, y: -20, transition: { duration: 0.2, ease: 'easeIn' } },
+   155→};
+   156→
+   157→function PageWrapper({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+   158→  return (
+   159→    <motion.div
+   160→      variants={pageVariants}
+   161→      initial="initial"
+   162→      animate="animate"
+   163→      exit="exit"
+   164→      className={`min-h-screen ${className}`}
+   165→    >
+   166→      {children}
+   167→    </motion.div>
+   168→  );
+   169→}
+   170→
+   171→// ============================================================
+   172→// Shared Back Button Component
+   173→// ============================================================
+   174→function BackButton({ target, label }: { target: Screen; label: string }) {
+   175→  const { navigate } = useApp();
+   176→  return (
+   177→    <button
+   178→      onClick={() => navigate(target)}
+   179→      className="flex items-center gap-2 text-green-700 hover:text-green-900 font-medium transition-colors px-3 py-2 rounded-lg hover:bg-green-50"
+   180→    >
+   181→      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+   182→        <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+   183→      </svg>
+   184→      {label}
+   185→    </button>
+   186→  );
+   187→}
+   188→
+   189→// ============================================================
+   190→// LANGUAGE SELECTION SCREEN
+   191→// ============================================================
+   192→function LanguageScreen() {
+   193→  const { setLang, navigate } = useApp();
+   194→  const t = getTranslations('en');
+   195→
+   196→  const languages = [
+   197→    { code: 'mr' as Language, flag: '🇮🇳', label: t.marathi },
+   198→    { code: 'hi' as Language, flag: '🇮🇳', label: t.hindi },
+   199→    { code: 'en' as Language, flag: '🌐', label: t.english },
+   200→  ];
+   201→
+   202→  const handleSelect = (code: Language) => {
+   203→    setLang(code);
+   204→    navigate('profile');
+   205→  };
+   206→
+   207→  return (
+   208→    <PageWrapper className="flex items-center justify-center px-4">
+   209→      <div className="w-full max-w-lg text-center">
+   210→        {/* Logo */}
+   211→        <motion.div
+   212→          initial={{ scale: 0.8, opacity: 0 }}
+   213→          animate={{ scale: 1, opacity: 1 }}
+   214→          transition={{ duration: 0.5 }}
+   215→          className="mb-8"
+   216→        >
+   217→          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-2xl mx-auto mb-4">
+   218→            <span className="text-4xl">🌾</span>
+   219→          </div>
+   220→          <h1 className="text-3xl md:text-4xl font-bold text-green-800 mb-2">KisanPilot AI</h1>
+   221→          <p className="text-green-600 font-medium text-lg">{t.yourPersonalAi}</p>
+   222→        </motion.div>
+   223→
+   224→        {/* Language Cards */}
+   225→        <div className="space-y-4 mb-8">
+   226→          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.chooseYourLanguage}</h2>
+   227→          <p className="text-gray-500 text-sm mb-6">{t.languageSubtitle[0]}</p>
+   228→          {languages.map((lang, i) => (
+   229→            <motion.button
+   230→              key={lang.code}
+   231→              initial={{ opacity: 0, x: -30 }}
+   232→              animate={{ opacity: 1, x: 0 }}
+   233→              transition={{ delay: i * 0.1, duration: 0.3 }}
+   234→              onClick={() => handleSelect(lang.code)}
+   235→              className="w-full flex items-center gap-4 p-5 bg-white rounded-2xl shadow-md hover:shadow-xl border-2 border-transparent hover:border-green-500 transition-all duration-200 group"
+   236→            >
+   237→              <span className="text-4xl group-hover:scale-110 transition-transform">{lang.flag}</span>
+   238→              <span className="text-lg font-semibold text-gray-800 group-hover:text-green-700 transition-colors">
+   239→                {lang.label}
+   240→              </span>
+   241→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-auto text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" viewBox="0 0 20 20" fill="currentColor">
+   242→                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+   243→              </svg>
+   244→            </motion.button>
+   245→          ))}
+   246→        </div>
+   247→      </div>
+   248→    </PageWrapper>
+   249→  );
+   250→}
+   251→
+   252→// ============================================================
+   253→// PROFILE SETUP SCREEN
+   254→// ============================================================
+   255→function ProfileScreen() {
+   256→  const { t, navigate, setProfile } = useApp();
+   257→  const [name, setName] = useState('');
+   258→  const [village, setVillage] = useState('');
+   259→  const [farmSize, setFarmSize] = useState('');
+   260→  const [mainCrop, setMainCrop] = useState('');
+   261→  const [errors, setErrors] = useState<{ name?: string; village?: string }>({});
+   262→
+   263→  const farmSizes = [
+   264→    { value: '<1', label: t.lessThanOneAcre },
+   265→    { value: '1-5', label: t.oneToFiveAcres },
+   266→    { value: '5-10', label: t.fiveToTenAcres },
+   267→    { value: '>10', label: t.moreThanTenAcres },
+   268→  ];
+   269→
+   270→  const crops = [t.cropWheat, t.cropRice, t.cropCotton, t.cropSoybean, t.cropSugarcane, t.cropTomato, t.cropOnion, t.cropOther];
+   271→
+   272→  const handleSave = () => {
+   273→    const newErrors: { name?: string; village?: string } = {};
+   274→    if (!name.trim()) newErrors.name = t.nameRequired;
+   275→    if (!village.trim()) newErrors.village = t.villageRequired;
+   276→    if (Object.keys(newErrors).length > 0) {
+   277→      setErrors(newErrors);
+   278→      return;
+   279→    }
+   280→    setProfile({
+   281→      name: name.trim(),
+   282→      village: village.trim(),
+   283→      farmSize: farmSize || t.lessThanOneAcre,
+   284→      mainCrop: mainCrop || t.cropWheat,
+   285→    });
+   286→    navigate('dashboard');
+   287→  };
+   288→
+   289→  return (
+   290→    <PageWrapper className="flex items-center justify-center px-4 py-8">
+   291→      <div className="w-full max-w-md">
+   292→        <div className="text-center mb-8">
+   293→          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-lg mx-auto mb-3">
+   294→            <span className="text-2xl">👨‍🌾</span>
+   295→          </div>
+   296→          <h1 className="text-2xl font-bold text-gray-800">{t.setupProfile}</h1>
+   297→          <p className="text-gray-500 mt-1">{t.setupProfileSubtitle}</p>
+   298→        </div>
+   299→
+   300→        <div className="bg-white rounded-3xl shadow-lg p-6 md:p-8 space-y-5">
+   301→          {/* Farmer Name */}
+   302→          <div>
+   303→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.farmerName}</label>
+   304→            <input
+   305→              type="text"
+   306→              value={name}
+   307→              onChange={(e) => { setName(e.target.value); setErrors(p => ({ ...p, name: undefined })); }}
+   308→              placeholder={t.farmerNamePlaceholder}
+   309→              className={`w-full px-4 py-3 rounded-xl border-2 ${errors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+   310→            />
+   311→            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+   312→          </div>
+   313→
+   314→          {/* Village Name */}
+   315→          <div>
+   316→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.villageName}</label>
+   317→            <input
+   318→              type="text"
+   319→              value={village}
+   320→              onChange={(e) => { setVillage(e.target.value); setErrors(p => ({ ...p, village: undefined })); }}
+   321→              placeholder={t.villageNamePlaceholder}
+   322→              className={`w-full px-4 py-3 rounded-xl border-2 ${errors.village ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+   323→            />
+   324→            {errors.village && <p className="text-red-500 text-sm mt-1">{errors.village}</p>}
+   325→          </div>
+   326→
+   327→          {/* Farm Size */}
+   328→          <div>
+   329→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.farmSize}</label>
+   330→            <div className="grid grid-cols-2 gap-2">
+   331→              {farmSizes.map((fs) => (
+   332→                <button
+   333→                  key={fs.value}
+   334→                  onClick={() => setFarmSize(fs.label)}
+   335→                  className={`px-3 py-2.5 rounded-xl text-sm font-medium border-2 transition-all ${
+   336→                    farmSize === fs.label
+   337→                      ? 'border-green-500 bg-green-50 text-green-700'
+   338→                      : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300'
+   339→                  }`}
+   340→                >
+   341→                  {fs.label}
+   342→                </button>
+   343→              ))}
+   344→            </div>
+   345→          </div>
+   346→
+   347→          {/* Main Crop */}
+   348→          <div>
+   349→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.mainCrop}</label>
+   350→            <select
+   351→              value={mainCrop}
+   352→              onChange={(e) => setMainCrop(e.target.value)}
+   353→              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800"
+   354→            >
+   355→              <option value="">{t.selectCrop}</option>
+   356→              {crops.map((c) => (
+   357→                <option key={c} value={c}>{c}</option>
+   358→              ))}
+   359→            </select>
+   360→          </div>
+   361→
+   362→          {/* Buttons */}
+   363→          <div className="flex gap-3 pt-2">
+   364→            <button
+   365→              onClick={() => navigate('language')}
+   366→              className="flex-1 py-3 px-4 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all"
+   367→            >
+   368→              {t.back}
+   369→            </button>
+   370→            <button
+   371→              onClick={handleSave}
+   372→              className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all"
+   373→            >
+   374→              {t.saveAndContinue}
+   375→            </button>
+   376→          </div>
+   377→        </div>
+   378→      </div>
+   379→    </PageWrapper>
+   380→  );
+   381→}
+   382→
+   383→// ============================================================
+   384→// DASHBOARD SCREEN
+   385→// ============================================================
+   386→function DashboardScreen() {
+   387→  const { t, profile, navigate, lang } = useApp();
+   388→
+   389→  if (!profile) return null;
+   390→
+   391→  const features = [
+   392→    { id: 'chatbot' as Screen, icon: '🤖', title: t.aiChatbot, desc: t.aiChatbotDesc, color: 'from-violet-500 to-purple-600' },
+   393→    { id: 'myfarm' as Screen, icon: '🌾', title: t.myFarm, desc: t.myFarmDesc, color: 'from-amber-500 to-orange-600' },
+   394→    { id: 'cropdoctor' as Screen, icon: '📷', title: t.cropDoctor, desc: t.cropDoctorDesc, color: 'from-rose-500 to-pink-600' },
+   395→    { id: 'weather' as Screen, icon: '🌦', title: t.weather, desc: t.weatherDesc, color: 'from-sky-500 to-blue-600' },
+   396→    { id: 'insights' as Screen, icon: '📊', title: t.farmInsights, desc: t.farmInsightsDesc, color: 'from-teal-500 to-cyan-600' },
+   397→    { id: 'alerts' as Screen, icon: '🔔', title: t.smartAlerts, desc: t.smartAlertsDesc, color: 'from-red-500 to-rose-600' },
+   398→  ];
+   399→
+   400→  return (
+   401→    <PageWrapper>
+   402→      {/* Header */}
+   403→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   404→        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+   405→          <div className="flex items-center gap-3">
+   406→            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-md">
+   407→              <span className="text-lg">🌾</span>
+   408→            </div>
+   409→            <div>
+   410→              <h1 className="text-lg font-bold text-green-800 leading-tight">KisanPilot AI</h1>
+   411→              <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-medium">
+   412→                {getLanguageLabel(lang)}
+   413→              </span>
+   414→            </div>
+   415→          </div>
+   416→          <div className="flex items-center gap-2">
+   417→            <button
+   418→              onClick={() => navigate('settings')}
+   419→              className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+   420→              aria-label={t.settings}
+   421→            >
+   422→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+   423→            </button>
+   424→          </div>
+   425→        </div>
+   426→      </header>
+   427→
+   428→      <main className="max-w-5xl mx-auto px-4 pb-8">
+   429→        {/* Welcome */}
+   430→        <div className="mt-6 mb-6">
+   431→          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+   432→            {t.welcomeBack}, {profile.name} 👋
+   433→          </h2>
+   434→          <p className="text-gray-500 mt-1">{t.smarterDecisions}</p>
+   435→        </div>
+   436→
+   437→        {/* Farm Summary Cards */}
+   438→        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+   439→          {[
+   440→            { icon: '📍', label: t.village, value: profile.village },
+   441→            { icon: '🌾', label: t.mainCrop, value: profile.mainCrop },
+   442→            { icon: '📏', label: t.farmSizeLabel, value: profile.farmSize },
+   443→            { icon: '🌱', label: t.farmStatus, value: t.good },
+   444→          ].map((card) => (
+   445→            <div key={card.label} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
+   446→              <div className="text-2xl mb-2">{card.icon}</div>
+   447→              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">{card.label}</p>
+   448→              <p className="text-sm font-bold text-gray-800 mt-1 truncate">{card.value}</p>
+   449→            </div>
+   450→          ))}
+   451→        </div>
+   452→
+   453→        {/* Hero Section */}
+   454→        <div className="relative rounded-3xl overflow-hidden mb-8 shadow-lg">
+   455→          <img src="/images/hero-farm.png" alt="Farm landscape" className="w-full h-48 md:h-64 object-cover" />
+   456→          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+   457→          <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+   458→            <h3 className="text-white text-xl md:text-2xl font-bold">{t.yourPersonalAi}</h3>
+   459→            <p className="text-white/80 text-sm mt-1">{t.smarterDecisions}</p>
+   460→          </div>
+   461→        </div>
+   462→
+   463→        {/* Feature Cards */}
+   464→        <div className="mb-4">
+   465→          <h3 className="text-lg font-bold text-gray-800 mb-4">{t.exploreFeatures}</h3>
+   466→          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+   467→            {features.map((feature, i) => (
+   468→              <motion.button
+   469→                key={feature.id}
+   470→                initial={{ opacity: 0, y: 20 }}
+   471→                animate={{ opacity: 1, y: 0 }}
+   472→                transition={{ delay: i * 0.05, duration: 0.3 }}
+   473→                onClick={() => navigate(feature.id)}
+   474→                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group"
+   475→              >
+   476→                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-md mb-3 group-hover:scale-110 transition-transform`}>
+   477→                  <span className="text-2xl">{feature.icon}</span>
+   478→                </div>
+   479→                <h4 className="font-bold text-gray-800 text-sm md:text-base">{feature.title}</h4>
+   480→                <p className="text-gray-500 text-xs mt-1">{feature.desc}</p>
+   481→              </motion.button>
+   482→            ))}
+   483→          </div>
+   484→        </div>
+   485→
+   486→        {/* AI Agriculture Banner */}
+   487→        <div className="relative rounded-3xl overflow-hidden mt-8 shadow-lg">
+   488→          <img src="/images/ai-agriculture.png" alt="AI Agriculture" className="w-full h-40 md:h-56 object-cover" />
+   489→          <div className="absolute inset-0 bg-gradient-to-r from-green-900/70 to-transparent" />
+   490→          <div className="absolute inset-0 flex items-center p-5 md:p-8">
+   491→            <div className="max-w-sm">
+   492→              <h3 className="text-white text-lg md:text-xl font-bold">AI-Powered Farming</h3>
+   493→              <p className="text-white/80 text-sm mt-1">Leverage artificial intelligence for smarter agricultural decisions.</p>
+   494→              <button
+   495→                onClick={() => navigate('insights')}
+   496→                className="mt-3 px-4 py-2 bg-white/90 text-green-800 rounded-xl font-semibold text-sm hover:bg-white transition-colors"
+   497→              >
+   498→                {t.farmInsights} →
+   499→              </button>
+   500→            </div>
+   501→          </div>
+   502→        </div>
+   503→      </main>
+   504→
+   505→      {/* Sticky Footer */}
+   506→      <footer className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t border-green-100 mt-4">
+   507→        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+   508→          <span className="text-xs text-gray-400">KisanPilot AI v1.0</span>
+   509→          <span className="text-xs text-green-600 font-medium">🌱 {t.tagline}</span>
+   510→        </div>
+   511→      </footer>
+   512→    </PageWrapper>
+   513→  );
+   514→}
+   515→
+   516→// ============================================================
+   517→// CHATBOT SCREEN
+   518→// ============================================================
+   519→interface ChatMessage {
+   520→  id: number;
+   521→  role: 'user' | 'bot';
+   522→  text: string;
+   523→}
+   524→
+   525→function ChatbotScreen() {
+   526→  const { t, lang } = useApp();
+   527→  const [messages, setMessages] = useState<ChatMessage[]>([]);
+   528→  const [input, setInput] = useState('');
+   529→  const [isTyping, setIsTyping] = useState(false);
+   530→  const chatEndRef = React.useRef<HTMLDivElement>(null);
+   531→
+   532→  useEffect(() => {
+   533→    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+   534→  }, [messages, isTyping]);
+   535→
+   536→  const generateResponse = (userMsg: string): string => {
+   537→    const lower = userMsg.toLowerCase();
+   538→    if (lower.includes('water') || lower.includes('irrigat') || lower.includes('watering') || lower.includes('पानी') || lower.includes('सिंचाई')) {
+   539→      return t.waterResponse;
+   540→    }
+   541→    if (lower.includes('yellow') || lower.includes('पील') || lower.includes('पिवळ')) {
+   542→      return t.yellowLeavesResponse;
+   543→    }
+   544→    if (lower.includes('pest') || lower.includes('insect') || lower.includes('कीट') || lower.includes('bug')) {
+   545→      return t.pestResponse;
+   546→    }
+   547→    if (lower.includes('fertilizer') || lower.includes('nutrient') || lower.includes('उर्वरक') || lower.includes('पोषक') || lower.includes('खत')) {
+   548→      return t.fertilizerResponse;
+   549→    }
+   550→    if (lower.includes('weather') || lower.includes('मौसम') || lower.includes('हवामान')) {
+   551→      return t.weatherResponse;
+   552→    }
+   553→    return t.defaultResponse;
+   554→  };
+   555→
+   556→  const sendMessage = (text?: string) => {
+   557→    const msgText = text || input.trim();
+   558→    if (!msgText) return;
+   559→
+   560→    const userMsg: ChatMessage = { id: Date.now(), role: 'user', text: msgText };
+   561→    setMessages(prev => [...prev, userMsg]);
+   562→    setInput('');
+   563→    setIsTyping(true);
+   564→
+   565→    setTimeout(() => {
+   566→      const botReply: ChatMessage = { id: Date.now() + 1, role: 'bot', text: generateResponse(msgText) };
+   567→      setIsTyping(false);
+   568→      setMessages(prev => [...prev, botReply]);
+   569→    }, 800 + Math.random() * 700);
+   570→  };
+   571→
+   572→  const handleKeyDown = (e: React.KeyboardEvent) => {
+   573→    if (e.key === 'Enter' && !e.shiftKey) {
+   574→      e.preventDefault();
+   575→      sendMessage();
+   576→    }
+   577→  };
+   578→
+   579→  return (
+   580→    <PageWrapper className="flex flex-col">
+   581→      {/* Header */}
+   582→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   583→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+   584→          <BackButton target="dashboard" label={t.backToDashboard} />
+   585→          <div className="flex-1 flex items-center gap-2 justify-center">
+   586→            <span className="text-xl">🤖</span>
+   587→            <h1 className="text-lg font-bold text-green-800">{t.aiAssistant}</h1>
+   588→          </div>
+   589→        </div>
+   590→      </header>
+   591→
+   592→      {/* Messages */}
+   593→      <div className="flex-1 max-w-2xl mx-auto w-full px-4 py-4 overflow-y-auto">
+   594→        {messages.length === 0 && (
+   595→          <div className="text-center py-12">
+   596→            <div className="text-5xl mb-4">🤖</div>
+   597→            <h3 className="text-xl font-bold text-gray-800 mb-2">{t.aiAssistant}</h3>
+   598→            <p className="text-gray-500 text-sm mb-8 max-w-sm mx-auto">{t.defaultResponse}</p>
+   599→
+   600→            {/* Quick Suggestions */}
+   601→            <div className="space-y-2">
+   602→              <p className="text-sm font-semibold text-gray-600 mb-3">{t.quickSuggestions}</p>
+   603→              {[t.suggestion1, t.suggestion2, t.suggestion3, t.suggestion4].map((s, i) => (
+   604→                <motion.button
+   605→                  key={i}
+   606→                  initial={{ opacity: 0, y: 10 }}
+   607→                  animate={{ opacity: 1, y: 0 }}
+   608→                  transition={{ delay: i * 0.1 }}
+   609→                  onClick={() => sendMessage(s)}
+   610→                  className="w-full text-left px-4 py-3 bg-white rounded-xl border border-green-200 text-sm text-green-800 hover:bg-green-50 hover:border-green-300 transition-all shadow-sm"
+   611→                >
+   612→                  {s}
+   613→                </motion.button>
+   614→              ))}
+   615→            </div>
+   616→          </div>
+   617→        )}
+   618→
+   619→        {/* Message List */}
+   620→        {messages.map((msg) => (
+   621→          <motion.div
+   622→            key={msg.id}
+   623→            initial={{ opacity: 0, y: 10 }}
+   624→            animate={{ opacity: 1, y: 0 }}
+   625→            className={`flex mb-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+   626→          >
+   627→            <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+   628→              msg.role === 'user'
+   629→                ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-br-md'
+   630→                : 'bg-white border border-gray-200 text-gray-800 shadow-sm rounded-bl-md'
+   631→            }`}>
+   632→              <div className="whitespace-pre-wrap break-words">{msg.text}</div>
+   633→            </div>
+   634→          </motion.div>
+   635→        ))}
+   636→
+   637→        {isTyping && (
+   638→          <div className="flex mb-4 justify-start">
+   639→            <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+   640→              <div className="flex gap-1.5">
+   641→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+   642→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+   643→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+   644→              </div>
+   645→            </div>
+   646→          </div>
+   647→        )}
+   648→        <div ref={chatEndRef} />
+   649→      </div>
+   650→
+   651→      {/* Input */}
+   652→      <div className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t border-green-100">
+   653→        <div className="max-w-2xl mx-auto px-4 py-3">
+   654→          <div className="flex gap-2">
+   655→            <input
+   656→              type="text"
+   657→              value={input}
+   658→              onChange={(e) => setInput(e.target.value)}
+   659→              onKeyDown={handleKeyDown}
+   660→              placeholder={t.typeMessage}
+   661→              className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800 text-sm"
+   662→            />
+   663→            <button
+   664→              onClick={() => sendMessage()}
+   665→              disabled={!input.trim() || isTyping}
+   666→              className="px-5 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+   667→            >
+   668→              {t.send}
+   669→            </button>
+   670→          </div>
+   671→        </div>
+   672→      </div>
+   673→    </PageWrapper>
+   674→  );
+   675→}
+   676→
+   677→// ============================================================
+   678→// CROP DOCTOR SCREEN
+   679→// ============================================================
+   680→function CropDoctorScreen() {
+   681→  const { t } = useApp();
+   682→  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+   683→  const [analyzing, setAnalyzing] = useState(false);
+   684→  const [result, setResult] = useState<boolean>(false);
+   685→  const fileInputRef = React.useRef<HTMLInputElement>(null);
+   686→
+   687→  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+   688→    const file = e.target.files?.[0];
+   689→    if (file) {
+   690→      const reader = new FileReader();
+   691→      reader.onload = (ev) => {
+   692→        setSelectedImage(ev.target?.result as string);
+   693→        setResult(false);
+   694→      };
+   695→      reader.readAsDataURL(file);
+   696→    }
+   697→  };
+   698→
+   699→  const handleAnalyze = () => {
+   700→    setAnalyzing(true);
+   701→    setTimeout(() => {
+   702→      setAnalyzing(false);
+   703→      setResult(true);
+   704→    }, 2000);
+   705→  };
+   706→
+   707→  const handleAnalyzeAnother = () => {
+   708→    setSelectedImage(null);
+   709→    setResult(false);
+   710→    if (fileInputRef.current) fileInputRef.current.value = '';
+   711→  };
+   712→
+   713→  return (
+   714→    <PageWrapper className="flex flex-col">
+   715→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   716→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+   717→          <BackButton target="dashboard" label={t.backToDashboard} />
+   718→          <div className="flex-1 flex items-center gap-2 justify-center">
+   719→            <span className="text-xl">📷</span>
+   720→            <h1 className="text-lg font-bold text-green-800">{t.cropDoctorTitle}</h1>
+   721→          </div>
+   722→        </div>
+   723→      </header>
+   724→
+   725→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+   726→        <p className="text-gray-500 text-center mb-6">{t.cropDoctorSubtitle}</p>
+   727→
+   728→        {/* Default State */}
+   729→        {!selectedImage && !result && (
+   730→          <div className="space-y-6">
+   731→            <div className="rounded-3xl overflow-hidden shadow-md">
+   732→              <img src="/images/crop-doctor.png" alt="Crop health" className="w-full h-64 object-cover" />
+   733→            </div>
+   734→            <div
+   735→              onClick={() => fileInputRef.current?.click()}
+   736→              className="border-2 border-dashed border-green-300 rounded-3xl p-10 text-center hover:border-green-500 hover:bg-green-50/50 transition-all cursor-pointer"
+   737→            >
+   738→              <div className="text-5xl mb-3">📷</div>
+   739→              <h3 className="text-lg font-bold text-gray-800">{t.uploadPhoto}</h3>
+   740→              <p className="text-gray-500 text-sm mt-1">{t.uploadPhotoDesc}</p>
+   741→            </div>
+   742→            <input
+   743→              ref={fileInputRef}
+   744→              type="file"
+   745→              accept="image/*"
+   746→              onChange={handleFileSelect}
+   747→              className="hidden"
+   748→            />
+   749→          </div>
+   750→        )}
+   751→
+   752→        {/* Image Selected */}
+   753→        {selectedImage && !result && (
+   754→          <div className="space-y-6">
+   755→            <div className="rounded-3xl overflow-hidden shadow-md">
+   756→              <img src={selectedImage} alt="Selected crop" className="w-full h-64 object-cover" />
+   757→            </div>
+   758→            <button
+   759→              onClick={handleAnalyze}
+   760→              disabled={analyzing}
+   761→              className="w-full py-4 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold text-lg shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-70 transition-all"
+   762→            >
+   763→              {analyzing ? (
+   764→                <span className="flex items-center justify-center gap-3">
+   765→                  <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+   766→                  {t.analyzing}
+   767→                </span>
+   768→              ) : (
+   769→                t.analyzeCrop
+   770→              )}
+   771→            </button>
+   772→            <button
+   773→              onClick={() => { setSelectedImage(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
+   774→              className="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all"
+   775→            >
+   776→              {t.back}
+   777→            </button>
+   778→          </div>
+   779→        )}
+   780→
+   781→        {/* Analysis Result */}
+   782→        {result && (
+   783→          <div className="space-y-5">
+   784→            <div className="rounded-3xl overflow-hidden shadow-md">
+   785→              <img src={selectedImage!} alt="Analyzed crop" className="w-full h-48 object-cover" />
+   786→            </div>
+   787→
+   788→            {/* Health Score */}
+   789→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+   790→              <div className="flex items-center justify-between mb-3">
+   791→                <span className="text-sm font-semibold text-gray-600">{t.cropHealthScore}</span>
+   792→                <span className="text-2xl font-bold text-green-600">82%</span>
+   793→              </div>
+   794→              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+   795→                <motion.div
+   796→                  initial={{ width: 0 }}
+   797→                  animate={{ width: '82%' }}
+   798→                  transition={{ duration: 1, ease: 'easeOut' }}
+   799→                  className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+   800→                />
+   801→              </div>
+   802→            </div>
+   803→
+   804→            {/* Observation */}
+   805→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+   806→              <h4 className="text-sm font-semibold text-gray-600 mb-2">{t.possibleObservation}</h4>
+   807→              <p className="text-gray-800">{t.mildNutrientStress}</p>
+   808→            </div>
+   809→
+   810→            {/* Recommendations */}
+   811→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+   812→              <h4 className="text-sm font-semibold text-gray-600 mb-3">{t.recommendations}</h4>
+   813→              <ul className="space-y-2">
+   814→                {[
+   815→                  { icon: '🧪', text: t.rec1 },
+   816→                  { icon: '👁', text: t.rec2 },
+   817→                  { icon: '💧', text: t.rec3 },
+   818→                  { icon: '👨‍🔬', text: t.rec4 },
+   819→                ].map((r, i) => (
+   820→                  <motion.li
+   821→                    key={i}
+   822→                    initial={{ opacity: 0, x: -10 }}
+   823→                    animate={{ opacity: 1, x: 0 }}
+   824→                    transition={{ delay: i * 0.15 }}
+   825→                    className="flex items-start gap-3 text-sm text-gray-700"
+   826→                  >
+   827→                    <span className="text-lg">{r.icon}</span>
+   828→                    <span>{r.text}</span>
+   829→                  </motion.li>
+   830→                ))}
+   831→              </ul>
+   832→            </div>
+   833→
+   834→            <button
+   835→              onClick={handleAnalyzeAnother}
+   836→              className="w-full py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+   837→            >
+   838→              {t.analyzeAnother}
+   839→            </button>
+   840→            <BackButton target="dashboard" label={t.backToDashboard} />
+   841→          </div>
+   842→        )}
+   843→      </main>
+   844→    </PageWrapper>
+   845→  );
+   846→}
+   847→
+   848→// ============================================================
+   849→// WEATHER SCREEN
+   850→// ============================================================
+   851→function WeatherScreen() {
+   852→  const { t } = useApp();
+   853→
+   854→  const forecast = [
+   855→    { day: t.monday, icon: '☀️', temp: '30°C' },
+   856→    { day: t.tuesday, icon: '🌤', temp: '29°C' },
+   857→    { day: t.wednesday, icon: '🌧', temp: '26°C' },
+   858→    { day: t.thursday, icon: '⛅', temp: '28°C' },
+   859→    { day: t.friday, icon: '☀️', temp: '31°C' },
+   860→  ];
+   861→
+   862→  return (
+   863→    <PageWrapper className="flex flex-col">
+   864→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   865→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+   866→          <BackButton target="dashboard" label={t.backToDashboard} />
+   867→          <div className="flex-1 flex items-center gap-2 justify-center">
+   868→            <span className="text-xl">🌦</span>
+   869→            <h1 className="text-lg font-bold text-green-800">{t.weatherTitle}</h1>
+   870→          </div>
+   871→        </div>
+   872→      </header>
+   873→
+   874→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+   875→        {/* Weather Hero Image */}
+   876→        <div className="relative rounded-3xl overflow-hidden mb-6 shadow-lg">
+   877→          <img src="/images/weather-farm.png" alt="Farm weather" className="w-full h-48 object-cover" />
+   878→          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+   879→          <div className="absolute bottom-4 left-4">
+   880→            <span className="text-4xl font-bold text-white">28°C</span>
+   881→            <span className="text-white/80 text-sm ml-2">{t.partlyCloudy}</span>
+   882→          </div>
+   883→        </div>
+   884→
+   885→        {/* Current Conditions */}
+   886→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+   887→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.currentWeather}</h3>
+   888→          <div className="grid grid-cols-2 gap-4">
+   889→            {[
+   890→              { label: t.temperature, value: '28°C', icon: '🌡' },
+   891→              { label: t.condition, value: t.partlyCloudy, icon: '⛅' },
+   892→              { label: t.humidity, value: '65%', icon: '💧' },
+   893→              { label: t.wind, value: '12 km/h', icon: '💨' },
+   894→              { label: t.rainChance, value: '30%', icon: '🌧' },
+   895→            ].map((item) => (
+   896→              <div key={item.label} className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
+   897→                <span className="text-2xl">{item.icon}</span>
+   898→                <div>
+   899→                  <p className="text-xs text-gray-500">{item.label}</p>
+   900→                  <p className="text-sm font-bold text-gray-800">{item.value}</p>
+   901→                </div>
+   902→              </div>
+   903→            ))}
+   904→          </div>
+   905→        </div>
+   906→
+   907→        {/* 5-Day Forecast */}
+   908→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+   909→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.fiveDayForecast}</h3>
+   910→          <div className="space-y-3">
+   911→            {forecast.map((day, i) => (
+   912→              <motion.div
+   913→                key={day.day}
+   914→                initial={{ opacity: 0, x: -20 }}
+   915→                animate={{ opacity: 1, x: 0 }}
+   916→                transition={{ delay: i * 0.08 }}
+   917→                className="flex items-center justify-between py-2 px-3 rounded-xl hover:bg-gray-50 transition-colors"
+   918→              >
+   919→                <span className="text-sm font-medium text-gray-700 w-24">{day.day}</span>
+   920→                <span className="text-2xl">{day.icon}</span>
+   921→                <span className="text-sm font-bold text-gray-800">{day.temp}</span>
+   922→              </motion.div>
+   923→            ))}
+   924→          </div>
+   925→        </div>
+   926→
+   927→        {/* Farming Advice */}
+   928→        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 shadow-md text-white">
+   929→          <div className="flex items-start gap-3">
+   930→            <span className="text-2xl">💡</span>
+   931→            <div>
+   932→              <h3 className="font-bold mb-1">{t.farmingAdvice}</h3>
+   933→              <p className="text-green-100 text-sm leading-relaxed">{t.rainAdvice}</p>
+   934→            </div>
+   935→          </div>
+   936→        </div>
+   937→      </main>
+   938→    </PageWrapper>
+   939→  );
+   940→}
+   941→
+   942→// ============================================================
+   943→// MY FARM SCREEN
+   944→// ============================================================
+   945→function MyFarmScreen() {
+   946→  const { t, profile, setProfile } = useApp();
+   947→  const [editing, setEditing] = useState(false);
+   948→  const [name, setName] = useState(profile?.name || '');
+   949→  const [village, setVillage] = useState(profile?.village || '');
+   950→  const [farmSize, setFarmSize] = useState(profile?.farmSize || '');
+   951→  const [mainCrop, setMainCrop] = useState(profile?.mainCrop || '');
+   952→
+   953→  const handleSave = () => {
+   954→    setProfile({ name, village, farmSize, mainCrop });
+   955→    setEditing(false);
+   956→  };
+   957→
+   958→  const handleCancel = () => {
+   959→    if (profile) {
+   960→      setName(profile.name);
+   961→      setVillage(profile.village);
+   962→      setFarmSize(profile.farmSize);
+   963→      setMainCrop(profile.mainCrop);
+   964→    }
+   965→    setEditing(false);
+   966→  };
+   967→
+   968→  if (!profile) return null;
+   969→
+   970→  return (
+   971→    <PageWrapper className="flex flex-col">
+   972→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   973→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+   974→          <BackButton target="dashboard" label={t.backToDashboard} />
+   975→          <div className="flex-1 flex items-center gap-2 justify-center">
+   976→            <span className="text-xl">🌾</span>
+   977→            <h1 className="text-lg font-bold text-green-800">{t.myFarmTitle}</h1>
+   978→          </div>
+   979→        </div>
+   980→      </header>
+   981→
+   982→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+   983→        {/* Farm Details */}
+   984→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+   985→          <div className="flex items-center justify-between mb-4">
+   986→            <h3 className="text-sm font-semibold text-gray-600">{t.farmDetails}</h3>
+   987→            {!editing && (
+   988→              <button
+   989→                onClick={() => setEditing(true)}
+   990→                className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-sm font-semibold hover:bg-green-200 transition-colors"
+   991→              >
+   992→                {t.editProfile}
+   993→              </button>
+   994→            )}
+   995→          </div>
+   996→
+   997→          {editing ? (
+   998→            <div className="space-y-4">
+   999→              <div>
+  1000→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.farmerName}</label>
+  1001→                <input
+  1002→                  type="text"
+  1003→                  value={name}
+  1004→                  onChange={(e) => setName(e.target.value)}
+  1005→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1006→                />
+  1007→              </div>
+  1008→              <div>
+  1009→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.villageName}</label>
+  1010→                <input
+  1011→                  type="text"
+  1012→                  value={village}
+  1013→                  onChange={(e) => setVillage(e.target.value)}
+  1014→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1015→                />
+  1016→              </div>
+  1017→              <div>
+  1018→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.farmSize}</label>
+  1019→                <input
+  1020→                  type="text"
+  1021→                  value={farmSize}
+  1022→                  onChange={(e) => setFarmSize(e.target.value)}
+  1023→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1024→                />
+  1025→              </div>
+  1026→              <div>
+  1027→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.mainCrop}</label>
+  1028→                <input
+  1029→                  type="text"
+  1030→                  value={mainCrop}
+  1031→                  onChange={(e) => setMainCrop(e.target.value)}
+  1032→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1033→                />
+  1034→              </div>
+  1035→              <div className="flex gap-3">
+  1036→                <button
+  1037→                  onClick={handleCancel}
+  1038→                  className="flex-1 py-2.5 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all"
+  1039→                >
+  1040→                  {t.cancel}
+  1041→                </button>
+  1042→                <button
+  1043→                  onClick={handleSave}
+  1044→                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all"
+  1045→                >
+  1046→                  {t.saveChanges}
+  1047→                </button>
+  1048→              </div>
+  1049→            </div>
+  1050→          ) : (
+  1051→            <div className="space-y-3">
+  1052→              {[
+  1053→                { icon: '👨‍🌾', label: t.farmerName, value: profile.name },
+  1054→                { icon: '📍', label: t.villageName, value: profile.village },
+  1055→                { icon: '📏', label: t.farmSizeLabel, value: profile.farmSize },
+  1056→                { icon: '🌾', label: t.mainCrop, value: profile.mainCrop },
+  1057→              ].map((item) => (
+  1058→                <div key={item.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+  1059→                  <div className="flex items-center gap-3">
+  1060→                    <span className="text-lg">{item.icon}</span>
+  1061→                    <span className="text-sm text-gray-500">{item.label}</span>
+  1062→                  </div>
+  1063→                  <span className="text-sm font-bold text-gray-800">{item.value}</span>
+  1064→                </div>
+  1065→              ))}
+  1066→            </div>
+  1067→          )}
+  1068→        </div>
+  1069→
+  1070→        {/* Farm Status */}
+  1071→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+  1072→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.farmStatusSection}</h3>
+  1073→          <div className="space-y-4">
+  1074→            {[
+  1075→              { icon: '🌱', label: t.cropHealth, value: t.good, color: 'green' },
+  1076→              { icon: '💧', label: t.soilMoisture, value: t.moderate, color: 'yellow' },
+  1077→              { icon: '🚰', label: t.irrigationStatus, value: t.onTrack, color: 'blue' },
+  1078→            ].map((status) => (
+  1079→              <div key={status.label} className="flex items-center justify-between">
+  1080→                <div className="flex items-center gap-3">
+  1081→                  <span className="text-xl">{status.icon}</span>
+  1082→                  <span className="text-sm text-gray-700">{status.label}</span>
+  1083→                </div>
+  1084→                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+  1085→                  status.color === 'green' ? 'bg-green-100 text-green-700' :
+  1086→                  status.color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
+  1087→                  'bg-blue-100 text-blue-700'
+  1088→                }`}>
+  1089→                  {status.value}
+  1090→                </span>
+  1091→              </div>
+  1092→            ))}
+  1093→          </div>
+  1094→        </div>
+  1095→      </main>
+  1096→    </PageWrapper>
+  1097→  );
+  1098→}
+  1099→
+  1100→// ============================================================
+  1101→// FARM INSIGHTS SCREEN
+  1102→// ============================================================
+  1103→function InsightsScreen() {
+  1104→  const { t } = useApp();
+  1105→  const [insightIndex, setInsightIndex] = useState(0);
+  1106→  const [animatedValues, setAnimatedValues] = useState({ health: 0, moisture: 0, irrigation: 0 });
+  1107→
+  1108→  useEffect(() => {
+  1109→    const timer = setTimeout(() => {
+  1110→      setAnimatedValues({ health: 82, moisture: 68, irrigation: 75 });
+  1111→    }, 300);
+  1112→    return () => clearTimeout(timer);
+  1113→  }, []);
+  1114→
+  1115→  const insights = [t.insight1, t.insight2, t.insight3, t.insight4, t.insight5, t.insight6];
+  1116→
+  1117→  const handleGenerate = () => {
+  1118→    setAnimatedValues({ health: 0, moisture: 0, irrigation: 0 });
+  1119→    setInsightIndex(prev => (prev + 1) % insights.length);
+  1120→    setTimeout(() => {
+  1121→      setAnimatedValues({ health: 82, moisture: 68, irrigation: 75 });
+  1122→    }, 300);
+  1123→  };
+  1124→
+  1125→  const bars = [
+  1126→    { label: t.cropHealthScore2, value: animatedValues.health, color: 'from-green-500 to-emerald-500', bgColor: 'bg-green-100' },
+  1127→    { label: t.soilMoisture2, value: animatedValues.moisture, color: 'from-sky-500 to-blue-500', bgColor: 'bg-sky-100' },
+  1128→    { label: t.irrigationEfficiency, value: animatedValues.irrigation, color: 'from-amber-500 to-orange-500', bgColor: 'bg-amber-100' },
+  1129→  ];
+  1130→
+  1131→  return (
+  1132→    <PageWrapper className="flex flex-col">
+  1133→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1134→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1135→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1136→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1137→            <span className="text-xl">📊</span>
+  1138→            <h1 className="text-lg font-bold text-green-800">{t.insightsTitle}</h1>
+  1139→          </div>
+  1140→        </div>
+  1141→      </header>
+  1142→
+  1143→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1144→        {/* Progress Bars */}
+  1145→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1146→          <h3 className="text-sm font-semibold text-gray-600 mb-5">Farm Analytics</h3>
+  1147→          <div className="space-y-5">
+  1148→            {bars.map((bar) => (
+  1149→              <div key={bar.label}>
+  1150→                <div className="flex items-center justify-between mb-2">
+  1151→                  <span className="text-sm text-gray-700 font-medium">{bar.label}</span>
+  1152→                  <span className="text-sm font-bold text-gray-800">{bar.value}%</span>
+  1153→                </div>
+  1154→                <div className={`w-full h-3 ${bar.bgColor} rounded-full overflow-hidden`}>
+  1155→                  <motion.div
+  1156→                    className={`h-full bg-gradient-to-r ${bar.color} rounded-full`}
+  1157→                    initial={{ width: 0 }}
+  1158→                    animate={{ width: `${bar.value}%` }}
+  1159→                    transition={{ duration: 1, ease: 'easeOut' }}
+  1160→                  />
+  1161→                </div>
+  1162→              </div>
+  1163→            ))}
+  1164→          </div>
+  1165→        </div>
+  1166→
+  1167→        {/* AI Insight */}
+  1168→        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 mb-6 shadow-md text-white">
+  1169→          <div className="flex items-start gap-3">
+  1170→            <span className="text-2xl">🧠</span>
+  1171→            <div>
+  1172→              <h3 className="font-bold mb-1">{t.aiInsights}</h3>
+  1173→              <motion.p
+  1174→                key={insightIndex}
+  1175→                initial={{ opacity: 0, y: 10 }}
+  1176→                animate={{ opacity: 1, y: 0 }}
+  1177→                className="text-green-100 text-sm leading-relaxed"
+  1178→              >
+  1179→                {insights[insightIndex]}
+  1180→              </motion.p>
+  1181→            </div>
+  1182→          </div>
+  1183→        </div>
+  1184→
+  1185→        <button
+  1186→          onClick={handleGenerate}
+  1187→          className="w-full py-3.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all"
+  1188→        >
+  1189→          ✨ {t.generateInsight}
+  1190→        </button>
+  1191→      </main>
+  1192→    </PageWrapper>
+  1193→  );
+  1194→}
+  1195→
+  1196→// ============================================================
+  1197→// SMART ALERTS SCREEN
+  1198→// ============================================================
+  1199→function AlertsScreen() {
+  1200→  const { t, alerts, setAlerts } = useApp();
+  1201→
+  1202→  const markAsRead = (id: number) => {
+  1203→    setAlerts(alerts.map(a => a.id === id ? { ...a, read: true } : a));
+  1204→  };
+  1205→
+  1206→  const markAllAsRead = () => {
+  1207→    setAlerts(alerts.map(a => ({ ...a, read: true })));
+  1208→  };
+  1209→
+  1210→  const unreadCount = alerts.filter(a => !a.read).length;
+  1211→
+  1212→  return (
+  1213→    <PageWrapper className="flex flex-col">
+  1214→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1215→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1216→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1217→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1218→            <span className="text-xl">🔔</span>
+  1219→            <h1 className="text-lg font-bold text-green-800">{t.alertsTitle}</h1>
+  1220→            {unreadCount > 0 && (
+  1221→              <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+  1222→                {unreadCount}
+  1223→              </span>
+  1224→            )}
+  1225→          </div>
+  1226→        </div>
+  1227→      </header>
+  1228→
+  1229→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1230→        {unreadCount > 0 && (
+  1231→          <button
+  1232→            onClick={markAllAsRead}
+  1233→            className="w-full py-3 rounded-xl bg-green-100 text-green-700 font-semibold text-sm hover:bg-green-200 transition-colors mb-5"
+  1234→          >
+  1235→            ✅ {t.markAllAsRead}
+  1236→          </button>
+  1237→        )}
+  1238→
+  1239→        {unreadCount === 0 && (
+  1240→          <div className="text-center py-10 mb-5">
+  1241→            <div className="text-4xl mb-2">✅</div>
+  1242→            <p className="text-gray-500">{t.noUnreadAlerts}</p>
+  1243→          </div>
+  1244→        )}
+  1245→
+  1246→        <div className="space-y-3">
+  1247→          {alerts.map((alert) => (
+  1248→            <motion.div
+  1249→              key={alert.id}
+  1250→              initial={{ opacity: 0, y: 10 }}
+  1251→              animate={{ opacity: 1, y: 0 }}
+  1252→              className={`flex items-start gap-4 p-4 rounded-2xl border transition-all ${
+  1253→                alert.read
+  1254→                  ? 'bg-gray-50 border-gray-100 opacity-60'
+  1255→                  : 'bg-white border-green-200 shadow-sm'
+  1256→              }`}
+  1257→            >
+  1258→              <div className="text-2xl">{alert.icon}</div>
+  1259→              <div className="flex-1">
+  1260→                <p className={`text-sm ${alert.read ? 'text-gray-500' : 'text-gray-800 font-medium'}`}>
+  1261→                  {t[alert.text as keyof Translations] || alert.text}
+  1262→                </p>
+  1263→              </div>
+  1264→              {!alert.read && (
+  1265→                <button
+  1266→                  onClick={() => markAsRead(alert.id)}
+  1267→                  className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 transition-colors whitespace-nowrap"
+  1268→                >
+  1269→                  {t.markAsRead}
+  1270→                </button>
+  1271→              )}
+  1272→              {alert.read && (
+  1273→                <span className="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-500 text-xs font-medium">
+  1274→                  ✓
+  1275→                </span>
+  1276→              )}
+  1277→            </motion.div>
+  1278→          ))}
+  1279→        </div>
+  1280→      </main>
+  1281→    </PageWrapper>
+  1282→  );
+  1283→}
+  1284→
+  1285→// ============================================================
+  1286→// SETTINGS SCREEN
+  1287→// ============================================================
+  1288→function SettingsScreen() {
+  1289→  const { t, navigate, setLang, lang, setProfile, setAlerts, profile } = useApp();
+  1290→  const [showConfirm, setShowConfirm] = useState(false);
+  1291→
+  1292→  const handleChangeLanguage = () => {
+  1293→    navigate('language');
+  1294→  };
+  1295→
+  1296→  const handleEditProfile = () => {
+  1297→    navigate('myfarm');
+  1298→  };
+  1299→
+  1300→  const handleReset = () => {
+  1301→    setShowConfirm(true);
+  1302→  };
+  1303→
+  1304→  const confirmReset = () => {
+  1305→    localStorage.removeItem('kp_lang');
+  1306→    localStorage.removeItem('kp_profile');
+  1307→    localStorage.removeItem('kp_alerts');
+  1308→    setLang('en');
+  1309→    setProfile(null!);
+  1310→    setAlerts(defaultAlerts);
+  1311→    navigate('language');
+  1312→  };
+  1313→
+  1314→  const settings = [
+  1315→    { icon: '🌐', label: t.changeLanguageOption, desc: getLanguageLabel(lang), action: handleChangeLanguage, color: 'bg-violet-100 text-violet-700' },
+  1316→    { icon: '👨‍🌾', label: t.editProfileOption, desc: profile?.name || '', action: handleEditProfile, color: 'bg-amber-100 text-amber-700' },
+  1317→    { icon: '🗑', label: t.resetData, desc: '', action: handleReset, color: 'bg-red-100 text-red-700' },
+  1318→  ];
+  1319→
+  1320→  return (
+  1321→    <PageWrapper className="flex flex-col">
+  1322→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1323→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1324→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1325→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1326→            <span className="text-xl">⚙️</span>
+  1327→            <h1 className="text-lg font-bold text-green-800">{t.settingsTitle}</h1>
+  1328→          </div>
+  1329→        </div>
+  1330→      </header>
+  1331→
+  1332→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1333→        {/* Confirm Reset Dialog */}
+  1334→        {showConfirm && (
+  1335→          <motion.div
+  1336→            initial={{ opacity: 0 }}
+  1337→            animate={{ opacity: 1 }}
+  1338→            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+  1339→            onClick={() => setShowConfirm(false)}
+  1340→          >
+  1341→            <motion.div
+  1342→              initial={{ scale: 0.9, opacity: 0 }}
+  1343→              animate={{ scale: 1, opacity: 1 }}
+  1344→              onClick={(e) => e.stopPropagation()}
+  1345→              className="bg-white rounded-3xl shadow-2xl p-6 max-w-sm w-full"
+  1346→            >
+  1347→              <div className="text-center mb-4">
+  1348→                <div className="text-4xl mb-2">⚠️</div>
+  1349→                <h3 className="text-lg font-bold text-gray-800">{t.resetData}</h3>
+  1350→              </div>
+  1351→              <p className="text-gray-600 text-sm text-center mb-6">{t.resetConfirm}</p>
+  1352→              <div className="flex gap-3">
+  1353→                <button
+  1354→                  onClick={() => setShowConfirm(false)}
+  1355→                  className="flex-1 py-2.5 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all"
+  1356→                >
+  1357→                  {t.cancelReset}
+  1358→                </button>
+  1359→                <button
+  1360→                  onClick={confirmReset}
+  1361→                  className="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-semibold text-sm shadow-md hover:bg-red-600 transition-all"
+  1362→                >
+  1363→                  {t.confirmReset}
+  1364→                </button>
+  1365→              </div>
+  1366→            </motion.div>
+  1367→          </motion.div>
+  1368→        )}
+  1369→
+  1370→        <div className="space-y-3">
+  1371→          {settings.map((setting, i) => (
+  1372→            <motion.button
+  1373→              key={setting.label}
+  1374→              initial={{ opacity: 0, y: 10 }}
+  1375→              animate={{ opacity: 1, y: 0 }}
+  1376→              transition={{ delay: i * 0.08 }}
+  1377→              onClick={setting.action}
+  1378→              className="w-full flex items-center gap-4 p-5 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all text-left"
+  1379→            >
+  1380→              <div className={`w-12 h-12 rounded-xl ${setting.color} flex items-center justify-center`}>
+  1381→                <span className="text-xl">{setting.icon}</span>
+  1382→              </div>
+  1383→              <div className="flex-1">
+  1384→                <h3 className="font-semibold text-gray-800">{setting.label}</h3>
+  1385→                {setting.desc && <p className="text-xs text-gray-500 mt-0.5">{setting.desc}</p>}
+  1386→              </div>
+  1387→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+  1388→                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+  1389→              </svg>
+  1390→            </motion.button>
+  1391→          ))}
+  1392→        </div>
+  1393→
+  1394→        {/* App Info */}
+  1395→        <div className="mt-8 text-center">
+  1396→          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-md mx-auto mb-3">
+  1397→            <span className="text-2xl">🌾</span>
+  1398→          </div>
+  1399→          <h3 className="font-bold text-green-800">KisanPilot AI</h3>
+  1400→          <p className="text-xs text-gray-500 mt-1">v1.0 — {t.tagline}</p>
+  1401→        </div>
+  1402→      </main>
+  1403→    </PageWrapper>
+  1404→  );
+  1405→}
+  1406→

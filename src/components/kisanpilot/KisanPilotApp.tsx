@@ -3,11 +3,19 @@
 import React, { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getTranslations, getLanguageLabel, type Language, type Translations } from '@/lib/i18n';
+import VoiceKhataScreen from './screens/VoiceKhataScreen';
+import FarmEconomicsScreen from './screens/FarmEconomicsScreen';
+import BajarBhavScreen from './screens/BajarBhavScreen';
+import RiskRadarScreen from './screens/RiskRadarScreen';
+import SimulatorScreen from './screens/SimulatorScreen';
+import PMFBYScreen from './screens/PMFBYScreen';
+import FarmGoalsScreen from './screens/FarmGoalsScreen';
+import NextBestActionScreen from './screens/NextBestActionScreen';
 
 // ============================================================
 // Types
 // ============================================================
-export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings';
+export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction';
 
 export interface FarmerProfile {
   name: string;
@@ -139,6 +147,14 @@ export default function KisanPilotApp() {
           {screen === 'insights' && <InsightsScreen key="insights" />}
           {screen === 'alerts' && <AlertsScreen key="alerts" />}
           {screen === 'settings' && <SettingsScreen key="settings" />}
+          {screen === 'voicekhata' && <VoiceKhataScreen key="voicekhata" />}
+          {screen === 'farmeconomics' && <FarmEconomicsScreen key="farmeconomics" />}
+          {screen === 'bajarbhav' && <BajarBhavScreen key="bajarbhav" />}
+          {screen === 'riskradar' && <RiskRadarScreen key="riskradar" />}
+          {screen === 'simulator' && <SimulatorScreen key="simulator" />}
+          {screen === 'pmfby' && <PMFBYScreen key="pmfby" />}
+          {screen === 'farmgoals' && <FarmGoalsScreen key="farmgoals" />}
+          {screen === 'nextbestaction' && <NextBestActionScreen key="nextbestaction" />}
         </AnimatePresence>
       </div>
     </AppContext.Provider>
@@ -393,7 +409,15 @@ function DashboardScreen() {
     { id: 'myfarm' as Screen, icon: '🌾', title: t.myFarm, desc: t.myFarmDesc, color: 'from-amber-500 to-orange-600' },
     { id: 'cropdoctor' as Screen, icon: '📷', title: t.cropDoctor, desc: t.cropDoctorDesc, color: 'from-rose-500 to-pink-600' },
     { id: 'weather' as Screen, icon: '🌦', title: t.weather, desc: t.weatherDesc, color: 'from-sky-500 to-blue-600' },
-    { id: 'insights' as Screen, icon: '📊', title: t.farmInsights, desc: t.farmInsightsDesc, color: 'from-teal-500 to-cyan-600' },
+    { id: 'voicekhata' as Screen, icon: '🎙', title: t.voiceKhata, desc: t.voiceKhataDesc, color: 'from-emerald-500 to-green-600' },
+    { id: 'farmeconomics' as Screen, icon: '💰', title: t.farmEconomics, desc: t.farmEconomicsDesc, color: 'from-green-500 to-emerald-600' },
+    { id: 'bajarbhav' as Screen, icon: '🏪', title: t.bajarBhav, desc: t.bajarBhavDesc, color: 'from-yellow-500 to-amber-600' },
+    { id: 'riskradar' as Screen, icon: '🎯', title: t.riskRadar, desc: t.riskRadarDesc, color: 'from-orange-500 to-red-600' },
+    { id: 'simulator' as Screen, icon: '⚖️', title: t.whatIfSimulator, desc: t.whatIfDesc, color: 'from-indigo-500 to-violet-600' },
+    { id: 'pmfby' as Screen, icon: '🏛', title: t.pmfbySchemes, desc: t.pmfbyDesc, color: 'from-blue-500 to-indigo-600' },
+    { id: 'farmgoals' as Screen, icon: '🎯', title: t.farmGoals, desc: t.farmGoalsDesc, color: 'from-teal-500 to-cyan-600' },
+    { id: 'nextbestaction' as Screen, icon: '✨', title: t.nextBestAction, desc: t.nextBestActionDesc, color: 'from-lime-500 to-green-600' },
+    { id: 'insights' as Screen, icon: '📊', title: t.farmInsights, desc: t.farmInsightsDesc, color: 'from-cyan-500 to-teal-600' },
     { id: 'alerts' as Screen, icon: '🔔', title: t.smartAlerts, desc: t.smartAlertsDesc, color: 'from-red-500 to-rose-600' },
   ];
 
@@ -450,13 +474,55 @@ function DashboardScreen() {
           ))}
         </div>
 
+        {/* Next Best Action Card */}
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          onClick={() => navigate('nextbestaction')}
+          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 mb-4 shadow-md text-left hover:shadow-lg transition-all"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">✨</span>
+            <h3 className="text-white font-bold">{t.nextBestAction}</h3>
+            <span className="ml-auto text-white/70 text-xs">→</span>
+          </div>
+          <p className="text-green-100 text-sm">{t.action1}</p>
+          <p className="text-green-200/60 text-xs mt-1">{t.action1Reason}</p>
+        </motion.button>
+
         {/* Hero Section */}
-        <div className="relative rounded-3xl overflow-hidden mb-8 shadow-lg">
-          <img src="/images/hero-farm.png" alt="Farm landscape" className="w-full h-48 md:h-64 object-cover" />
+        <div className="relative rounded-3xl overflow-hidden mb-6 shadow-lg">
+          <img src="/images/hero-farm.png" alt="Farm landscape" className="w-full h-44 md:h-56 object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
             <h3 className="text-white text-xl md:text-2xl font-bold">{t.yourPersonalAi}</h3>
             <p className="text-white/80 text-sm mt-1">{t.smarterDecisions}</p>
+          </div>
+        </div>
+
+        {/* Risk Radar Summary Strip */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-gray-700">🎯 {t.riskSummary}</h3>
+            <button onClick={() => navigate('riskradar')} className="text-xs text-green-600 font-semibold hover:text-green-800">View All →</button>
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {[
+              { label: t.rainRisk, level: 'medium' as const, icon: '🌧' },
+              { label: t.waterStressRisk, level: 'low' as const, icon: '💧' },
+              { label: t.diseaseRisk, level: 'low' as const, icon: '🐛' },
+              { label: t.heatRisk, level: 'low' as const, icon: '🌡' },
+              { label: t.costRisk, level: 'medium' as const, icon: '💸' },
+              { label: t.insuranceReady, level: 'high' as const, icon: '🛡' },
+            ].map((risk) => (
+              <div key={risk.label} className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${
+                risk.level === 'low' ? 'bg-green-100 text-green-700' : risk.level === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+              }`}>
+                <span>{risk.icon}</span>
+                <span>{risk.label.split(' ')[0]}</span>
+              </div>
+            ))}
           </div>
         </div>
 

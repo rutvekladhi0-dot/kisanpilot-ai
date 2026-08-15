@@ -1,0 +1,638 @@
+     1→export type Language = 'en' | 'hi' | 'mr';
+     2→
+     3→export interface Translations {
+     4→  // Language Selection
+     5→  chooseYourLanguage: string;
+     6→  languageSubtitle: string[];
+     7→  marathi: string;
+     8→  hindi: string;
+     9→  english: string;
+    10→
+    11→  // Profile Setup
+    12→  setupProfile: string;
+    13→  setupProfileSubtitle: string;
+    14→  farmerName: string;
+    15→  farmerNamePlaceholder: string;
+    16→  villageName: string;
+    17→  villageNamePlaceholder: string;
+    18→  farmSize: string;
+    19→  lessThanOneAcre: string;
+    20→  oneToFiveAcres: string;
+    21→  fiveToTenAcres: string;
+    22→  moreThanTenAcres: string;
+    23→  mainCrop: string;
+    24→  selectCrop: string;
+    25→  cropWheat: string;
+    26→  cropRice: string;
+    27→  cropCotton: string;
+    28→  cropSoybean: string;
+    29→  cropSugarcane: string;
+    30→  cropTomato: string;
+    31→  cropOnion: string;
+    32→  cropOther: string;
+    33→  saveAndContinue: string;
+    34→  back: string;
+    35→  nameRequired: string;
+    36→  villageRequired: string;
+    37→
+    38→  // Dashboard
+    39→  welcomeBack: string;
+    40→  exploreFeatures: string;
+    41→  village: string;
+    42→  mainCrop: string;
+    43→  farmSizeLabel: string;
+    44→  farmStatus: string;
+    45→  good: string;
+    46→  aiChatbot: string;
+    47→  aiChatbotDesc: string;
+    48→  myFarm: string;
+    49→  myFarmDesc: string;
+    50→  cropDoctor: string;
+    51→  cropDoctorDesc: string;
+    52→  weather: string;
+    53→  weatherDesc: string;
+    54→  farmInsights: string;
+    55→  farmInsightsDesc: string;
+    56→  smartAlerts: string;
+    57→  smartAlertsDesc: string;
+    58→  changeLanguage: string;
+    59→  settings: string;
+    60→  dashboard: string;
+    61→  yourPersonalAi: string;
+    62→  smarterDecisions: string;
+    63→  tagline: string;
+    64→
+    65→  // Chatbot
+    66→  aiAssistant: string;
+    67→  typeMessage: string;
+    68→  send: string;
+    69→  backToDashboard: string;
+    70→  quickSuggestions: string;
+    71→  suggestion1: string;
+    72→  suggestion2: string;
+    73→  suggestion3: string;
+    74→  suggestion4: string;
+    75→
+    76→  // Chatbot responses
+    77→  waterResponse: string;
+    78→  yellowLeavesResponse: string;
+    79→  pestResponse: string;
+    80→  fertilizerResponse: string;
+    81→  weatherResponse: string;
+    82→  defaultResponse: string;
+    83→
+    84→  // Crop Doctor
+    85→  cropDoctorTitle: string;
+    86→  cropDoctorSubtitle: string;
+    87→  uploadPhoto: string;
+    88→  uploadPhotoDesc: string;
+    89→  analyzeCrop: string;
+    90→  analyzing: string;
+    91→  cropHealthScore: string;
+    92→  possibleObservation: string;
+    93→  recommendations: string;
+    94→  rec1: string;
+    95→  rec2: string;
+    96→  rec3: string;
+    97→  rec4: string;
+    98→  analyzeAnother: string;
+    99→  mildNutrientStress: string;
+   100→
+   101→  // Weather
+   102→  weatherTitle: string;
+   103→  currentWeather: string;
+   104→  temperature: string;
+   105→  condition: string;
+   106→  partlyCloudy: string;
+   107→  humidity: string;
+   108→  wind: string;
+   109→  rainChance: string;
+   110→  fiveDayForecast: string;
+   111→  farmingAdvice: string;
+   112→  rainAdvice: string;
+   113→  monday: string;
+   114→  tuesday: string;
+   115→  wednesday: string;
+   116→  thursday: string;
+   117→  friday: string;
+   118→
+   119→  // My Farm
+   120→  myFarmTitle: string;
+   121→  farmDetails: string;
+   122→  editProfile: string;
+   123→  saveChanges: string;
+   124→  cancel: string;
+   125→  cropHealth: string;
+   126→  soilMoisture: string;
+   127→  irrigationStatus: string;
+   128→  moderate: string;
+   129→  onTrack: string;
+   130→  farmStatusSection: string;
+   131→
+   132→  // Insights
+   133→  insightsTitle: string;
+   134→  cropHealthScore2: string;
+   135→  soilMoisture2: string;
+   136→  irrigationEfficiency: string;
+   137→  aiInsights: string;
+   138→  insight1: string;
+   139→  insight2: string;
+   140→  insight3: string;
+   141→  insight4: string;
+   142→  insight5: string;
+   143→  insight6: string;
+   144→  generateInsight: string;
+   145→
+   146→  // Alerts
+   147→  alertsTitle: string;
+   148→  rainExpected: string;
+   149→  monitorSoil: string;
+   150→  checkPestSigns: string;
+   151→  fertilizerReminder: string;
+   152→  markAsRead: string;
+   153→  markAllAsRead: string;
+   154→  noUnreadAlerts: string;
+   155→
+   156→  // Settings
+   157→  settingsTitle: string;
+   158→  changeLanguageOption: string;
+   159→  editProfileOption: string;
+   160→  resetData: string;
+   161→  resetConfirm: string;
+   162→  confirmReset: string;
+   163→  cancelReset: string;
+   164→}
+   165→
+   166→const en: Translations = {
+   167→  chooseYourLanguage: 'Choose Your Language',
+   168→  languageSubtitle: [
+   169→    'Smarter farming decisions, at the right time.',
+   170→  ],
+   171→  marathi: 'Marathi – मराठी',
+   172→  hindi: 'Hindi – हिंदी',
+   173→  english: 'English – English',
+   174→
+   175→  setupProfile: 'Setup Your Farm Profile',
+   176→  setupProfileSubtitle: 'Tell us about your farm so we can help you better.',
+   177→  farmerName: 'Farmer Name',
+   178→  farmerNamePlaceholder: 'Enter your name',
+   179→  villageName: 'Village Name',
+   180→  villageNamePlaceholder: 'Enter village name',
+   181→  farmSize: 'Farm Size',
+   182→  lessThanOneAcre: 'Less than 1 acre',
+   183→  oneToFiveAcres: '1–5 acres',
+   184→  fiveToTenAcres: '5–10 acres',
+   185→  moreThanTenAcres: 'More than 10 acres',
+   186→  mainCrop: 'Main Crop',
+   187→  selectCrop: 'Select crop',
+   188→  cropWheat: 'Wheat',
+   189→  cropRice: 'Rice',
+   190→  cropCotton: 'Cotton',
+   191→  cropSoybean: 'Soybean',
+   192→  cropSugarcane: 'Sugarcane',
+   193→  cropTomato: 'Tomato',
+   194→  cropOnion: 'Onion',
+   195→  cropOther: 'Other',
+   196→  saveAndContinue: 'Save & Continue',
+   197→  back: 'Back',
+   198→  nameRequired: 'Farmer name is required',
+   199→  villageRequired: 'Village name is required',
+   200→
+   201→  welcomeBack: 'Welcome back',
+   202→  exploreFeatures: 'Explore KisanPilot Features',
+   203→  village: 'Village',
+   204→  mainCrop: 'Main Crop',
+   205→  farmSizeLabel: 'Farm Size',
+   206→  farmStatus: 'Farm Status',
+   207→  good: 'Good',
+   208→  aiChatbot: 'AI Chatbot',
+   209→  aiChatbotDesc: 'Ask your farming questions',
+   210→  myFarm: 'My Farm',
+   211→  myFarmDesc: 'View & edit farm details',
+   212→  cropDoctor: 'Crop Doctor',
+   213→  cropDoctorDesc: 'Diagnose crop health',
+   214→  weather: 'Weather',
+   215→  weatherDesc: 'Local weather updates',
+   216→  farmInsights: 'Farm Insights',
+   217→  farmInsightsDesc: 'AI-powered analytics',
+   218→  smartAlerts: 'Smart Alerts',
+   219→  smartAlertsDesc: 'Important notifications',
+   220→  changeLanguage: 'Change Language',
+   221→  settings: 'Settings',
+   222→  dashboard: 'Dashboard',
+   223→  yourPersonalAi: 'Your Personal AI Co-Pilot for Farming',
+   224→  smarterDecisions: 'Smarter farming decisions, at the right time.',
+   225→  tagline: 'Your Personal AI Co-Pilot for Farming',
+   226→
+   227→  aiAssistant: 'KisanPilot AI Assistant',
+   228→  typeMessage: 'Type your farming question...',
+   229→  send: 'Send',
+   230→  backToDashboard: 'Back to Dashboard',
+   231→  quickSuggestions: 'Quick Suggestions',
+   232→  suggestion1: 'When should I water my crop?',
+   233→  suggestion2: 'How can I improve soil health?',
+   234→  suggestion3: 'What should I do if leaves turn yellow?',
+   235→  suggestion4: 'How can I protect my crop from pests?',
+   236→  waterResponse: '💧 **Irrigation Guidance:** Water your crops early in the morning or late evening to reduce evaporation. Check soil moisture by inserting your finger 2-3 inches into the soil — if it feels dry, it\'s time to water. Generally, most crops need 1-2 inches of water per week. During flowering and fruiting stages, increase watering frequency. Use drip irrigation for better water efficiency.',
+   237→  yellowLeavesResponse: '🍂 **Yellow Leaves — Possible Causes:**\n\n1. **Nutrient Deficiency:** Lack of nitrogen, iron, or magnesium can cause yellowing. Check if older leaves or newer leaves are affected.\n2. **Overwatering:** Roots may be suffocating. Check for waterlogged soil.\n3. **Pest or Disease:** Look for spots, webs, or insects on the leaves.\n4. **Natural Aging:** Bottom leaves naturally yellow as the plant grows.\n\n**Suggestion:** Check the soil drainage, inspect leaves closely for pests, and consider a soil test.',
+   238→  pestResponse: '🐛 **Pest Management:**\n\n1. **Identify the pest:** Look closely at leaves, stems, and soil for insects or damage signs.\n2. **Monitor regularly:** Check your crops every 2-3 days for early signs.\n3. **Natural methods:** Use neem oil spray, introduce beneficial insects like ladybugs.\n4. **Integrated Pest Management (IPM):** Combine cultural, biological, and chemical methods.\n5. **Consult local expert:** If the infestation is severe, consult an agricultural expert for targeted treatment.',
+   239→  fertilizerResponse: '🧪 **Fertilizer & Nutrient Guidance:**\n\n1. **Soil Testing:** Get your soil tested at a local lab to know exact nutrient levels.\n2. **Balanced NPK:** Use fertilizers with balanced Nitrogen, Phosphorus, and Potassium ratios.\n3. **Organic Options:** Consider compost, vermicompost, or farmyard manure for long-term soil health.\n4. **Micronutrients:** Don\'t forget zinc, iron, and boron — deficiency shows in leaf color.\n5. **Application Timing:** Apply fertilizers during active growth phases for best absorption.',
+   240→  weatherResponse: '🌦 **Weather & Farming:**\n\nBased on the current forecast, plan your farming activities accordingly:\n\n- If rain is expected (30%+ chance), delay irrigation.\n- High humidity increases fungal disease risk — ensure proper spacing.\n- Wind above 20 km/h may damage tall crops — consider windbreaks.\n- Plan spraying on calm, dry days for best results.\n- Monitor soil temperature — most crops germinate best above 15°C.',
+   241→  defaultResponse: '🌱 I\'m your KisanPilot AI assistant. I can help you with crop care, irrigation, pests, soil health, and farming decisions. Ask me anything about your farm!',
+   242→
+   243→  cropDoctorTitle: 'Crop Doctor',
+   244→  cropDoctorSubtitle: 'Upload a photo of your crop for AI-powered health analysis',
+   245→  uploadPhoto: 'Upload Crop Photo',
+   246→  uploadPhotoDesc: 'Take a photo or select from gallery',
+   247→  analyzeCrop: 'Analyze Crop',
+   248→  analyzing: 'Analyzing your crop with AI…',
+   249→  cropHealthScore: 'Crop Health Score',
+   250→  possibleObservation: 'Possible Observation',
+   251→  recommendations: 'Recommendations',
+   252→  rec1: 'Check soil nutrient levels',
+   253→  rec2: 'Monitor leaf discoloration',
+   254→  rec3: 'Ensure proper irrigation',
+   255→  rec4: 'Consult a local agricultural expert for confirmation',
+   256→  analyzeAnother: 'Analyze Another Image',
+   257→  mildNutrientStress: 'Mild signs of nutrient stress detected.',
+   258→
+   259→  weatherTitle: 'Weather & Farm Forecast',
+   260→  currentWeather: 'Current Weather',
+   261→  temperature: 'Temperature',
+   262→  condition: 'Condition',
+   263→  partlyCloudy: 'Partly Cloudy',
+   264→  humidity: 'Humidity',
+   265→  wind: 'Wind',
+   266→  rainChance: 'Rain Chance',
+   267→  fiveDayForecast: '5-Day Forecast',
+   268→  farmingAdvice: 'Farming Advice',
+   269→  rainAdvice: 'Rain is possible this week. Avoid unnecessary irrigation before rainfall.',
+   270→  monday: 'Monday',
+   271→  tuesday: 'Tuesday',
+   272→  wednesday: 'Wednesday',
+   273→  thursday: 'Thursday',
+   274→  friday: 'Friday',
+   275→
+   276→  myFarmTitle: 'My Farm',
+   277→  farmDetails: 'Farm Details',
+   278→  editProfile: 'Edit Profile',
+   279→  saveChanges: 'Save Changes',
+   280→  cancel: 'Cancel',
+   281→  cropHealth: 'Crop Health',
+   282→  soilMoisture: 'Soil Moisture',
+   283→  irrigationStatus: 'Irrigation Status',
+   284→  moderate: 'Moderate',
+   285→  onTrack: 'On Track',
+   286→  farmStatusSection: 'Farm Status',
+   287→
+   288→  insightsTitle: 'Farm Insights',
+   289→  cropHealthScore2: 'Crop Health',
+   290→  soilMoisture2: 'Soil Moisture',
+   291→  irrigationEfficiency: 'Irrigation Efficiency',
+   292→  aiInsights: 'AI Insights',
+   293→  insight1: 'Your crop health is currently stable. Continue regular monitoring.',
+   294→  insight2: 'Consider monitoring soil moisture in the next 2 days.',
+   295→  insight3: 'Weather conditions may affect irrigation planning this week.',
+   296→  insight4: 'Crop growth rate is above average for this season. Great job!',
+   297→  insight5: 'Pest risk is low this week due to dry conditions.',
+   298→  insight6: 'Consider applying organic compost to boost long-term soil health.',
+   299→  generateInsight: 'Generate New Insight',
+   300→
+   301→  alertsTitle: 'Smart Alerts',
+   302→  rainExpected: 'Rain expected in your area within the next 48 hours.',
+   303→  monitorSoil: 'Monitor soil moisture levels — recent dry spell detected.',
+   304→  checkPestSigns: 'Check crop leaves for early signs of pest infestation.',
+   305→  fertilizerReminder: 'Fertilizer planning reminder — schedule soil testing.',
+   306→  markAsRead: 'Mark as Read',
+   307→  markAllAsRead: 'Mark All as Read',
+   308→  noUnreadAlerts: 'No unread alerts! Your farm is all caught up.',
+   309→
+   310→  settingsTitle: 'Settings',
+   311→  changeLanguageOption: 'Change Language',
+   312→  editProfileOption: 'Edit Farmer Profile',
+   313→  resetData: 'Reset Demo Data',
+   314→  resetConfirm: 'This will clear all your saved data and return to the language selection screen. Are you sure?',
+   315→  confirmReset: 'Confirm Reset',
+   316→  cancelReset: 'Cancel',
+   317→};
+   318→
+   319→const hi: Translations = {
+   320→  chooseYourLanguage: 'अपनी भाषा चुनें',
+   321→  languageSubtitle: [
+   322→    'खेती के लिए सही समय पर स्मार्ट निर्णय।',
+   323→  ],
+   324→  marathi: 'Marathi – मराठी',
+   325→  hindi: 'Hindi – हिंदी',
+   326→  english: 'English – English',
+   327→
+   328→  setupProfile: 'अपना खेत प्रोफ़ाइल सेट करें',
+   329→  setupProfileSubtitle: 'हमें अपने खेत के बारे में बताएं ताकि हम आपकी बेहतर मदद कर सकें।',
+   330→  farmerName: 'किसान का नाम',
+   331→  farmerNamePlaceholder: 'अपना नाम दर्ज करें',
+   332→  villageName: 'गाँव का नाम',
+   333→  villageNamePlaceholder: 'गाँव का नाम दर्ज करें',
+   334→  farmSize: 'खेत का आकार',
+   335→  lessThanOneAcre: '1 एकड़ से कम',
+   336→  oneToFiveAcres: '1–5 एकड़',
+   337→  fiveToTenAcres: '5–10 एकड़',
+   338→  moreThanTenAcres: '10 एकड़ से अधिक',
+   339→  mainCrop: 'मुख्य फसल',
+   340→  selectCrop: 'फसल चुनें',
+   341→  cropWheat: 'गेहूं',
+   342→  cropRice: 'चावल',
+   343→  cropCotton: 'कपास',
+   344→  cropSoybean: 'सोयाबीन',
+   345→  cropSugarcane: 'गन्ना',
+   346→  cropTomato: 'टमाटर',
+   347→  cropOnion: 'प्याज',
+   348→  cropOther: 'अन्य',
+   349→  saveAndContinue: 'सहेजें और जारी रखें',
+   350→  back: 'वापस',
+   351→  nameRequired: 'किसान का नाम आवश्यक है',
+   352→  villageRequired: 'गाँव का नाम आवश्यक है',
+   353→
+   354→  welcomeBack: 'वापसी पर स्वागत है',
+   355→  exploreFeatures: 'किसानपायलट सुविधाएं देखें',
+   356→  village: 'गाँव',
+   357→  mainCrop: 'मुख्य फसल',
+   358→  farmSizeLabel: 'खेत का आकार',
+   359→  farmStatus: 'खेत की स्थिति',
+   360→  good: 'अच्छी',
+   361→  aiChatbot: 'AI चैटबॉट',
+   362→  aiChatbotDesc: 'अपने खेती के सवाल पूछें',
+   363→  myFarm: 'मेरा खेत',
+   364→  myFarmDesc: 'खेत का विवरण देखें और संपादित करें',
+   365→  cropDoctor: 'फसल डॉक्टर',
+   366→  cropDoctorDesc: 'फसल की सेहत की जांच करें',
+   367→  weather: 'मौसम',
+   368→  weatherDesc: 'स्थानीय मौसम अपडेट',
+   369→  farmInsights: 'खेत अंतर्दृष्टि',
+   370→  farmInsightsDesc: 'AI संचालित विश्लेषण',
+   371→  smartAlerts: 'स्मार्ट अलर्ट',
+   372→  smartAlertsDesc: 'महत्वपूर्ण सूचनाएं',
+   373→  changeLanguage: 'भाषा बदलें',
+   374→  settings: 'सेटिंग्स',
+   375→  dashboard: 'डैशबोर्ड',
+   376→  yourPersonalAi: 'खेती के लिए आपका व्यक्तिगत AI सहायक',
+   377→  smarterDecisions: 'खेती के लिए सही समय पर स्मार्ट निर्णय।',
+   378→  tagline: 'खेती के लिए सही समय पर स्मार्ट निर्णय।',
+   379→
+   380→  aiAssistant: 'किसानपायलट AI सहायक',
+   381→  typeMessage: 'अपना खेती का सवाल टाइप करें...',
+   382→  send: 'भेजें',
+   383→  backToDashboard: 'डैशबोर्ड पर वापस',
+   384→  quickSuggestions: 'त्वरित सुझाव',
+   385→  suggestion1: 'मुझे अपनी फसल को कब पानी देना चाहिए?',
+   386→  suggestion2: 'मैं मिट्टी की सेहत कैसे सुधार सकता हूं?',
+   387→  suggestion3: 'पत्तियां पीली होने पर मुझे क्या करना चाहिए?',
+   388→  suggestion4: 'मैं अपनी फसल की सुरक्षा कीटों से कैसे करूं?',
+   389→  waterResponse: '💧 **सिंचाई मार्गदर्शन:** फसलों को सुबह जल्द या शाम को देर में पानी दें ताकि वाष्पीकरण कम हो। मिट्टी की नमी की जांच करने के लिए अपनी उंगली 2-3 इंच मिट्टी में डालें — अगर सूखी लगे तो पानी देने का समय है। अधिकांश फसलों को प्रति सप्ताह 1-2 इंच पानी की जरूरत होती है। ड्रिप सिंचाई का उपयोग बेहतर दक्षता के लिए करें।',
+   390→  yellowLeavesResponse: '🍂 **पीली पत्तियां — संभावित कारण:**\n\n1. **पोषक तत्व की कमी:** नाइट्रोजन, आयरन या मैग्नीशियम की कमी पीलेपन का कारण हो सकती है।\n2. **ज्यादा पानी:** जड़ें दम घोंट रही हों सकती हैं। पानी भरे मिट्टी की जांच करें।\n3. **कीट या रोग:** पत्तियों पर धब्बे, जाल या कीटों की जांच करें।\n4. **प्राकृतिक उम्र बढ़ना:** निचली पत्तियां स्वाभाविक रूप से पीली होती हैं।\n\n**सुझाव:** मिट्टी की जल निकासी की जांच करें, कीटों के लिए पत्तियों की निकटता से जांच करें।',
+   391→  pestResponse: '🐛 **कीट प्रबंधन:**\n\n1. **कीट की पहचान करें:** पत्तियों, तनों और मिट्टी पर कीटों या नुकसान के चिन्हों की जांच करें।\n2. **नियमित निगरानी:** हर 2-3 दिन में फसलों की जांच करें।\n3. **प्राकृतिक तरीके:** नीम ऑयल स्प्रे का उपयोग करें, लेडीबग जैसे लाभकारी कीट प्रस्तुत करें।\n4. **समन्वित कीट प्रबंधन (IPM):** सांस्कृतिक, जैविक और रासायनिक तरीकों को मिलाएं।\n5. **स्थानीय विशेषज्ञ से परामर्श करें:** संक्रमण गंभीर हो तो कृषि विशेषज्ञ से मिलें।',
+   392→  fertilizerResponse: '🧪 **उर्वरक और पोषक तत्व मार्गदर्शन:**\n\n1. **मिट्टी परीक्षण:** स्थानीय प्रयोगशाला में मिट्टी का परीक्षण करवाएं।\n2. **संतुलित NPK:** नाइट्रोजन, फॉस्फोरस और पोटैशियम के संतुलित अनुपात वाले उर्वरकों का उपयोग करें।\n3. **जैविक विकल्प:** कम्पोस्ट, वर्मीकम्पोस्ट या गोबर खाद पर विचार करें।\n4. **सूक्ष्म पोषक तत्व:** जिंक, आयरन और बोरॉन न भूलें।\n5. **उर्वरक का समय:** सक्रिय विकास चरणों के दौरान उर्वरक डालें।',
+   393→  weatherResponse: '🌦 **मौसम और खेती:**\n\nवर्तमान पूर्वानुमान के आधार पर अपनी खेती गतिविधियों की योजना बनाएं:\n\n- बारिश की उम्मीद हो तो सिंचाई टालें।\n- उच्च नमी फंगल रोग का जोखिम बढ़ाती है।\n- 20 किमी/घंटा से अधिक हवा लंबी फसलों को नुकसान पहुंचा सकती है।\n- शांत, सूखे दिनों पर छिड़काव की योजना बनाएं।\n- अधिकांश फसलें 15°C से ऊपर अच्छी तरह अंकुरित होती हैं।',
+   394→  defaultResponse: '🌱 मैं आपका किसानपायलट AI सहायक हूं। मैं फसल देखभाल, सिंचाई, कीट, मिट्टी की सेहत और खेती के निर्णयों में आपकी मदद कर सकता हूं। अपने खेत के बारे में कुछ भी पूछें!',
+   395→
+   396→  cropDoctorTitle: 'फसल डॉक्टर',
+   397→  cropDoctorSubtitle: 'AI आधारित स्वास्थ्य विश्लेषण के लिए फसल की तस्वीर अपलोड करें',
+   398→  uploadPhoto: 'फसल की तस्वीर अपलोड करें',
+   399→  uploadPhotoDesc: 'तस्वीर लें या गैलरी से चुनें',
+   400→  analyzeCrop: 'फसल का विश्लेषण करें',
+   401→  analyzing: 'AI से आपकी फसल का विश्लेषण हो रहा है…',
+   402→  cropHealthScore: 'फसल स्वास्थ्य स्कोर',
+   403→  possibleObservation: 'संभावित निरीक्षण',
+   404→  recommendations: 'सिफारिशें',
+   405→  rec1: 'मिट्टी में पोषक तत्व का स्तर जांचें',
+   406→  rec2: 'पत्तियों के रंग बदलने पर नजर रखें',
+   407→  rec3: 'उचित सिंचाई सुनिश्चित करें',
+   408→  rec4: 'पुष्टि के लिए स्थानीय कृषि विशेषज्ञ से मिलें',
+   409→  analyzeAnother: 'दूसरी तस्वीर विश्लेषण करें',
+   410→  mildNutrientStress: 'हल्के पोषक तत्व तनाव के संकेत पाए गए।',
+   411→
+   412→  weatherTitle: 'मौसम और खेत पूर्वानुमान',
+   413→  currentWeather: 'वर्तमान मौसम',
+   414→  temperature: 'तापमान',
+   415→  condition: 'स्थिति',
+   416→  partlyCloudy: 'आंशिक बादल',
+   417→  humidity: 'नमी',
+   418→  wind: 'हवा',
+   419→  rainChance: 'बारिश की संभावना',
+   420→  fiveDayForecast: '5 दिन का पूर्वानुमान',
+   421→  farmingAdvice: 'खेती सलाह',
+   422→  rainAdvice: 'इस हफ्ते बारिश संभव है। बारिश से पहले अनावश्यक सिंचाई से बचें।',
+   423→  monday: 'सोमवार',
+   424→  tuesday: 'मंगलवार',
+   425→  wednesday: 'बुधवार',
+   426→  thursday: 'गुरुवार',
+   427→  friday: 'शुक्रवार',
+   428→
+   429→  myFarmTitle: 'मेरा खेत',
+   430→  farmDetails: 'खेत का विवरण',
+   431→  editProfile: 'प्रोफ़ाइल संपादित करें',
+   432→  saveChanges: 'परिवर्तन सहेजें',
+   433→  cancel: 'रद्द करें',
+   434→  cropHealth: 'फसल स्वास्थ्य',
+   435→  soilMoisture: 'मिट्टी की नमी',
+   436→  irrigationStatus: 'सिंचाई स्थिति',
+   437→  moderate: 'मध्यम',
+   438→  onTrack: 'ठीक है',
+   439→  farmStatusSection: 'खेत की स्थिति',
+   440→
+   441→  insightsTitle: 'खेत अंतर्दृष्टि',
+   442→  cropHealthScore2: 'फसल स्वास्थ्य',
+   443→  soilMoisture2: 'मिट्टी की नमी',
+   444→  irrigationEfficiency: 'सिंचाई दक्षता',
+   445→  aiInsights: 'AI अंतर्दृष्टि',
+   446→  insight1: 'आपकी फसल की सेहत वर्तमान में स्थिर है। नियमित निगरानी जारी रखें।',
+   447→  insight2: 'अगले 2 दिनों में मिट्टी की नमी की निगरानी पर विचार करें।',
+   448→  insight3: 'इस हफ्ते मौसम की स्थितियां सिंचाई योजना को प्रभावित कर सकती हैं।',
+   449→  insight4: 'फसल की वृद्धि दर इस मौसम के लिए औसत से अधिक है। बहुत अच्छे!',
+   450→  insight5: 'सूखी स्थितियों के कारण इस हफ्ते कीट जोखिम कम है।',
+   451→  insight6: 'दीर्घकालिक मिट्टी की सेहत बढ़ाने के लिए जैविक कम्पोस्ट लगाने पर विचार करें।',
+   452→  generateInsight: 'नई अंतर्दृष्टि उत्पन्न करें',
+   453→
+   454→  alertsTitle: 'स्मार्ट अलर्ट',
+   455→  rainExpected: 'अगले 48 घंटों में आपके क्षेत्र में बारिश की उम्मीद है।',
+   456→  monitorSoil: 'मिट्टी की नमी स्तर की निगरानी करें — हाल की सूखी अवधि पाई गई।',
+   457→  checkPestSigns: 'फसल की पत्तियों पर कीट संक्रमण के शुरुआती लक्षणों की जांच करें।',
+   458→  fertilizerReminder: 'उर्वरक योजना अनुस्मारक — मिट्टी परीक्षण निर्धारित करें।',
+   459→  markAsRead: 'पढ़ा गया चिन्हित करें',
+   460→  markAllAsRead: 'सभी पढ़े गए चिन्हित करें',
+   461→  noUnreadAlerts: 'कोई अनपढ़ अलर्ट नहीं! आपका खेत अपडेट है।',
+   462→
+   463→  settingsTitle: 'सेटिंग्स',
+   464→  changeLanguageOption: 'भाषा बदलें',
+   465→  editProfileOption: 'किसान प्रोफ़ाइल संपादित करें',
+   466→  resetData: 'डेमो डेटा रीसेट करें',
+   467→  resetConfirm: 'यह आपका सारा डेटा मिटा देगा और भाषा चयन स्क्रीन पर लौट जाएगा। क्या आप सुनिश्चित हैं?',
+   468→  confirmReset: 'रीसेट की पुष्टि करें',
+   469→  cancelReset: 'रद्द करें',
+   470→};
+   471→
+   472→const mr: Translations = {
+   473→  chooseYourLanguage: 'आपली भाषा निवडा',
+   474→  languageSubtitle: [
+   475→    'किसानांसाठी स्मार्ट निर्णय, योग्य वेळी.',
+   476→  ],
+   477→  marathi: 'Marathi – मराठी',
+   478→  hindi: 'Hindi – हिंदी',
+   479→  english: 'English – English',
+   480→
+   481→  setupProfile: 'तुमचे शेत प्रोफाइल सेट करा',
+   482→  setupProfileSubtitle: 'आम्ही तुम्हाला चांगल्या प्रकारे मदत करू शकू यासाठी आपल्या शेताबद्दल सांगा.',
+   483→  farmerName: 'शेतकऱ्याचे नाव',
+   484→  farmerNamePlaceholder: 'आपले नाव लिहा',
+   485→  villageName: 'गावाचे नाव',
+   486→  villageNamePlaceholder: 'गावाचे नाव लिहा',
+   487→  farmSize: 'शेताचे आकार',
+   488→  lessThanOneAcre: '1 एकरपेक्षा कमी',
+   489→  oneToFiveAcres: '1–5 एकर',
+   490→  fiveToTenAcres: '5–10 एकर',
+   491→  moreThanTenAcres: '10 एकरपेक्षा जास्त',
+   492→  mainCrop: 'मुख्य पीक',
+   493→  selectCrop: 'पीक निवडा',
+   494→  cropWheat: 'गहू',
+   495→  cropRice: 'तांदूळ',
+   496→  cropCotton: 'कापूस',
+   497→  cropSoybean: 'सोयाबीन',
+   498→  cropSugarcane: 'ऊस',
+   499→  cropTomato: 'टोमॅटो',
+   500→  cropOnion: 'कांदा',
+   501→  cropOther: 'इतर',
+   502→  saveAndContinue: 'जतन करा आणि पुढे जा',
+   503→  back: 'मागे',
+   504→  nameRequired: 'शेतकऱ्याचे नाव आवश्यक आहे',
+   505→  villageRequired: 'गावाचे नाव आवश्यक आहे',
+   506→
+   507→  welcomeBack: 'पुन्हा स्वागत आहे',
+   508→  exploreFeatures: 'किसानपायलट वैशिष्ट्ये शोधा',
+   509→  village: 'गाव',
+   510→  mainCrop: 'मुख्य पीक',
+   511→  farmSizeLabel: 'शेताचे आकार',
+   512→  farmStatus: 'शेताची स्थिती',
+   513→  good: 'चांगली',
+   514→  aiChatbot: 'AI चॅटबॉट',
+   515→  aiChatbotDesc: 'तुमचे शेतीचे प्रश्न विचारा',
+   516→  myFarm: 'माझे शेत',
+   517→  myFarmDesc: 'शेताची माहिती पहा आणि संपादित करा',
+   518→  cropDoctor: 'पीक डॉक्टर',
+   519→  cropDoctorDesc: 'पिकाच्या आरोग्याची तपासणी करा',
+   520→  weather: 'हवामान',
+   521→  weatherDesc: 'स्थानिक हवामान अपडेट',
+   522→  farmInsights: 'शेत अंतर्दृष्टी',
+   523→  farmInsightsDesc: 'AI आधारित विश्लेषण',
+   524→  smartAlerts: 'स्मार्ट अलर्ट',
+   525→  smartAlertsDesc: 'महत्त्वाच्या सूचना',
+   526→  changeLanguage: 'भाषा बदला',
+   527→  settings: 'सेटिंग्ज',
+   528→  dashboard: 'डॅशबोर्ड',
+   529→  yourPersonalAi: 'शेतीसाठी तुमचा वैयक्तिक AI सहायक',
+   530→  smarterDecisions: 'किसानांसाठी स्मार्ट निर्णय, योग्य वेळी.',
+   531→  tagline: 'शेतीसाठी योग्य वेळी स्मार्ट निर्णय.',
+   532→
+   533→  aiAssistant: 'किसानपायलट AI सहायक',
+   534→  typeMessage: 'तुमचा शेतीचा प्रश्न टाइप करा...',
+   535→  send: 'पाठवा',
+   536→  backToDashboard: 'डॅशबोर्डवर परत जा',
+   537→  quickSuggestions: 'द्रुत सूचना',
+   538→  suggestion1: 'माझ्या पिकाला कधी पाणी द्यावे?',
+   539→  suggestion2: 'मी मातीचे आरोग्य कसे सुधारू शकतो?',
+   540→  suggestion3: 'पाने पिवळी झाल्यास मला काय करावे?',
+   541→  suggestion4: 'मी माझ्या पिकाचे कीड-मुक्यांपासून संरक्षण कसे करू?',
+   542→  waterResponse: '💧 **सिंचाई मार्गदर्शन:** पिकांना पहाटे लवकर किंवा संध्याकाळी उशिरा पाणी द्यावे जेणेकरून बाष्पीभवन कमी होईल. मातीची ओलावा तपासण्यासाठी तुमची बोटे मातीत 2-3 इंच घाला — जर कोरडी वाटत असेल तर पाणी देण्याची वेळ आली आहे. बहुतेक पिकांना दर आठवड्याला 1-2 इंच पाणी हवे असते. ड्रिप सिंचाई वापरा.',
+   543→  yellowLeavesResponse: '🍂 **पिवळी पाने — संभाव्य कारणे:**\n\n1. **पोषक तत्वांची कमी:** नायट्रोजन, लोह किंवा मॅग्नेशियमची कमी पिवळेपणाचे कारण असू शकते.\n2. **जास्त पाणी:** मुळे दम चोकून आहेत. पाणी साचलेली माती तपासा.\n3. **कीड किंवा रोग:** पानांवर डाग, जाळे किंवा कीड तपासा.\n4. **नैसर्गिक वाढ:** खालची पाने नैसर्गिकरित्या पिवळी होतात.\n\n**सूचना:** मातीची पाण्याची निकास तपासा, कीडीसाठी पानांची बारीक तपासणी करा.',
+   544→  pestResponse: '🐛 **कीट व्यवस्थापन:**\n\n1. **कीड ओळखा:** पानां, खेकड्यांवर आणि मातीत कीड किंवा नुकसानाचे चिन्ह तपासा.\n2. **नियमित निरीक्षण:** दर 2-3 दिवसांत पिकांची तपासणी करा.\n3. **नैसर्गिक पद्धती:** नीम तेल स्प्रे वापरा, लेडीबग सारखे उपयुक्त कीड आणा.\n4. **एकत्रित कीट व्यवस्थापन (IPM):** सांस्कृतिक, जैविक आणि रासायनिक पद्धती एकत्र करा.\n5. **स्थानिक तज्ञांशी सल्ला घ्या:** संक्रमण गंभीर असल्यास कृषी तज्ञांशी भेटा.',
+   545→  fertilizerResponse: '🧪 **खत आणि पोषक तत्व मार्गदर्शन:**\n\n1. **माती चाचणी:** स्थानिक प्रयोगशाळेत मातीची चाचणी करा.\n2. **संतुलित NPK:** नायट्रोजन, फॉस्फरस आणि पोटॅशियमच्या संतुलित प्रमाणाची खते वापरा.\n3. **जैविक पर्याय:** कम्पोस्ट, वर्मीकम्पोस्ट किंवा शेळी खाद वापरा.\n4. **सूक्ष्म पोषक तत्वे:** झिंक, लोह आणि बोरॉन विसरू नका.\n5. **खतांचा वेळ:** सक्रिय वाढीच्या टप्प्यात खते टाका.',
+   546→  weatherResponse: '🌦 **हवामान आणि शेती:**\n\nवर्तमान अंदाजानुसार तुमच्या शेती कृतींचे नियोजन करा:\n\n- पावसाची शक्यता असल्यास सिंचाई विलंबित करा.\n- उच्च ओलावा बुरशी रोगाचा धोका वाढवतो.\n- 20 किमी/तासापेक्षा जास्त वारा उंच पिकांना नुकसान करू शकतो.\n- शांत, कोरड्या दिवशी फवारणीचे नियोजन करा.\n- बहुतेक पिके 15°C पेक्षा वर चांगल्या प्रकारे अंकुरित होतात.',
+   547→  defaultResponse: '🌱 मी तुमचा किसानपायलट AI सहायक आहे. मी पीक काळजी, सिंचाई, कीड, मातीचे आरोग्य आणि शेती निर्णयांमध्ये तुम्हाला मदत करू शकतो. तुमच्या शेताबद्दल काहीही विचारा!',
+   548→
+   549→  cropDoctorTitle: 'पीक डॉक्टर',
+   550→  cropDoctorSubtitle: 'AI आधारित आरोग्य विश्लेषणासाठी पिकाचा फोटो अपलोड करा',
+   551→  uploadPhoto: 'पिकाचा फोटो अपलोड करा',
+   552→  uploadPhotoDesc: 'फोटो काढा किंवा गॅलरीतून निवडा',
+   553→  analyzeCrop: 'पिकाचे विश्लेषण करा',
+   554→  analyzing: 'AI सह तुमचे पिक विश्लेषित केले जात आहे…',
+   555→  cropHealthScore: 'पिक आरोग्य गुण',
+   556→  possibleObservation: 'संभाव्य निरीक्षण',
+   557→  recommendations: 'शिफारसी',
+   558→  rec1: 'मातीतील पोषक तत्व पातळी तपासा',
+   559→  rec2: 'पानांच्या रंग बदलावर लक्ष ठेवा',
+   560→  rec3: 'योग्य सिंचाई सुनिश्चित करा',
+   561→  rec4: 'पुष्टीकरणासाठी स्थानिक कृषी तज्ञांशी भेटा',
+   562→  analyzeAnother: 'दुसरा फोटो विश्लेषित करा',
+   563→  mildNutrientStress: 'हलके पोषक तत्व ताणाचे चिन्ह आढळले.',
+   564→
+   565→  weatherTitle: 'हवामान आणि शेत अंदाज',
+   566→  currentWeather: 'सध्याचे हवामान',
+   567→  temperature: 'तापमान',
+   568→  condition: 'स्थिती',
+   569→  partlyCloudy: 'अंशतः ढगाळ',
+   570→  humidity: 'ओलावा',
+   571→  wind: 'वारा',
+   572→  rainChance: 'पावसाची शक्यता',
+   573→  fiveDayForecast: '5 दिवसांचा अंदाज',
+   574→  farmingAdvice: 'शेती सल्ला',
+   575→  rainAdvice: 'या आठवड्यात पाऊस शक्य आहे. पावसापूर्वी अनावश्यक सिंचाई टाळा.',
+   576→  monday: 'सोमवार',
+   577→  tuesday: 'मंगळवार',
+   578→  wednesday: 'बुधवार',
+   579→  thursday: 'गुरुवार',
+   580→  friday: 'शुक्रवार',
+   581→
+   582→  myFarmTitle: 'माझे शेत',
+   583→  farmDetails: 'शेताची माहिती',
+   584→  editProfile: 'प्रोफाइल संपादित करा',
+   585→  saveChanges: 'बदल जतन करा',
+   586→  cancel: 'रद्द करा',
+   587→  cropHealth: 'पीक आरोग्य',
+   588→  soilMoisture: 'मातीचा ओलावा',
+   589→  irrigationStatus: 'सिंचाई स्थिती',
+   590→  moderate: 'मध्यम',
+   591→  onTrack: 'योग्य आहे',
+   592→  farmStatusSection: 'शेताची स्थिती',
+   593→
+   594→  insightsTitle: 'शेत अंतर्दृष्टी',
+   595→  cropHealthScore2: 'पीक आरोग्य',
+   596→  soilMoisture2: 'मातीचा ओलावा',
+   597→  irrigationEfficiency: 'सिंचाई दक्षता',
+   598→  aiInsights: 'AI अंतर्दृष्टी',
+   599→  insight1: 'तुमचे पीक आरोग्य सध्या स्थिर आहे. नियमित निरीक्षण सुरू ठेवा.',
+   600→  insight2: 'पुढील 2 दिवसांत मातीच्या ओलाव्याचे निरीक्षण करा.',
+   601→  insight3: 'या आठवड्यात हवामानाच्या परिस्थिती सिंचाई नियोजनावर परिणाम करू शकतात.',
+   602→  insight4: 'या हंगामात पिकाची वाढीचा दर सरासरीपेक्षा जास्त आहे. छान!',
+   603→  insight5: 'कोरड्या परिस्थितीमुळे या आठवड्यात कीडीचा धोका कमी आहे.',
+   604→  insight6: 'दीर्घकालीन मातीचे आरोग्य सुधारण्यासाठी जैविक कम्पोस्ट टाकण्यावर विचार करा.',
+   605→  generateInsight: 'नवीन अंतर्दृष्टी निर्माण करा',
+   606→
+   607→  alertsTitle: 'स्मार्ट अलर्ट',
+   608→  rainExpected: 'पुढील 48 तासांत तुमच्या भागात पाऊस येण्याची शक्यता आहे.',
+   609→  monitorSoil: 'मातीच्या ओलाव्याच्या पातळीवर लक्ष ठेवा — अलीकडील कोरडा काळ आढळला.',
+   610→  checkPestSigns: 'पिकाच्या पानांवर कीड संक्रमणाची सुरुवातीची लक्षणे तपसा.',
+   611→  fertilizerReminder: 'खत नियोजन स्मरणपत्र — माती चाचणी शेड्यूल करा.',
+   612→  markAsRead: 'वाचले चिन्हांकित करा',
+   613→  markAllAsRead: 'सर्व वाचले चिन्हांकित करा',
+   614→  noUnreadAlerts: 'कोणतेही न वाचलेले अलर्ट नाही! तुमचे शेत अपडेट आहे.',
+   615→
+   616→  settingsTitle: 'सेटिंग्ज',
+   617→  changeLanguageOption: 'भाषा बदला',
+   618→  editProfileOption: 'शेतकऱ्याचे प्रोफाइल संपादित करा',
+   619→  resetData: 'डेमो डेटा रीसेट करा',
+   620→  resetConfirm: 'हे तुमचा सर्व डेटा हटवेल आणि भाषा निवड स्क्रीनवर परत जाईल. तुम्हाला खात्री आहे का?',
+   621→  confirmReset: 'रीसेट पुष्टी करा',
+   622→  cancelReset: 'रद्द करा',
+   623→};
+   624→
+   625→const translations: Record<Language, Translations> = { en, hi, mr };
+   626→
+   627→export function getTranslations(lang: Language): Translations {
+   628→  return translations[lang] || translations.en;
+   629→}
+   630→
+   631→export function getLanguageLabel(lang: Language): string {
+   632→  switch (lang) {
+   633→    case 'mr': return 'मराठी';
+   634→    case 'hi': return 'हिंदी';
+   635→    case 'en': return 'English';
+   636→  }
+   637→}
+   638→
