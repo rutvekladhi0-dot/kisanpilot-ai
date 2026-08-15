@@ -681,22 +681,158 @@ function ChatbotScreen() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
+  const getTransactionSummary = (): string => {
+    try {
+      const stored = localStorage.getItem('kp_voicekhata');
+      if (!stored) return 'NO_DATA';
+      const entries: any[] = JSON.parse(stored);
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30);
+      const recent = entries.filter((e: any) => e.date && new Date(e.date) >= thirtyDaysAgo);
+      if (recent.length === 0) return 'NO_DATA';
+      const income = recent.filter((e: any) => e.type === 'income').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
+      const expense = recent.filter((e: any) => e.type === 'expense').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
+      const net = income - expense;
+      const incCount = recent.filter((e: any) => e.type === 'income').length;
+      const expCount = recent.filter((e: any) => e.type === 'expense').length;
+      return JSON.stringify({ income, expense, net, incCount, expCount, total: recent.length });
+    } catch { return 'NO_DATA'; }
+  };
+
+  const getFarmMemorySummary = (): string => {
+    try {
+      const stored = localStorage.getItem('kp_farm_memory');
+      if (!stored) return 'NO_DATA';
+      return stored;
+    } catch { return 'NO_DATA'; }
+  };
+
+  const formatCurrency = (amount: number): string => {
+    return '₹' + amount.toLocaleString('en-IN');
+  };
+
   const generateResponse = (userMsg: string): string => {
     const lower = userMsg.toLowerCase();
+
+    // Greeting
+    if (/^(hi|hello|hey|namaste|नमस्ते|हेलो|हाय)/i.test(lower.trim())) {
+      return t.chatGreeting;
+    }
+    // Thank you
+    if (/^(thank|thanks|धन्य|शुक्रिया|thank you)/i.test(lower.trim())) {
+      return t.chatThankYou;
+    }
+    // Everything OK / Farm Status / Health Check
+    if (lower.includes('everything ok') || lower.includes('everything is ok') || lower.includes('कुछ ठीक') || lower.includes('farm status') || lower.includes('खेत कैसा') || lower.includes('खेत कसा') || lower.includes('how is my farm') || lower.includes('overall health') || lower.includes('farm health')) {
+      const mem = getFarmMemorySummary();
+      if (mem !== 'NO_DATA') {
+        const fm: any = JSON.parse(mem);
+        const crop = fm.lastCrop || fm.lastSeasonCrop || t.defaultResponse;
+        const soil = fm.soilType || 'N/A';
+        const satisfaction = fm.lastSeasonSatisfaction || 'N/A';
+        return t.chatFarmStatusResponse
+          .replace('{crop}', crop)
+          .replace('{soil}', soil)
+          .replace('{satisfaction}', satisfaction);
+      }
+      return t.chatFarmStatusDefault;
+    }
+    // Transaction / Last Month / Expense / Income Summary
+    if (lower.includes('transaction') || lower.includes('last month') || lower.includes('expense') || lower.includes('income') || lower.includes('my spend') || lower.includes('my earning') || lower.includes('khata') || lower.includes('राशि') || lower.includes('खर्च') || lower.includes('आय') || lower.includes('लेनदेन') || lower.includes('बाजार') || lower.includes('profit') || lower.includes('loss')) {
+      const summary = getTransactionSummary();
+      if (summary !== 'NO_DATA') {
+        const data: any = JSON.parse(summary);
+        const netLabel = data.net >= 0 ? t.netProfit : (t.totalExpense);
+        return t.chatTransactionResponse
+          .replace('{income}', formatCurrency(data.income))
+          .replace('{expense}', formatCurrency(data.expense))
+          .replace('{net}', formatCurrency(Math.abs(data.net)))
+          .replace('{netLabel}', data.net >= 0 ? t.netProfit : 'Loss')
+          .replace('{total}', String(data.total))
+          .replace('{incCount}', String(data.incCount))
+          .replace('{expCount}', String(data.expCount));
+      }
+      return t.chatTransactionNoData;
+    }
+    // Water / Irrigation
     if (lower.includes('water') || lower.includes('irrigat') || lower.includes('watering') || lower.includes('पानी') || lower.includes('सिंचाई')) {
       return t.waterResponse;
     }
+    // Yellow Leaves
     if (lower.includes('yellow') || lower.includes('पील') || lower.includes('पिवळ')) {
       return t.yellowLeavesResponse;
     }
+    // Pest / Insect
     if (lower.includes('pest') || lower.includes('insect') || lower.includes('कीट') || lower.includes('bug')) {
       return t.pestResponse;
     }
+    // Fertilizer / Nutrient
     if (lower.includes('fertilizer') || lower.includes('nutrient') || lower.includes('उर्वरक') || lower.includes('पोषक') || lower.includes('खत')) {
       return t.fertilizerResponse;
     }
-    if (lower.includes('weather') || lower.includes('मौसम') || lower.includes('हवामान')) {
+    // Weather
+    if (lower.includes('weather') || lower.includes('मौसम') || lower.includes('हवामान') || lower.includes('rain') || lower.includes('बारिश') || lower.includes('बारसात')) {
       return t.weatherResponse;
+    }
+    // Soil / Soil Test / Soil Health
+    if (lower.includes('soil') || lower.includes('मिट्टी') || lower.includes('माती') || lower.includes('soil test')) {
+      return t.chatSoilResponse;
+    }
+    // Seed / Sowing / Planting
+    if (lower.includes('seed') || lower.includes('sowing') || lower.includes('planting') || lower.includes('बीज') || lower.includes('बियाणे') || lower.includes('बुवाई')) {
+      return t.chatSeedResponse;
+    }
+    // Harvest / Crop Ready
+    if (lower.includes('harvest') || lower.includes('crop ready') || lower.includes('कटाई') || lower.includes('फसल तैयार') || lower.includes('कापणी')) {
+      return t.chatHarvestResponse;
+    }
+    // Insurance / PMFBY
+    if (lower.includes('insurance') || lower.includes('pmfby') || lower.includes('बीमा') || lower.includes('विमा')) {
+      return t.chatInsuranceResponse;
+    }
+    // Loan / Credit / KCC
+    if (lower.includes('loan') || lower.includes('credit') || lower.includes('kcc') || lower.includes('कर्ज') || lower.includes('क्रेडिट') || lower.includes('ऋण')) {
+      return t.chatLoanResponse;
+    }
+    // Subsidy / Government Scheme
+    if (lower.includes('subsidy') || lower.includes('scheme') || lower.includes('government') || lower.includes('सब्सिडी') || lower.includes('योजना') || lower.includes('सरकार')) {
+      return t.chatSubsidyResponse;
+    }
+    // Organic Farming / Compost
+    if (lower.includes('organic') || lower.includes('compost') || lower.includes('vermicompost') || lower.includes('जैविक') || lower.includes('कम्पोस्ट') || lower.includes('खाद')) {
+      return t.chatOrganicResponse;
+    }
+    // Disease / Rot / Fungus / Blight
+    if (lower.includes('disease') || lower.includes('rot') || lower.includes('fungus') || lower.includes('blight') || lower.includes('रोग') || lower.includes('बुरसी') || lower.includes('सड़न')) {
+      return t.chatDiseaseResponse;
+    }
+    // Market Price / Mandi / Bajar Bhav
+    if (lower.includes('market price') || lower.includes('mandi') || lower.includes('bajar') || lower.includes('bhav') || lower.includes('मंडी') || lower.includes('बाजार') || lower.includes('भाव')) {
+      return t.chatMarketResponse;
+    }
+    // What should I do today / Next Action
+    if (lower.includes('what should i do') || lower.includes('next action') || lower.includes('today') || lower.includes('आज') || lower.includes('करा') || lower.includes('करू') || lower.includes('करना चाहिए')) {
+      return t.chatNextActionResponse;
+    }
+    // Scorecard / Season Performance
+    if (lower.includes('scorecard') || lower.includes('score card') || lower.includes('season performance') || lower.includes('स्कोर') || lower.includes('प्रदर्शन')) {
+      return t.chatScorecardResponse;
+    }
+    // Weed / Weed Control
+    if (lower.includes('weed') || lower.includes('grass') || lower.includes('खरपतवार') || lower.includes('गवत')) {
+      return t.chatWeedResponse;
+    }
+    // Drone / Technology / Modern
+    if (lower.includes('drone') || lower.includes('technology') || lower.includes('modern') || lower.includes('ड्रोन') || lower.includes('तकनीक') || lower.includes('आधुनिक')) {
+      return t.chatTechResponse;
+    }
+    // Crop rotation / Crop selection
+    if (lower.includes('rotation') || lower.includes('which crop') || lower.includes('best crop') || lower.includes('फसल चुन') || lower.includes('फसल बदल') || lower.includes('फसल निवड')) {
+      return t.chatCropRotationResponse;
+    }
+    // Help / What can you do
+    if (lower.includes('help') || lower.includes('what can you') || lower.includes('मदद') || lower.includes('क्या कर') || lower.includes('मदत')) {
+      return t.chatHelpResponse;
     }
     return t.defaultResponse;
   };
@@ -806,7 +942,8 @@ function ChatbotScreen() {
             {/* Quick Suggestions */}
             <div className="space-y-2">
               <p className="text-sm font-semibold text-gray-600 mb-3">{t.quickSuggestions}</p>
-              {[t.suggestion1, t.suggestion2, t.suggestion3, t.suggestion4].map((s, i) => (
+              <div className="grid grid-cols-1 gap-2">
+                {[t.suggestion1, t.suggestion2, t.suggestion3, t.suggestion4, t.suggestion5, t.suggestion6, t.suggestion7, t.suggestion8].map((s, i) => (
                 <motion.button
                   key={i}
                   initial={{ opacity: 0, y: 10 }}
@@ -818,6 +955,7 @@ function ChatbotScreen() {
                   {s}
                 </motion.button>
               ))}
+              </div>
             </div>
           </div>
         )}

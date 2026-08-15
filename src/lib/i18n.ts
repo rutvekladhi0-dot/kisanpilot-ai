@@ -503,6 +503,33 @@ export interface Translations {
   // Voice Chat in Chatbot
   micButton: string;
   stopTalking: string;
+
+  // Enhanced Chatbot Responses
+  suggestion5: string;
+  suggestion6: string;
+  suggestion7: string;
+  suggestion8: string;
+  chatGreeting: string;
+  chatThankYou: string;
+  chatFarmStatusResponse: string;
+  chatFarmStatusDefault: string;
+  chatTransactionResponse: string;
+  chatTransactionNoData: string;
+  chatSoilResponse: string;
+  chatSeedResponse: string;
+  chatHarvestResponse: string;
+  chatInsuranceResponse: string;
+  chatLoanResponse: string;
+  chatSubsidyResponse: string;
+  chatOrganicResponse: string;
+  chatDiseaseResponse: string;
+  chatMarketResponse: string;
+  chatNextActionResponse: string;
+  chatScorecardResponse: string;
+  chatWeedResponse: string;
+  chatTechResponse: string;
+  chatCropRotationResponse: string;
+  chatHelpResponse: string;
 }
 
 const en: Translations = {
@@ -998,6 +1025,33 @@ const en: Translations = {
   // Voice Chat in Chatbot
   micButton: 'Mic',
   stopTalking: 'Stop',
+
+  // Enhanced Chatbot Responses
+  suggestion5: 'What is my last month transaction?',
+  suggestion6: 'Is everything OK with my farm?',
+  suggestion7: 'What should I do today?',
+  suggestion8: 'Tell me about soil health',
+  chatGreeting: '🌱 Namaste! I\'m your KisanPilot AI assistant. I can help with crop care, irrigation, pest management, market prices, insurance, and much more. Ask me anything about your farm!',
+  chatThankYou: '🙏 You\'re welcome! Happy farming! If you need any more help, I\'m always here.',
+  chatFarmStatusResponse: '🌾 **Farm Status Report:**\n\n✅ **Last Crop:** {crop}\n🧪 **Soil Type:** {soil}\n😊 **Last Season Satisfaction:** {satisfaction}\n\n📊 Overall, your farm appears to be in stable condition. Keep monitoring your crops regularly and maintain proper irrigation. For a detailed score, check the Season Score Card feature!',
+  chatFarmStatusDefault: '🌾 Your farm status looks stable based on current conditions. To get a personalized report, please fill in your Farm Memory details first. Go to the Farm Memory section from the dashboard to set up your farm profile.',
+  chatTransactionResponse: '💰 **Last Month Transaction Summary:**\n\n💵 **Total Income:** {income} ({incCount} entries)\n💸 **Total Expense:** {expense} ({expCount} entries)\n📊 **{netLabel}:** {net}\n📝 **Total Transactions:** {total}\n\n💡 Tip: Check the Voice Khata feature for detailed entry-by-entry records and category breakdowns.',
+  chatTransactionNoData: '📝 No transactions found for last month. Start adding your income and expense entries using the **Voice Khata** feature! You can add entries by voice or manually. This will help you track your farm economics.',
+  chatSoilResponse: '🧪 **Soil Health Guide:**\n\n1. **Get a soil test done** at your nearest Krushi Kendra or agriculture office — it costs only ₹50-200.\n2. **Check pH level** — most crops prefer 6.0-7.5 pH.\n3. **Add organic matter** — compost, vermicompost, or farmyard manure improves soil structure.\n4. **Crop rotation** prevents soil depletion.\n5. **Avoid excess chemical fertilizers** — they degrade soil health over time.\n6. **Mulching** helps retain moisture and prevents erosion.\n\n💡 Healthy soil = Healthy crops = Better income!',
+  chatSeedResponse: '🌱 **Seed & Sowing Guide:**\n\n1. **Always buy certified seeds** from Govt. centers or authorized dealers.\n2. **Treat seeds** before sowing — use Trichoderma or Carbendazim solution.\n3. **Check sowing season** — each crop has an ideal window (e.g., Wheat: Oct-Nov, Cotton: Jun-Jul).\n4. **Seed rate matters** — follow recommended seed rate per acre for optimum plant population.\n5. **Seed depth** — sow at the right depth (generally 3-5 cm for most crops).\n6. **Maintain spacing** for proper aeration and sunlight.\n\n📅 Check with your local agriculture office for the current season\'s recommended varieties.',
+  chatHarvestResponse: '🌾 **Harvest Readiness Guide:**\n\n1. **Grain moisture** should be below 14% for most crops.\n2. **Color change** — leaves turn yellow/brown when crop matures.\n3. **Grain hardness** — bite test: if grain is hard, it\'s ready.\n4. **Days after flowering** — Wheat: ~120 days, Cotton: ~160 days, Rice: ~110 days.\n5. **Weather window** — plan harvest during clear, dry weather.\n6. **Post-harvest** — dry grains properly before storage to avoid fungal growth.\n\n💡 Harvesting at the right time maximizes quality and market price!',
+  chatInsuranceResponse: '🛡 **Crop Insurance & Schemes:**\n\n**PMFBY (Pradhan Mantri Fasal Bima Yojana):**\n• Premium: Only 2% for Kharif, 1.5% for Rabi crops\n• Covers: Natural calamities, pests, diseases\n• Apply through: Your local bank or CSC center\n• Deadline: Before sowing season starts\n\n**Kisan Credit Card (KCC):**\n• Loan up to ₹3 lakh at 4% interest (subsidized)\n• Covers crop, animal husbandry, and fishery\n• Apply at any nationalized bank\n\n💡 Visit the PMFBY & Schemes section for full details and eligibility!',
+  chatLoanResponse: '🏦 **Loan & Credit Options:**\n\n**Kisan Credit Card (KCC):**\n• Up to ₹3 lakh at 4% interest\n• No collateral needed for loans up to ₹1.6 lakh\n• Repayment: After harvest\n\n**Crop Loan:**\n• Available from nationalized banks & cooperative banks\n• Interest subvention: 2% prompt repayment discount\n\n**Government Subsidies:**\n• Interest subsidy up to 3% on crop loans\n• Processing fee waiver in some states\n\n📞 Visit your nearest bank branch with Aadhaar card and land records.',
+  chatSubsidyResponse: '🏛 **Government Schemes for Farmers:**\n\n1. **PM-KISAN** — ₹6,000/year direct income support\n2. **PMFBY** — Crop insurance at low premium\n3. **Soil Health Card Scheme** — Free soil testing\n4. **e-NAM** — Online national agriculture market\n5. **PM Krishi Sinchai Yojana** — Irrigation subsidy\n6. **Kisan Credit Card** — Low-interest crop loan\n\n📱 Register at: pmkisan.gov.in or visit your nearest CSC center for assistance.',
+  chatOrganicResponse: '🌿 **Organic Farming Guide:**\n\n**Benefits:** Better soil health, premium market prices, sustainable farming.\n\n**Getting Started:**\n1. **Composting** — Turn crop residue + cow dung into nutrient-rich compost\n2. **Vermicompost** — Use earthworms for faster decomposition\n3. **Neem-based pesticides** — Natural pest control\n4. **Cow urine (Gomutra)** — Acts as growth promoter & pest deterrent\n5. **Green manuring** — Grow dhaincha/sunhemp and plow back into soil\n6. **Crop rotation** — Alternate legumes with cereals\n\n💰 Organic produce fetches 20-40% premium price in markets!',
+  chatDiseaseResponse: '🦠 **Disease Management:**\n\n**Common Crop Diseases:**\n• **Blight** (potato/tomato) — Brown spots, spreading rapidly\n• **Rust** (wheat) — Orange-brown pustules on leaves\n• **Powdery Mildew** — White powder on leaves\n• **Root Rot** — Wilting, yellowing from base\n\n**Prevention:**\n1. Use disease-resistant seed varieties\n2. Maintain proper spacing for air circulation\n3. Avoid waterlogging — improves root health\n4. Apply Trichoderma or Pseudomonas as preventive spray\n5. Remove and destroy infected plants immediately\n\n⚠️ For severe infection, consult your nearest Krushi Kendra.',
+  chatMarketResponse: '🏪 **Market Price Guide:**\n\n📊 Check the **Market Prices (Bajar Bhav)** feature for live mandi prices.\n\n**Tips for Better Prices:**\n1. **Timing matters** — Prices often drop right after harvest season\n2. ** graded produce** — Get your crop graded for better rates\n3. **Multiple mandis** — Compare prices across nearby mandis\n4. **Direct selling** — Skip middlemen for better margins\n5. **e-NAM portal** — Sell online at national level\n6. **Storage** — If prices are low, store and sell later\n\n💡 Check transport costs before choosing a distant mandi!',
+  chatNextActionResponse: '✨ **Recommended Action for Today:**\n\n📋 **Priority 1:** Check soil moisture levels — use the finger test (insert 2-3 inches into soil).\n📋 **Priority 2:** Walk through your field and check for early pest signs on leaves.\n📋 **Priority 3:** Review weather forecast — plan irrigation accordingly.\n\n💡 For personalized AI recommendations, check the **Next Best Action** feature on your dashboard!',
+  chatScorecardResponse: '🏆 **Season Score Card:**\n\n📊 Your season performance is tracked across 6 key metrics:\n• Crop Health\n• Irrigation Management\n• Pest Management\n• Soil Health\n• Profitability\n• Timely Actions\n\nCheck the **Season Score Card** feature to see your detailed scores, highlights, alerts, and download a PDF report!',
+  chatWeedResponse: '🌿 **Weed Management:**\n\n**Types of Weeds:**\n• **Grassy weeds** — resemble crop seedlings\n• **Broadleaf weeds** — wider leaves, easier to identify\n• **Sedges** — triangular stems, thrive in wet soil\n\n**Control Methods:**\n1. **Manual weeding** — First 30 days after sowing is critical\n2. **Hoeing** — Loosens soil + removes weeds\n3. **Mulching** — Blocks weed seed germination\n4. **Herbicide** — Use recommended pre-emergence herbicide if needed\n\n💡 Timely weeding in the first month can increase yield by 15-25%!',
+  chatTechResponse: '🚜 **Modern Farming Technology:**\n\n**Available Technologies:**\n1. **Drones** — Crop health monitoring, spraying pesticides over large areas\n2. **Soil moisture sensors** — Real-time irrigation planning\n3. **Mobile apps** — Weather alerts, market prices, expert advice\n4. **Solar pumps** — Cost-effective irrigation solution\n5. **Micro-irrigation** — Drip/sprinkler for water efficiency\n6. **AI advisory** — Like KisanPilot! Smart farming decisions\n\n💰 Government subsidies (up to 50%) available for drip irrigation and solar pumps!',
+  chatCropRotationResponse: '🔄 **Crop Rotation Guide:**\n\n**Why Rotate?** Prevents soil depletion, breaks pest cycles, improves yield.\n\n**Recommended Rotations:**\n• **Year 1:** Cereal (Wheat/Rice)\n• **Year 2:** Legume (Gram/Soybean) — fixes nitrogen naturally\n• **Year 3:** Cash crop (Cotton/Sugarcane)\n• **Year 4:** Oilseed (Groundnut/Mustard)\n\n**Benefits:**\n✅ 10-20% yield improvement\n✅ Reduced fertilizer need by 25%\n✅ Fewer pest problems\n✅ Better soil structure\n\n💡 Legumes in rotation can save ₹2,000-4,000/acre in fertilizer costs!',
+  chatHelpResponse: '🤖 **I can help you with:**\n\n💧 **Irrigation** — When and how much to water\n🐛 **Pest Management** — Identify and control pests\n🧪 **Fertilizer** — NPK guidance and schedules\n🌦 **Weather** — Farming advice based on weather\n💰 **Transactions** — View your monthly income/expense\n🌾 **Farm Status** — Overall farm health check\n🌱 **Seeds & Sowing** — Best practices for planting\n🛡 **Insurance** — PMFBY and KCC details\n🏪 **Market Prices** — Mandi rates and selling tips\n🌿 **Organic Farming** — Chemical-free methods\n📉 **Loan & Subsidy** — Government schemes\n\nJust type or ask your question — in English, Hindi, or Marathi!',
 };
 
 const hi: Translations = {
@@ -1493,6 +1547,33 @@ const hi: Translations = {
   // Voice Chat in Chatbot
   micButton: 'माइक',
   stopTalking: 'बंद करें',
+
+  // Enhanced Chatbot Responses
+  suggestion5: 'पिछले महीने का लेनदेन क्या है?',
+  suggestion6: 'मेरा खेत ठीक तो है?',
+  suggestion7: 'मुझे आज क्या करना चाहिए?',
+  suggestion8: 'मिट्टी की सेहत के बारे में बताएं',
+  chatGreeting: '🌱 नमस्ते! मैं आपका किसानपायलट AI सहायक हूं। मैं फसल देखभाल, सिंचाई, कीट प्रबंधन, बाजार भाव, बीमा और बहुत कुछ में आपकी मदद कर सकता हूं। अपने खेत के बारे में कुछ भी पूछें!',
+  chatThankYou: '🙏 आपका स्वागत है! खुश किसानी! अगर आपको और मदद चाहिए तो मैं हमेशा यहीं हूं।',
+  chatFarmStatusResponse: '🌾 **खेत स्थिति रिपोर्ट:**\n\n✅ **पिछली फसल:** {crop}\n🧪 **मिट्टी का प्रकार:** {soil}\n😊 **पिछले मौसम की संतुष्टि:** {satisfaction}\n\n📊 समग्र रूप से, आपका खेत स्थिर स्थिति में प्रतीत हो रहा है। नियमित निगरानी जारी रखें और उचित सिंचाई बनाए रखें। विस्तृत स्कोर के लिए सीज़न स्कोर कार्ड देखें!',
+  chatFarmStatusDefault: '🌾 वर्तमान स्थितियों के आधार पर आपकी खेत स्थिति स्थिर दिखती है। व्यक्तिगत रिपोर्ट प्राप्त करने के लिए कृपया पहले अपनी खेत स्मृति विवरण भरें। डैशबोर्ड से खेत स्मृति सेक्शन पर जाएं।',
+  chatTransactionResponse: '💰 **पिछले महीने का लेनदेन सारांश:**\n\n💵 **कुल आय:** {income} ({incCount} प्रविष्टियां)\n💸 **कुल खर्च:** {expense} ({expCount} प्रविष्टियां)\n📊 **{netLabel}:** {net}\n📝 **कुल लेनदेन:** {total}\n\n💡 सुझाव: विस्तृत रिकॉर्ड के लिए वॉइस खाता फीचर देखें।',
+  chatTransactionNoData: '📝 पिछले महीने कोई लेनदेन नहीं मिला। **वॉइस खाता** फीचर से अपनी आय और खर्च प्रविष्टियां जोड़ें!',
+  chatSoilResponse: '🧪 **मिट्टी स्वास्थ्य गाइड:**\n\n1. नजदीकी कृषि केंद्र पर **मिट्टी परीक्षण** करवाएं — ₹50-200 लागत।\n2. **pH स्तर** जांचें — अधिकांश फसलें 6.0-7.5 pH पसंद करती हैं।\n3. **जैविक पदार्थ** जोड़ें — कम्पोस्ट या गोबर खाद।\n4. **फसल रोटेशन** मिट्टी की क्षरण रोकता है।\n5. अधिक रासायनिक खत से बचें।\n\n💡 स्वस्थ मिट्टी = स्वस्थ फसल = बेहतर आय!',
+  chatSeedResponse: '🌱 **बीज और बुवाई गाइड:**\n\n1. हमेशा **प्रमाणित बीज** खरीदें।\n2. बुवाई से पहले **बीज उपचार** करें।\n3. **बुवाई का मौसम** देखें — गेहूं: अक्टूबर-नवंबर।\n4. सही **बीज दर** बनाए रखें।\n5. सही **गहराई** पर बोएं।\n6. उचित **दूरी** बनाए रखें।',
+  chatHarvestResponse: '🌾 **कटाई तैयारी गाइड:**\n\n1. **अनाज की नमी** 14% से कम होनी चाहिए।\n2. **रंग बदलाव** — पत्तियां पीली/भूरी होती हैं।\n3. **अनाज कठोरता** — दांत से काटकर जांचें।\n4. **फूलने के बाद दिन** — गेहूं: ~120 दिन।\n5. **मौसम** — साफ, शुष्क मौसम में कटाई करें।\n6. भंडारण से पहले **अनाज सूखा करें**।',
+  chatInsuranceResponse: '🛡 **फसल बीमा और योजनाएं:**\n\n**PMFBY:**\n• प्रीमियम: खरीफ 2%, रबी 1.5%\n• कवर: प्राकृतिक आपदा, कीट, रोग\n• बुवाई से पहले आवेदन करें\n\n**किसान क्रेडिट कार्ड:**\n• ₹3 लाख तक 4% ब्याज पर\n\n💡 पूरी जानकारी के लिए PMFBY & Schemes सेक्शन देखें!',
+  chatLoanResponse: '🏦 **ऋण विकल्प:**\n\n**किसान क्रेडिट कार्ड:**\n• ₹3 लाख तक 4% ब्याज\n• ₹1.6 लाख तक बिना जमानत\n\n**सरकारी सब्सिडी:**\n• फसल ऋण पर 2% ब्याज सब्सिडी\n\n📞 आधार कार्ड और भूमि रिकॉर्ड लेकर बैंक जाएं।',
+  chatSubsidyResponse: '🏛 **किसानों के लिए सरकारी योजनाएं:**\n\n1. **PM-KISAN** — साल में ₹6,000 सीधी आय सहायता\n2. **PMFBY** — कम प्रीमियम पर फसल बीमा\n3. **मिट्टी स्वास्थ्य कार्ड** — मुफ्त मिट्टी परीक्षण\n4. **e-NAM** — ऑनलाइन राष्ट्रीय कृषि बाजार\n5. **PM कृषि सिंचाई योजना** — सिंचाई सब्सिडी\n\n📱 pmkisan.gov.in पर रजिस्टर करें।',
+  chatOrganicResponse: '🌿 **जैविक खेती गाइड:**\n\n**फायदे:** बेहतर मिट्टी, प्रीमियम भाव, सस्टेनेबल खेती।\n\n1. **कम्पोस्ट** — फसल अवशेष + गोबर से बनाएं\n2. **वर्मीकम्पोस्ट** — एर्थवर्म से तेज़ी से बनाएं\n3. **नीम आधारित कीटनाशक** — प्राकृतिक कीट नियंत्रण\n4. **हरी खाद** — धैंचा/सूरजमुखी उगाकर मिट्टी में गलाएं\n5. **फसल रोटेशन** — दलहन और अनाज बारी-बारी लगाएं\n\n💰 जैविक उत्पाद 20-40% अधिक भाव पर बिकता है!',
+  chatDiseaseResponse: '🦠 **रोग प्रबंधन:**\n\n**सामान्य फसल रोग:**\n• **ब्लाइट** — भूरे धब्बे\n• **रस्ट** — सुनहरे-भूरे दाने\n• **पाउडरी मिल्ड्यू** — सफेद पाउडर\n• **रूट रॉट** — पत्तियां पीली\n\n**रोकथाम:**\n1. रोग प्रतिरोधी किस्में उपयोग करें\n2. उचित दूरी बनाए रखें\n3. जल जमाव से बचें\n4. ट्राइकोडर्मा स्प्रे करें\n5. संक्रमित पौधे हटाएं',
+  chatMarketResponse: '🏪 **बाजार भाव गाइड:**\n\n**बेहतर भाव के टिप्स:**\n1. समय सही चुनें — कटाई के बाद भाव गिरता है\n2. **ग्रेडिंग** कराएं — बेहतर दर मिलते हैं\n3. कई **मंडियों** में भाव तुलना करें\n4. **e-NAM पोर्टल** पर ऑनलाइन बेचें\n5. भाव कम हो तो **भंडारण** करें\n\n💡 बाजार भाव सुविधा के लिए Market Prices फीचर देखें!',
+  chatNextActionResponse: '✨ **आज के लिए अनुशंसित कार्य:**\n\n📋 **प्राथमिकता 1:** मिट्टी की नमी जांचें।\n📋 **प्राथमिकता 2:** फसल की पत्तियों पर कीट के संकेत देखें।\n📋 **प्राथमिकता 3:** मौसम पूर्वानुमान देखें।\n\n💡 व्यक्तिगत सुझाव के लिए **Next Best Action** फीचर देखें!',
+  chatScorecardResponse: '🏆 **सीज़न स्कोर कार्ड:**\n\n📊 6 मुख्य मैट्रिक्स पर आपका प्रदर्शन ट्रैक किया जाता है:\n• फसल स्वास्थ्य, सिंचाई, कीट प्रबंधन\n• मिट्टी स्वास्थ्य, लाभपरकता, समय पर कार्य\n\n**Season Score Card** फीचर देखें और PDF डाउनलोड करें!',
+  chatWeedResponse: '🌿 **खरपतवार प्रबंधन:**\n\n**नियंत्रण विधियां:**\n1. **मैन्युअल निराई** — बुवाई के बाद पहले 30 दिन महत्वपूर्ण\n2. **कुदाल** — मिट्टी ढीली + खरपतवार हटाता है\n3. **मल्चिंग** — खरपतवार अंकुरण रोकता है\n4. **शाकनाशी** — सिफारिशित हर्बिसाइड\n\n💡 समय पर निराई से उपज 15-25% बढ़ सकती है!',
+  chatTechResponse: '🚜 **आधुनिक खेती तकनीक:**\n\n1. **ड्रोन** — फसल स्वास्थ्य निगरानी, कीटनाशक छिड़काव\n2. **मिट्टी नमी सेंसर** — रियल-टाइम सिंचाई\n3. **मोबाइल ऐप्स** — मौसम, बाजार, सलाह\n4. **सोलर पंप** — सस्ती सिंचाई\n5. **माइक्रो सिंचाई** — ड्रिप/स्प्रिंकलर\n\n💰 सरकारी सब्सिडी ड्रिप और सोलर पंप पर!',
+  chatCropRotationResponse: '🔄 **फसल रोटेशन गाइड:**\n\n**लाभ:** मिट्टी सुधार, कीट चक्र तोड़ें, उपज बढ़ाएं।\n\n**सुझावित रोटेशन:**\n• **साल 1:** अनाज (गेहूं/चावल)\n• **साल 2:** दलहन (चना/सोयाबीन)\n• **साल 3:** नकदी फसल (कपास/गन्ना)\n• **साल 4:** तिलहन (मूंगफली/सरसों)\n\n✅ 10-20% उपज वृद्धि, 25% कम खर्चा!',
+  chatHelpResponse: '🤖 **मैं इनमें मदद कर सकता हूं:**\n\n💧 सिंचाई | 🐛 कीट प्रबंधन | 🧪 खत\n🌦 मौसम | 💰 लेनदेन | 🌾 खेत स्थिति\n🌱 बीज | 🛡 बीमा | 🏪 बाजार भाव\n🌿 जैविक खेती | 📉 ऋण और सब्सिडी\n\nअंग्रेजी, हिंदी या मराठी में पूछें!',
 };
 
 const mr: Translations = {
@@ -1988,6 +2069,33 @@ const mr: Translations = {
   // Voice Chat in Chatbot
   micButton: 'माइक',
   stopTalking: 'बंद करा',
+
+  // Enhanced Chatbot Responses
+  suggestion5: 'मागील महिन्यातील लेनदेन काय आहे?',
+  suggestion6: 'माझे शेत ठीक आहे का?',
+  suggestion7: 'मला आज काय करावे?',
+  suggestion8: 'मातीचे आरोग्य सांगा',
+  chatGreeting: '🌱 नमस्कार! मी तुमचा किसानपायलट AI सहाय्यक आहे. मी पिक काळजी, सिंचाई, कीड व्यवस्थापन, बाजारभाव, विमा आणि बरेच काही मध्ये तुम्हाला मदत करू शकतो.',
+  chatThankYou: '🙏 आभार! शुभ शेती! अधिक मदत हवी असल्या, मी नेहमी इथे आहे.',
+  chatFarmStatusResponse: '🌾 **शेत स्थिती अहवाल:**\n\n✅ **मागील पीक:** {crop}\n🧪 **मातीचा प्रकार:** {soil}\n😊 **मागील हंगाम समाधान:** {satisfaction}\n\n📊 एकंदरीत, तुमचे शेत स्थिर स्थितीत आहे. नियमित निरीक्षण ठेवा आणि योग्य सिंचाई ठेवा.',
+  chatFarmStatusDefault: '🌾 सध्याच्या परिस्थितींनुसार तुमचे शेत ठीक आहे. वैयक्तिक अहवाल मिळवण्यासाठी शेत स्मृती तपशील भरा.',
+  chatTransactionResponse: '💰 **मागील महिन्याचा लेनदेन सारांश:**\n\n💵 **एकूण उत्पन्न:** {income} ({incCount} प्रविष्ट्या)\n💸 **एकूण खर्च:** {expense} ({expCount} प्रविष्ट्या)\n📊 **{netLabel}:** {net}\n📝 **एकूण लेनदेन:** {total}\n\n💡 तपशीलवार रेकॉर्डसाठी व्हॉइस खाता फीचर पहा.',
+  chatTransactionNoData: '📝 मागील महिन्यात कोणतेही लेनदेन नाही. **व्हॉइस खाता** फीचर वापरून आपल्या उत्पन्न आणि खर्च प्रविष्ट्या जोडा!',
+  chatSoilResponse: '🧪 **माती आरोग्य मार्गदर्शक:**\n\n1. जवळच्या कृषी केंद्रावर **माती चाचणी** करा — ₹50-200 खर्च.\n2. **pH पातळी** तपासा — बहुतेक पिकांना 6.0-7.5 pH आवडतो.\n3. **जैविक पदार्थ** टाका — कम्पोस्ट किंवा शेळी खाद.\n4. **पीक रोटेशन** मातीची झीज थांबवतो.\n5. जास्त रासायनिक खतांपासून दूर राहा.',
+  chatSeedResponse: '🌱 **बियाणे आणि बुवण मार्गदर्शक:**\n\n1. नेहमी **प्रमाणित बियाणे** विकत घ्या.\n2. बुवणीपूर्वी **बियाणे उपचार** करा.\n3. **बुवणीचा हंगाम** बघा — गहू: ऑक्टोबर-नोव्हेंबर.\n4. योग्य **बियाणे दर** ठेवा.\n5. योग्य **खोल** पर बियाणे टाका.',
+  chatHarvestResponse: '🌾 **कापणी तयारी मार्गदर्शक:**\n\n1. **धान्याची ओलावा** 14% पेक्षा कमी असावा.\n2. **रंग बदल** — पाने पिवळी/तपकिरी होतात.\n3. **धान्याची कठीणता** — दात घाऊन तपासा.\n4. **फुलण्यानंतर दिवस** — गहू: ~120 दिवस.\n5. **हवामान** — स्वच्छ, कोरड्या हवामानात कापणी करा.',
+  chatInsuranceResponse: '🛡 **पीक विमा आणि योजना:**\n\n**PMFBY:**\n• प्रीमियम: खरीफ 2%, रबी 1.5%\n• संरक्षण: नैसर्गिक आपत्ती, कीड, रोग\n• बुवणीपूर्वी अर्ज करा\n\n**शेतकरी क्रेडिट कार्ड:**\n• ₹3 लाख पर्यंत 4% व्याजावर',
+  chatLoanResponse: '🏦 **कर्ज पर्याय:**\n\n**शेतकरी क्रेडिट कार्ड:**\n• ₹3 लाख पर्यंत 4% व्याज\n• ₹1.6 लाख पर्यंत जामीननास्तेव\n\n📞 आधार कार्ड आणि जमीन रेकॉर्ड घेऊन बँकेला जा.',
+  chatSubsidyResponse: '🏛 **शेतकऱ्यांसाठी सरकारी योजना:**\n\n1. **PM-KISAN** — वर्षी ₹6,000 सरळ उत्पन्न सहाय्य\n2. **PMFBY** — कम प्रीमियमवर पीक विमा\n3. **माती आरोग्य कार्ड** — मोफत माती चाचणी\n4. **e-NAM** — ऑनलाइन राष्ट्रीय कृषी बाजार\n\n📱 pmkisan.gov.in वर नोंदणी करा.',
+  chatOrganicResponse: '🌿 **जैविक शेती मार्गदर्शक:**\n\n1. **कम्पोस्ट** — पिकाचा अवशेष + शेळी खादापासून बनवा\n2. **वर्मीकम्पोस्ट** — एर्थवर्म वापरा\n3. **नीम आधारित कीडनाशक** — नैसर्गिक कीड नियंत्रण\n4. **हिरवी खाद** — धैंचा उगवून मातीत गाळा\n5. **पीक रोटेशन** — डालिंगण आणि अन्न बदला',
+  chatDiseaseResponse: '🦠 **रोग व्यवस्थापन:**\n\n**सामान्य पीक रोग:**\n• **ब्लाइट** — तपकिरी डाग\n• **रस्ट** — पिवळसर डाग\n• **पावडरी मिल्ड्यू** — पांढरा पावडर\n\n**प्रतिबंध:**\n1. रोग प्रतिरोधी कापस वापरा\n2. योग्य अंतर ठेवा\n3. पाणी साचणे टाळा\n4. संक्रमित रोपे हटवा',
+  chatMarketResponse: '🏪 **बाजारभाव मार्गदर्शक:**\n\n**चांगल्या भावाचे टिप्स:**\n1. वेळेची निवड करा — कापणीनंतर भाव घटतो\n2. कितीही **मांड्यांमध्ये** भाव तुलना करा\n3. **e-NAM पोर्टल** वर ऑनलाइन विका\n4. भाव कम असल्यास **साठवणे** करा\n\n💡 बाजार भाव सुविधेसाठी Market Prices फीचर पहा!',
+  chatNextActionResponse: '✨ **आजसाठी शिफारस:**\n\n📋 **प्राधान्य 1:** मातीची ओलावा तपासा.\n📋 **प्राधान्य 2:** पिकाच्या पानांवर कीडीची चिन्हे बघा.\n📋 **प्राधान्य 3:** हवामान अंदाज बघा.\n\n💡 वैयक्तिक शिफारसीसाठी **Next Best Action** फीचर पहा!',
+  chatScorecardResponse: '🏆 **हंगाम स्कोअर कार्ड:**\n\n📊 6 मुख्य मेट्रिक्सवर तुमची कामगिरी ट्रॅक केली जाते:\n• पीक आरोग्य, सिंचाई, कीड व्यवस्थापन\n• माती आरोग्य, नफा, वेळेवर कृती\n\n**Season Score Card** फीचर पहा आणि PDF डाउनलोड करा!',
+  chatWeedResponse: '🌿 **खरपतवार व्यवस्थापन:**\n\n1. **मॅन्युअल निराई** — बुवणीनंतर पहिले 30 दिवस महत्त्वाचे\n2. **कुदळी** — माती सैल व खरपतवार काढते\n3. **मल्चिंग** — खरपतवार अंकुरण थांबवते\n\n💡 वेळेवर निराईमुळे उत्पादन 15-25% वाढू शकते!',
+  chatTechResponse: '🚜 **आधुनिक शेती तंत्रज्ञान:**\n\n1. **ड्रोन** — पीक आरोग्य निरीक्षण\n2. **माती ओलावा सेन्सर** — रिअल-टाइम सिंचाई\n3. **मोबाइल अॅप्स** — हवामान, बाजार, सल्ला\n4. **सोलर पंप** — स्वस्त सिंचाई\n5. **मायक्रो सिंचाई** — ड्रिप/स्प्रिंकलर',
+  chatCropRotationResponse: '🔄 **पीक रोटेशन मार्गदर्शक:**\n\n**सुचव:**\n• **वर्ष 1:** अन्न (गहू/तांदूळ)\n• **वर्ष 2:** डालिंगण (चणा/सोयाबीन)\n• **वर्ष 3:** रोपण पीक (कापूस/ऊस)\n• **वर्ष 4:** तेलबीज (मूगफली/सरसो)\n\n✅ 10-20% उत्पादन वाढ, 25% कम खर्चा!',
+  chatHelpResponse: '🤖 **मी यामध्ये मदत करू शकतो:**\n\n💧 सिंचाई | 🐛 कीड व्यवस्थापन | 🧪 खत\n🌦 हवामान | 💰 लेनदेन | 🌾 शेत स्थिती\n🌱 बियाणे | 🛡 विमा | 🏪 बाजारभाव\n🌿 जैविक शेती | 📉 कर्ज आणि अनुदान\n\nइंग्रजी, हिंदी किंवा मराठीत विचारा!',
 };
 
 const translations: Record<Language, Translations> = { en, hi, mr };

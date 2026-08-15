@@ -267,3 +267,25 @@ Stage Summary:
 - FarmMemoryScreen now has 18 total fields (9 basic farm + 9 last season review)
 - SeasonScoreCardScreen now has PDF download and share functionality
 - New hero-farm.png generated with Indian farm landscape
+
+---
+Task ID: 6
+Agent: Main Agent
+Task: Enhance chatbot with many more questions, data-driven responses, and smart answers
+
+Work Log:
+- Expanded generateResponse function from 5 topic patterns to 25+ topic patterns
+- Added data-driven responses: transaction summary reads from Voice Khata localStorage, farm status reads from Farm Memory localStorage
+- Added smart greeting ("hello", "namaste") and thank you responses
+- Added 20 new detailed farming topic responses: soil health, seeds/sowing, harvest, insurance/PMFBY, loan/KCC, government subsidies, organic farming, disease management, market prices, next action, scorecard, weed management, modern technology, crop rotation, help overview
+- Added 4 new quick suggestion buttons (total 8): "What is my last month transaction?", "Is everything OK with my farm?", "What should I do today?", "Tell me about soil health"
+- Added ~30 new i18n keys across EN/HI/MR for all new responses
+- Fixed grid layout for quick suggestions (grid-cols-1)
+- Zero lint errors, zero runtime errors, zero browser errors
+- Agent Browser verified: all 8 suggestions visible, greeting response works, transaction response works, farm status default response works
+
+Stage Summary:
+- Chatbot now handles 25+ topic areas with detailed responses
+- Smart data-driven answers for transactions and farm status
+- Trilingual keyword matching (English, Hindi, Marathi) for each topic
+- 8 quick suggestion buttons for easy access
