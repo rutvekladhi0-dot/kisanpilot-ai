@@ -204,3 +204,66 @@ Work Log:
 
 Stage Summary:
 - New SeasonScoreCardScreen.tsx created with season performance metrics
+
+---
+Task ID: 5
+Agent: Farm Memory Enhancement Agent
+Task: Add last season review details to FarmMemoryScreen
+
+Work Log:
+- Added 9 new fields for last season review section
+- Updated FarmMemoryData interface with new fields
+- Added section separator with 📋 icon
+- All data persists in localStorage
+
+Stage Summary:
+- FarmMemoryScreen now has 18 total fields (9 basic + 9 last season)
+- New fields: lastSeasonCrop, lastSeasonYield, lastSeasonIncome, lastSeasonExpense, lastSeasonMajorProblem, lastSeasonPestIssue, lastSeasonSatisfaction, lastSeasonLesson, lastSeasonCropDamage
+
+---
+Task ID: 4
+Agent: Scorecard PDF Agent
+Task: Add PDF download and share features to SeasonScoreCardScreen
+
+Work Log:
+- Added 8 new i18n keys (downloadScorecardPdf, downloadScorecardDesc, shareScorecard, pdfGenerating, copiedToClipboard, shareNotSupported, scorecardGeneratedDate, poweredBy) to all 3 languages (EN/HI/MR)
+- Created generatePdfHtml() function that builds a complete print-friendly HTML document with inline CSS
+- Print window includes: KisanPilot AI logo, season title, season badge, overall score circle (CSS-based), all 6 metrics with colored progress bars and rating badges, highlights, alerts, tip, generated date, footer
+- Print window styled with green gradient header (#16a34a to #059669), white content area, A4-friendly sizing, system fonts
+- Auto-triggers window.print() on load, then closes window via onafterprint and fallback timeout
+- Added Download Scorecard PDF button (amber-to-yellow gradient, full-width, spinner loading state)
+- Added Share Scorecard button (green-to-emerald gradient) using Web Share API (navigator.share) with clipboard.copy fallback
+- Share feedback shown as inline toast tooltip below share button
+- Both buttons in responsive grid card (side-by-side on sm+, stacked on mobile)
+- Buttons placed prominently after season badge, before overall score circle
+- Zero lint errors, zero runtime errors
+
+Stage Summary:
+- SeasonScoreCardScreen now has download PDF and share functionality
+- PDF is generated client-side using window.print() approach with full inline CSS
+- Share uses Web Share API with clipboard fallback
+- All new i18n keys added across 3 languages
+
+---
+Task ID: 5
+Agent: Main Agent + Sub-agents
+Task: Add platform logo, new hero image, PDF download for scorecard, last season details in farm memory
+
+Work Log:
+- Copied uploaded logo image to `/public/images/logo.png`
+- Generated new hero farm image using z-ai image-generation CLI
+- Replaced emoji logo (🌾) with uploaded image in LanguageScreen and DashboardScreen header
+- Added "Download Scorecard PDF" button to SeasonScoreCardScreen with print-friendly HTML generation
+- Added "Share Scorecard" button using Web Share API with clipboard fallback
+- Enhanced FarmMemoryScreen with 9 new "Last Season Review" fields: last season crop, yield per acre, total income, total expense, major problem faced, pest/disease details, satisfaction level, key learning, crop damage %
+- Updated i18n.ts with ~50 new translation keys across EN/HI/MR for: PDF download/share, last season review
+- All data persists in localStorage
+- Zero lint errors, zero runtime errors
+- Agent Browser verified: dashboard with logo + new hero, farm memory with 18 fields, season scorecard with download/share buttons
+
+Stage Summary:
+- 4 features implemented: logo replacement, hero image update, PDF download, last season review
+- Total i18n keys: ~460+ across 3 languages
+- FarmMemoryScreen now has 18 total fields (9 basic farm + 9 last season review)
+- SeasonScoreCardScreen now has PDF download and share functionality
+- New hero-farm.png generated with Indian farm landscape

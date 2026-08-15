@@ -16,6 +16,15 @@ interface FarmMemoryData {
   livestockCount: string;
   fertilizerBrand: string;
   seedSource: string;
+  lastSeasonCrop: string;
+  lastSeasonYield: string;
+  lastSeasonIncome: string;
+  lastSeasonExpense: string;
+  lastSeasonMajorProblem: string;
+  lastSeasonPestIssue: string;
+  lastSeasonSatisfaction: string;
+  lastSeasonLesson: string;
+  lastSeasonCropDamage: string;
 }
 
 const defaultData: FarmMemoryData = {
@@ -28,6 +37,15 @@ const defaultData: FarmMemoryData = {
   livestockCount: '',
   fertilizerBrand: '',
   seedSource: '',
+  lastSeasonCrop: '',
+  lastSeasonYield: '',
+  lastSeasonIncome: '',
+  lastSeasonExpense: '',
+  lastSeasonMajorProblem: '',
+  lastSeasonPestIssue: '',
+  lastSeasonSatisfaction: '',
+  lastSeasonLesson: '',
+  lastSeasonCropDamage: '',
 };
 
 function loadFarmMemory(): FarmMemoryData {
@@ -314,11 +332,159 @@ export default function FarmMemoryScreen() {
           </FieldCard>
         </div>
 
-        {/* Save Button */}
+        {/* Last Season Review Section */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.4 }}
+          className="pt-4"
+        >
+          <div className="flex items-center gap-3 mb-1">
+            <span className="text-2xl">📋</span>
+            <h2 className="text-base font-bold text-green-800">
+              {(t as any).lastSeasonReview || 'Last Season Review'}
+            </h2>
+          </div>
+          <p className="text-xs text-gray-500 mb-3 ml-11">
+            {(t as any).lastSeasonReviewDesc || 'Tell us about your previous farming season'}
+          </p>
+          <div className="h-px bg-gradient-to-r from-green-300 via-green-200 to-transparent" />
+        </motion.div>
+
+        <div className="space-y-3">
+          {/* 10. Last Season Crop */}
+          <FieldCard index={9}>
+            <label className={labelClass}>{(t as any).lastSeasonCrop || 'Last Season Crop'}</label>
+            <select
+              value={formData.lastSeasonCrop}
+              onChange={(e) => updateField('lastSeasonCrop', e.target.value)}
+              className={selectClass}
+            >
+              <option value="">{(t as any).lastSeasonCropPlaceholder || 'Select last season\'s crop'}</option>
+              <option value="wheat">{(t as any).lastSeasonCropWheat || 'Wheat'}</option>
+              <option value="cotton">{(t as any).lastSeasonCropCotton || 'Cotton'}</option>
+              <option value="soybean">{(t as any).lastSeasonCropSoybean || 'Soybean'}</option>
+              <option value="rice">{(t as any).lastSeasonCropRice || 'Rice'}</option>
+              <option value="sugarcane">{(t as any).lastSeasonCropSugarcane || 'Sugarcane'}</option>
+              <option value="onion">{(t as any).lastSeasonCropOnion || 'Onion'}</option>
+              <option value="other">{(t as any).lastSeasonCropOther || 'Other'}</option>
+            </select>
+          </FieldCard>
+
+          {/* 11. Last Season Yield */}
+          <FieldCard index={10}>
+            <label className={labelClass}>{(t as any).lastSeasonYield || 'Yield per Acre'}</label>
+            <input
+              type="text"
+              value={formData.lastSeasonYield}
+              onChange={(e) => updateField('lastSeasonYield', e.target.value)}
+              placeholder={(t as any).lastSeasonYieldPlaceholder || 'e.g. 15 quintals/acre'}
+              className={inputClass}
+            />
+          </FieldCard>
+
+          {/* 12. Last Season Income */}
+          <FieldCard index={11}>
+            <label className={labelClass}>{(t as any).lastSeasonIncome || 'Total Income'}</label>
+            <input
+              type="text"
+              value={formData.lastSeasonIncome}
+              onChange={(e) => updateField('lastSeasonIncome', e.target.value)}
+              placeholder={(t as any).lastSeasonIncomePlaceholder || 'e.g. ₹50,000'}
+              className={inputClass}
+            />
+          </FieldCard>
+
+          {/* 13. Last Season Expense */}
+          <FieldCard index={12}>
+            <label className={labelClass}>{(t as any).lastSeasonExpense || 'Total Expense'}</label>
+            <input
+              type="text"
+              value={formData.lastSeasonExpense}
+              onChange={(e) => updateField('lastSeasonExpense', e.target.value)}
+              placeholder={(t as any).lastSeasonExpensePlaceholder || 'e.g. ₹25,000'}
+              className={inputClass}
+            />
+          </FieldCard>
+
+          {/* 14. Major Problem Faced */}
+          <FieldCard index={13}>
+            <label className={labelClass}>{(t as any).lastSeasonMajorProblem || 'Major Problem Faced'}</label>
+            <select
+              value={formData.lastSeasonMajorProblem}
+              onChange={(e) => updateField('lastSeasonMajorProblem', e.target.value)}
+              className={selectClass}
+            >
+              <option value="">{(t as any).lastSeasonMajorProblemPlaceholder || 'Select main problem'}</option>
+              <option value="pest">{(t as any).problemPest || 'Pest Attack'}</option>
+              <option value="water">{(t as any).problemWater || 'Water Shortage'}</option>
+              <option value="market">{(t as any).problemMarket || 'Low Market Price'}</option>
+              <option value="disease">{(t as any).problemDisease || 'Crop Disease'}</option>
+              <option value="weather">{(t as any).problemWeather || 'Weather Damage'}</option>
+              <option value="labor">{(t as any).problemLabor || 'Labor Shortage'}</option>
+              <option value="none">{(t as any).problemNone || 'No Major Problem'}</option>
+            </select>
+          </FieldCard>
+
+          {/* 15. Pest/Disease Details */}
+          <FieldCard index={14}>
+            <label className={labelClass}>{(t as any).lastSeasonPestIssue || 'Pest/Disease Details'}</label>
+            <input
+              type="text"
+              value={formData.lastSeasonPestIssue}
+              onChange={(e) => updateField('lastSeasonPestIssue', e.target.value)}
+              placeholder={(t as any).lastSeasonPestIssuePlaceholder || 'Which pest or disease?'}
+              className={inputClass}
+            />
+          </FieldCard>
+
+          {/* 16. Satisfaction Level */}
+          <FieldCard index={15}>
+            <label className={labelClass}>{(t as any).lastSeasonSatisfaction || 'Satisfaction Level'}</label>
+            <select
+              value={formData.lastSeasonSatisfaction}
+              onChange={(e) => updateField('lastSeasonSatisfaction', e.target.value)}
+              className={selectClass}
+            >
+              <option value="">{(t as any).lastSeasonSatisfactionPlaceholder || 'How satisfied were you?'}</option>
+              <option value="very-satisfied">{(t as any).satisfactionVerySatisfied || 'Very Satisfied'}</option>
+              <option value="satisfied">{(t as any).satisfactionSatisfied || 'Satisfied'}</option>
+              <option value="neutral">{(t as any).satisfactionNeutral || 'Neutral'}</option>
+              <option value="dissatisfied">{(t as any).satisfactionDissatisfied || 'Dissatisfied'}</option>
+              <option value="very-dissatisfied">{(t as any).satisfactionVeryDissatisfied || 'Very Dissatisfied'}</option>
+            </select>
+          </FieldCard>
+
+          {/* 17. Key Learning */}
+          <FieldCard index={16}>
+            <label className={labelClass}>{(t as any).lastSeasonLesson || 'Key Learning'}</label>
+            <textarea
+              value={formData.lastSeasonLesson}
+              onChange={(e) => updateField('lastSeasonLesson', e.target.value)}
+              placeholder={(t as any).lastSeasonLessonPlaceholder || 'What did you learn from last season?'}
+              rows={3}
+              className={`${inputClass} resize-none`}
+            />
+          </FieldCard>
+
+          {/* 18. Crop Damage % */}
+          <FieldCard index={17}>
+            <label className={labelClass}>{(t as any).lastSeasonCropDamage || 'Crop Damage %'}</label>
+            <input
+              type="text"
+              value={formData.lastSeasonCropDamage}
+              onChange={(e) => updateField('lastSeasonCropDamage', e.target.value)}
+              placeholder={(t as any).lastSeasonCropDamagePlaceholder || 'e.g. 10%'}
+              className={inputClass}
+            />
+          </FieldCard>
+        </div>
+
+        {/* Save Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.4 }}
         >
           <button
             onClick={handleSave}

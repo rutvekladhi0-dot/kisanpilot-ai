@@ -1,0 +1,1757 @@
+     1→     1→'use client';
+     2→     2→
+     3→     3→import React, { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
+     4→     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→     5→import { getTranslations, getLanguageLabel, type Language, type Translations } from '@/lib/i18n';
+     6→     6→import VoiceKhataScreen from './screens/VoiceKhataScreen';
+     7→     7→import FarmEconomicsScreen from './screens/FarmEconomicsScreen';
+     8→     8→import BajarBhavScreen from './screens/BajarBhavScreen';
+     9→     9→import RiskRadarScreen from './screens/RiskRadarScreen';
+    10→    10→import SimulatorScreen from './screens/SimulatorScreen';
+    11→    11→import PMFBYScreen from './screens/PMFBYScreen';
+    12→    12→import FarmGoalsScreen from './screens/FarmGoalsScreen';
+    13→    13→import NextBestActionScreen from './screens/NextBestActionScreen';
+    14→    14→import MonthlyPhotoTrackerScreen from './screens/MonthlyPhotoTrackerScreen';
+    15→    15→import FarmMemoryScreen from './screens/FarmMemoryScreen';
+    16→    16→import SeasonScoreCardScreen from './screens/SeasonScoreCardScreen';
+    17→    17→
+    18→    18→// ============================================================
+    19→    19→// Types
+    20→    20→// ============================================================
+    21→    21→export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction' | 'phototracker' | 'farmmemory' | 'seasonscorecard';
+    22→    22→
+    23→    23→export interface FarmerProfile {
+    24→    24→  name: string;
+    25→    25→  village: string;
+    26→    26→  farmSize: string;
+    27→    27→  mainCrop: string;
+    28→    28→}
+    29→    29→
+    30→    30→export interface AlertItem {
+    31→    31→  id: number;
+    32→    32→  text: string;
+    33→    33→  icon: string;
+    34→    34→  read: boolean;
+    35→    35→}
+    36→    36→
+    37→    37→// ============================================================
+    38→    38→// App Context
+    39→    39→// ============================================================
+    40→    40→interface AppContextType {
+    41→    41→  lang: Language;
+    42→    42→  t: Translations;
+    43→    43→  setLang: (l: Language) => void;
+    44→    44→  profile: FarmerProfile | null;
+    45→    45→  setProfile: (p: FarmerProfile) => void;
+    46→    46→  screen: Screen;
+    47→    47→  navigate: (s: Screen) => void;
+    48→    48→  alerts: AlertItem[];
+    49→    49→  setAlerts: (a: AlertItem[]) => void;
+    50→    50→}
+    51→    51→
+    52→    52→const AppContext = createContext<AppContextType>({} as AppContextType);
+    53→    53→
+    54→    54→export function useApp() {
+    55→    55→  return useContext(AppContext);
+    56→    56→}
+    57→    57→
+    58→    58→const defaultAlerts: AlertItem[] = [
+    59→    59→  { id: 1, icon: '🌧', text: 'rainExpected', read: false },
+    60→    60→  { id: 2, icon: '💧', text: 'monitorSoil', read: false },
+    61→    61→  { id: 3, icon: '🐛', text: 'checkPestSigns', read: false },
+    62→    62→  { id: 4, icon: '🧪', text: 'fertilizerReminder', read: false },
+    63→    63→];
+    64→    64→
+    65→    65→// ============================================================
+    66→    66→// Main App Component
+    67→    67→// ============================================================
+    68→    68→export default function KisanPilotApp() {
+    69→    69→  const initialized = useRef(false);
+    70→    70→  const [lang, setLangState] = useState<Language>(() => {
+    71→    71→    if (typeof window !== 'undefined') {
+    72→    72→      return (localStorage.getItem('kp_lang') as Language) || 'en';
+    73→    73→    }
+    74→    74→    return 'en';
+    75→    75→  });
+    76→    76→  const [profile, setProfileState] = useState<FarmerProfile | null>(() => {
+    77→    77→    if (typeof window !== 'undefined') {
+    78→    78→      try {
+    79→    79→        const saved = localStorage.getItem('kp_profile');
+    80→    80→        return saved ? JSON.parse(saved) : null;
+    81→    81→      } catch { return null; }
+    82→    82→    }
+    83→    83→    return null;
+    84→    84→  });
+    85→    85→  const [screen, setScreen] = useState<Screen>(() => {
+    86→    86→    if (typeof window !== 'undefined') {
+    87→    87→      const savedLang = localStorage.getItem('kp_lang');
+    88→    88→      const savedProfile = localStorage.getItem('kp_profile');
+    89→    89→      if (savedLang && savedProfile) return 'dashboard';
+    90→    90→      if (savedLang) return 'profile';
+    91→    91→    }
+    92→    92→    return 'language';
+    93→    93→  });
+    94→    94→  const [alerts, setAlertsState] = useState<AlertItem[]>(() => {
+    95→    95→    if (typeof window !== 'undefined') {
+    96→    96→      try {
+    97→    97→        const saved = localStorage.getItem('kp_alerts');
+    98→    98→        return saved ? JSON.parse(saved) : defaultAlerts;
+    99→    99→      } catch { return defaultAlerts; }
+   100→   100→    }
+   101→   101→    return defaultAlerts;
+   102→   102→  });
+   103→   103→
+   104→   104→  const [mounted, setMounted] = useState(false);
+   105→   105→
+   106→   106→  useEffect(() => {
+   107→   107→    if (!initialized.current) {
+   108→   108→      initialized.current = true;
+   109→   109→      requestAnimationFrame(() => setMounted(true));
+   110→   110→    }
+   111→   111→  }, []);
+   112→   112→
+   113→   113→  const t = getTranslations(lang);
+   114→   114→
+   115→   115→  const setLang = useCallback((l: Language) => {
+   116→   116→    setLangState(l);
+   117→   117→    localStorage.setItem('kp_lang', l);
+   118→   118→  }, []);
+   119→   119→
+   120→   120→  const setProfile = useCallback((p: FarmerProfile) => {
+   121→   121→    setProfileState(p);
+   122→   122→    localStorage.setItem('kp_profile', JSON.stringify(p));
+   123→   123→  }, []);
+   124→   124→
+   125→   125→  const navigate = useCallback((s: Screen) => {
+   126→   126→    setScreen(s);
+   127→   127→    window.scrollTo(0, 0);
+   128→   128→  }, []);
+   129→   129→
+   130→   130→  const setAlerts = useCallback((a: AlertItem[]) => {
+   131→   131→    setAlertsState(a);
+   132→   132→    localStorage.setItem('kp_alerts', JSON.stringify(a));
+   133→   133→  }, []);
+   134→   134→
+   135→   135→  if (!mounted) {
+   136→   136→    return null;
+   137→   137→  }
+   138→   138→
+   139→   139→  return (
+   140→   140→    <AppContext.Provider value={{ lang, t, setLang, profile, setProfile, screen, navigate, alerts, setAlerts }}>
+   141→   141→      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+   142→   142→        <AnimatePresence mode="wait">
+   143→   143→          {screen === 'language' && <LanguageScreen key="language" />}
+   144→   144→          {screen === 'profile' && <ProfileScreen key="profile" />}
+   145→   145→          {screen === 'dashboard' && <DashboardScreen key="dashboard" />}
+   146→   146→          {screen === 'chatbot' && <ChatbotScreen key="chatbot" />}
+   147→   147→          {screen === 'myfarm' && <MyFarmScreen key="myfarm" />}
+   148→   148→          {screen === 'cropdoctor' && <CropDoctorScreen key="cropdoctor" />}
+   149→   149→          {screen === 'weather' && <WeatherScreen key="weather" />}
+   150→   150→          {screen === 'insights' && <InsightsScreen key="insights" />}
+   151→   151→          {screen === 'alerts' && <AlertsScreen key="alerts" />}
+   152→   152→          {screen === 'settings' && <SettingsScreen key="settings" />}
+   153→   153→          {screen === 'voicekhata' && <VoiceKhataScreen key="voicekhata" />}
+   154→   154→          {screen === 'farmeconomics' && <FarmEconomicsScreen key="farmeconomics" />}
+   155→   155→          {screen === 'bajarbhav' && <BajarBhavScreen key="bajarbhav" />}
+   156→   156→          {screen === 'riskradar' && <RiskRadarScreen key="riskradar" />}
+   157→   157→          {screen === 'simulator' && <SimulatorScreen key="simulator" />}
+   158→   158→          {screen === 'pmfby' && <PMFBYScreen key="pmfby" />}
+   159→   159→          {screen === 'farmgoals' && <FarmGoalsScreen key="farmgoals" />}
+   160→   160→          {screen === 'nextbestaction' && <NextBestActionScreen key="nextbestaction" />}
+   161→   161→          {screen === 'phototracker' && <MonthlyPhotoTrackerScreen key="phototracker" />}
+   162→   162→          {screen === 'farmmemory' && <FarmMemoryScreen key="farmmemory" />}
+   163→   163→          {screen === 'seasonscorecard' && <SeasonScoreCardScreen key="seasonscorecard" />}
+   164→   164→        </AnimatePresence>
+   165→   165→      </div>
+   166→   166→    </AppContext.Provider>
+   167→   167→  );
+   168→   168→}
+   169→   169→
+   170→   170→// ============================================================
+   171→   171→// Shared Animation Variants
+   172→   172→// ============================================================
+   173→   173→const pageVariants = {
+   174→   174→  initial: { opacity: 0, y: 20 },
+   175→   175→  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+   176→   176→  exit: { opacity: 0, y: -20, transition: { duration: 0.2, ease: 'easeIn' } },
+   177→   177→};
+   178→   178→
+   179→   179→function PageWrapper({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+   180→   180→  return (
+   181→   181→    <motion.div
+   182→   182→      variants={pageVariants}
+   183→   183→      initial="initial"
+   184→   184→      animate="animate"
+   185→   185→      exit="exit"
+   186→   186→      className={`min-h-screen ${className}`}
+   187→   187→    >
+   188→   188→      {children}
+   189→   189→    </motion.div>
+   190→   190→  );
+   191→   191→}
+   192→   192→
+   193→   193→// ============================================================
+   194→   194→// Shared Back Button Component
+   195→   195→// ============================================================
+   196→   196→function BackButton({ target, label }: { target: Screen; label: string }) {
+   197→   197→  const { navigate } = useApp();
+   198→   198→  return (
+   199→   199→    <button
+   200→   200→      onClick={() => navigate(target)}
+   201→   201→      className="flex items-center gap-2 text-green-700 hover:text-green-900 font-medium transition-colors px-3 py-2 rounded-lg hover:bg-green-50"
+   202→   202→    >
+   203→   203→      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+   204→   204→        <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+   205→   205→      </svg>
+   206→   206→      {label}
+   207→   207→    </button>
+   208→   208→  );
+   209→   209→}
+   210→   210→
+   211→   211→// ============================================================
+   212→   212→// LANGUAGE SELECTION SCREEN
+   213→   213→// ============================================================
+   214→   214→function LanguageScreen() {
+   215→   215→  const { setLang, navigate } = useApp();
+   216→   216→  const t = getTranslations('en');
+   217→   217→
+   218→   218→  const languages = [
+   219→   219→    { code: 'mr' as Language, flag: '🇮🇳', label: t.marathi },
+   220→   220→    { code: 'hi' as Language, flag: '🇮🇳', label: t.hindi },
+   221→   221→    { code: 'en' as Language, flag: '🌐', label: t.english },
+   222→   222→  ];
+   223→   223→
+   224→   224→  const handleSelect = (code: Language) => {
+   225→   225→    setLang(code);
+   226→   226→    navigate('profile');
+   227→   227→  };
+   228→   228→
+   229→   229→  return (
+   230→   230→    <PageWrapper className="flex items-center justify-center px-4">
+   231→   231→      <div className="w-full max-w-lg text-center">
+   232→   232→        {/* Logo */}
+   233→   233→        <motion.div
+   234→   234→          initial={{ scale: 0.8, opacity: 0 }}
+   235→   235→          animate={{ scale: 1, opacity: 1 }}
+   236→   236→          transition={{ duration: 0.5 }}
+   237→   237→          className="mb-8"
+   238→   238→        >
+   239→   239→          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-2xl mx-auto mb-4">
+   240→   240→            <span className="text-4xl">🌾</span>
+   241→   241→          </div>
+   242→   242→          <h1 className="text-3xl md:text-4xl font-bold text-green-800 mb-2">KisanPilot AI</h1>
+   243→   243→          <p className="text-green-600 font-medium text-lg">{t.yourPersonalAi}</p>
+   244→   244→        </motion.div>
+   245→   245→
+   246→   246→        {/* Language Cards */}
+   247→   247→        <div className="space-y-4 mb-8">
+   248→   248→          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.chooseYourLanguage}</h2>
+   249→   249→          <p className="text-gray-500 text-sm mb-6">{t.languageSubtitle[0]}</p>
+   250→   250→          {languages.map((lang, i) => (
+   251→   251→            <motion.button
+   252→   252→              key={lang.code}
+   253→   253→              initial={{ opacity: 0, x: -30 }}
+   254→   254→              animate={{ opacity: 1, x: 0 }}
+   255→   255→              transition={{ delay: i * 0.1, duration: 0.3 }}
+   256→   256→              onClick={() => handleSelect(lang.code)}
+   257→   257→              className="w-full flex items-center gap-4 p-5 bg-white rounded-2xl shadow-md hover:shadow-xl border-2 border-transparent hover:border-green-500 transition-all duration-200 group"
+   258→   258→            >
+   259→   259→              <span className="text-4xl group-hover:scale-110 transition-transform">{lang.flag}</span>
+   260→   260→              <span className="text-lg font-semibold text-gray-800 group-hover:text-green-700 transition-colors">
+   261→   261→                {lang.label}
+   262→   262→              </span>
+   263→   263→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-auto text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" viewBox="0 0 20 20" fill="currentColor">
+   264→   264→                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+   265→   265→              </svg>
+   266→   266→            </motion.button>
+   267→   267→          ))}
+   268→   268→        </div>
+   269→   269→      </div>
+   270→   270→    </PageWrapper>
+   271→   271→  );
+   272→   272→}
+   273→   273→
+   274→   274→// ============================================================
+   275→   275→// PROFILE SETUP SCREEN
+   276→   276→// ============================================================
+   277→   277→function ProfileScreen() {
+   278→   278→  const { t, navigate, setProfile } = useApp();
+   279→   279→  const [name, setName] = useState('');
+   280→   280→  const [village, setVillage] = useState('');
+   281→   281→  const [farmSize, setFarmSize] = useState('');
+   282→   282→  const [mainCrop, setMainCrop] = useState('');
+   283→   283→  const [photo, setPhoto] = useState<string | null>(null);
+   284→   284→  const [errors, setErrors] = useState<{ name?: string; village?: string }>({});
+   285→   285→  const fileInputRef = React.useRef<HTMLInputElement>(null);
+   286→   286→
+   287→   287→  const farmSizes = [
+   288→   288→    { value: '<1', label: t.lessThanOneAcre },
+   289→   289→    { value: '1-5', label: t.oneToFiveAcres },
+   290→   290→    { value: '5-10', label: t.fiveToTenAcres },
+   291→   291→    { value: '>10', label: t.moreThanTenAcres },
+   292→   292→  ];
+   293→   293→
+   294→   294→  const crops = [t.cropWheat, t.cropRice, t.cropCotton, t.cropSoybean, t.cropSugarcane, t.cropTomato, t.cropOnion, t.cropOther];
+   295→   295→
+   296→   296→  const handleSave = () => {
+   297→   297→    const newErrors: { name?: string; village?: string } = {};
+   298→   298→    if (!name.trim()) newErrors.name = t.nameRequired;
+   299→   299→    if (!village.trim()) newErrors.village = t.villageRequired;
+   300→   300→    if (Object.keys(newErrors).length > 0) {
+   301→   301→      setErrors(newErrors);
+   302→   302→      return;
+   303→   303→    }
+   304→   304→    setProfile({
+   305→   305→      name: name.trim(),
+   306→   306→      village: village.trim(),
+   307→   307→      farmSize: farmSize || t.lessThanOneAcre,
+   308→   308→      mainCrop: mainCrop || t.cropWheat,
+   309→   309→    });
+   310→   310→    if (photo) {
+   311→   311→      localStorage.setItem('kp_farmer_photo', photo);
+   312→   312→    }
+   313→   313→    navigate('dashboard');
+   314→   314→  };
+   315→   315→
+   316→   316→  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+   317→   317→    const file = e.target.files?.[0];
+   318→   318→    if (file) {
+   319→   319→      const reader = new FileReader();
+   320→   320→      reader.onload = (ev) => {
+   321→   321→        setPhoto(ev.target?.result as string);
+   322→   322→      };
+   323→   323→      reader.readAsDataURL(file);
+   324→   324→    }
+   325→   325→  };
+   326→   326→
+   327→   327→  const removePhoto = () => {
+   328→   328→    setPhoto(null);
+   329→   329→    localStorage.removeItem('kp_farmer_photo');
+   330→   330→    if (fileInputRef.current) fileInputRef.current.value = '';
+   331→   331→  };
+   332→   332→
+   333→   333→  return (
+   334→   334→    <PageWrapper className="flex items-center justify-center px-4 py-8">
+   335→   335→      <div className="w-full max-w-md">
+   336→   336→        <div className="text-center mb-8">
+   337→   337→          <motion.div
+   338→   338→            whileHover={{ scale: 1.05 }}
+   339→   339→            onClick={() => fileInputRef.current?.click()}
+   340→   340→            className="w-24 h-24 rounded-full bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-lg mx-auto mb-3 cursor-pointer overflow-hidden border-4 border-white shadow-green-200"
+   341→   341→          >
+   342→   342→            {photo ? (
+   343→   343→              <img src={photo} alt="Profile" className="w-full h-full object-cover" />
+   344→   344→            ) : (
+   345→   345→              <span className="text-4xl">👨‍🌾</span>
+   346→   346→            )}
+   347→   347→          </motion.div>
+   348→   348→          <div className="flex items-center justify-center gap-3 mb-1">
+   349→   349→            <button
+   350→   350→              onClick={() => fileInputRef.current?.click()}
+   351→   351→              className="text-xs text-green-600 font-semibold hover:text-green-800"
+   352→   352→            >
+   353→   353→              {t.changePhoto}
+   354→   354→            </button>
+   355→   355→            {photo && (
+   356→   356→              <button
+   357→   357→                onClick={removePhoto}
+   358→   358→                className="text-xs text-red-500 font-semibold hover:text-red-700"
+   359→   359→              >
+   360→   360→                {t.removePhoto}
+   361→   361→              </button>
+   362→   362→            )}
+   363→   363→          </div>
+   364→   364→          <p className="text-xs text-gray-400">{t.uploadPhotoLabel}</p>
+   365→   365→          <input
+   366→   366→            ref={fileInputRef}
+   367→   367→            type="file"
+   368→   368→            accept="image/*"
+   369→   369→            capture="user"
+   370→   370→            onChange={handlePhotoSelect}
+   371→   371→            className="hidden"
+   372→   372→          />
+   373→   373→          <h1 className="text-2xl font-bold text-gray-800 mt-4">{t.setupProfile}</h1>
+   374→   374→          <p className="text-gray-500 mt-1">{t.setupProfileSubtitle}</p>
+   375→   375→        </div>
+   376→   376→
+   377→   377→        <div className="bg-white rounded-3xl shadow-lg p-6 md:p-8 space-y-5">
+   378→   378→          {/* Farmer Name */}
+   379→   379→          <div>
+   380→   380→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.farmerName}</label>
+   381→   381→            <input
+   382→   382→              type="text"
+   383→   383→              value={name}
+   384→   384→              onChange={(e) => { setName(e.target.value); setErrors(p => ({ ...p, name: undefined })); }}
+   385→   385→              placeholder={t.farmerNamePlaceholder}
+   386→   386→              className={`w-full px-4 py-3 rounded-xl border-2 ${errors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+   387→   387→            />
+   388→   388→            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+   389→   389→          </div>
+   390→   390→
+   391→   391→          {/* Village Name */}
+   392→   392→          <div>
+   393→   393→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.villageName}</label>
+   394→   394→            <input
+   395→   395→              type="text"
+   396→   396→              value={village}
+   397→   397→              onChange={(e) => { setVillage(e.target.value); setErrors(p => ({ ...p, village: undefined })); }}
+   398→   398→              placeholder={t.villageNamePlaceholder}
+   399→   399→              className={`w-full px-4 py-3 rounded-xl border-2 ${errors.village ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+   400→   400→            />
+   401→   401→            {errors.village && <p className="text-red-500 text-sm mt-1">{errors.village}</p>}
+   402→   402→          </div>
+   403→   403→
+   404→   404→          {/* Farm Size */}
+   405→   405→          <div>
+   406→   406→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.farmSize}</label>
+   407→   407→            <div className="grid grid-cols-2 gap-2">
+   408→   408→              {farmSizes.map((fs) => (
+   409→   409→                <button
+   410→   410→                  key={fs.value}
+   411→   411→                  onClick={() => setFarmSize(fs.label)}
+   412→   412→                  className={`px-3 py-2.5 rounded-xl text-sm font-medium border-2 transition-all ${
+   413→   413→                    farmSize === fs.label
+   414→   414→                      ? 'border-green-500 bg-green-50 text-green-700'
+   415→   415→                      : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300'
+   416→   416→                  }`}
+   417→   417→                >
+   418→   418→                  {fs.label}
+   419→   419→                </button>
+   420→   420→              ))}
+   421→   421→            </div>
+   422→   422→          </div>
+   423→   423→
+   424→   424→          {/* Main Crop */}
+   425→   425→          <div>
+   426→   426→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.mainCrop}</label>
+   427→   427→            <select
+   428→   428→              value={mainCrop}
+   429→   429→              onChange={(e) => setMainCrop(e.target.value)}
+   430→   430→              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800"
+   431→   431→            >
+   432→   432→              <option value="">{t.selectCrop}</option>
+   433→   433→              {crops.map((c) => (
+   434→   434→                <option key={c} value={c}>{c}</option>
+   435→   435→              ))}
+   436→   436→            </select>
+   437→   437→          </div>
+   438→   438→
+   439→   439→          {/* Buttons */}
+   440→   440→          <div className="flex gap-3 pt-2">
+   441→   441→            <button
+   442→   442→              onClick={() => navigate('language')}
+   443→   443→              className="flex-1 py-3 px-4 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all"
+   444→   444→            >
+   445→   445→              {t.back}
+   446→   446→            </button>
+   447→   447→            <button
+   448→   448→              onClick={handleSave}
+   449→   449→              className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all"
+   450→   450→            >
+   451→   451→              {t.saveAndContinue}
+   452→   452→            </button>
+   453→   453→          </div>
+   454→   454→        </div>
+   455→   455→      </div>
+   456→   456→    </PageWrapper>
+   457→   457→  );
+   458→   458→}
+   459→   459→
+   460→   460→// ============================================================
+   461→   461→// DASHBOARD SCREEN
+   462→   462→// ============================================================
+   463→   463→function DashboardScreen() {
+   464→   464→  const { t, profile, navigate, lang } = useApp();
+   465→   465→  const [farmerPhoto, setFarmerPhoto] = useState<string | null>(null);
+   466→   466→
+   467→   467→  React.useEffect(() => {
+   468→   468→    if (typeof window !== 'undefined') {
+   469→   469→      const saved = localStorage.getItem('kp_farmer_photo');
+   470→   470→      if (saved) setFarmerPhoto(saved);
+   471→   471→    }
+   472→   472→  }, []);
+   473→   473→
+   474→   474→  if (!profile) return null;
+   475→   475→
+   476→   476→  const features = [
+   477→   477→    { id: 'chatbot' as Screen, icon: '🤖', title: t.aiChatbot, desc: t.aiChatbotDesc, color: 'from-violet-500 to-purple-600' },
+   478→   478→    { id: 'myfarm' as Screen, icon: '🌾', title: t.myFarm, desc: t.myFarmDesc, color: 'from-amber-500 to-orange-600' },
+   479→   479→    { id: 'cropdoctor' as Screen, icon: '📷', title: t.cropDoctor, desc: t.cropDoctorDesc, color: 'from-rose-500 to-pink-600' },
+   480→   480→    { id: 'weather' as Screen, icon: '🌦', title: t.weather, desc: t.weatherDesc, color: 'from-sky-500 to-blue-600' },
+   481→   481→    { id: 'voicekhata' as Screen, icon: '🎙', title: t.voiceKhata, desc: t.voiceKhataDesc, color: 'from-emerald-500 to-green-600' },
+   482→   482→    { id: 'farmeconomics' as Screen, icon: '💰', title: t.farmEconomics, desc: t.farmEconomicsDesc, color: 'from-green-500 to-emerald-600' },
+   483→   483→    { id: 'bajarbhav' as Screen, icon: '🏪', title: t.bajarBhav, desc: t.bajarBhavDesc, color: 'from-yellow-500 to-amber-600' },
+   484→   484→    { id: 'riskradar' as Screen, icon: '🎯', title: t.riskRadar, desc: t.riskRadarDesc, color: 'from-orange-500 to-red-600' },
+   485→   485→    { id: 'simulator' as Screen, icon: '⚖️', title: t.whatIfSimulator, desc: t.whatIfDesc, color: 'from-indigo-500 to-violet-600' },
+   486→   486→    { id: 'pmfby' as Screen, icon: '🏛', title: t.pmfbySchemes, desc: t.pmfbyDesc, color: 'from-blue-500 to-indigo-600' },
+   487→   487→    { id: 'farmgoals' as Screen, icon: '🎯', title: t.farmGoals, desc: t.farmGoalsDesc, color: 'from-teal-500 to-cyan-600' },
+   488→   488→    { id: 'nextbestaction' as Screen, icon: '✨', title: t.nextBestAction, desc: t.nextBestActionDesc, color: 'from-lime-500 to-green-600' },
+   489→   489→    { id: 'phototracker' as Screen, icon: '📸', title: t.monthlyPhotoTracker, desc: t.monthlyPhotoTrackerDesc, color: 'from-pink-500 to-rose-600' },
+   490→   490→    { id: 'farmmemory' as Screen, icon: '🧠', title: t.farmMemory, desc: t.farmMemoryDesc, color: 'from-emerald-500 to-teal-600' },
+   491→   491→    { id: 'seasonscorecard' as Screen, icon: '🏆', title: t.seasonScoreCard, desc: t.seasonScoreCardDesc, color: 'from-amber-500 to-yellow-600' },
+   492→   492→    { id: 'insights' as Screen, icon: '📊', title: t.farmInsights, desc: t.farmInsightsDesc, color: 'from-cyan-500 to-teal-600' },
+   493→   493→    { id: 'alerts' as Screen, icon: '🔔', title: t.smartAlerts, desc: t.smartAlertsDesc, color: 'from-red-500 to-rose-600' },
+   494→   494→  ];
+   495→   495→
+   496→   496→  return (
+   497→   497→    <PageWrapper>
+   498→   498→      {/* Header */}
+   499→   499→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   500→   500→        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+   501→   501→          <div className="flex items-center gap-3">
+   502→   502→            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-md">
+   503→   503→              <span className="text-lg">🌾</span>
+   504→   504→            </div>
+   505→   505→            <div>
+   506→   506→              <h1 className="text-lg font-bold text-green-800 leading-tight">KisanPilot AI</h1>
+   507→   507→              <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-medium">
+   508→   508→                {getLanguageLabel(lang)}
+   509→   509→              </span>
+   510→   510→            </div>
+   511→   511→          </div>
+   512→   512→          <div className="flex items-center gap-2">
+   513→   513→            <button
+   514→   514→              onClick={() => navigate('settings')}
+   515→   515→              className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+   516→   516→              aria-label={t.settings}
+   517→   517→            >
+   518→   518→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+   519→   519→            </button>
+   520→   520→          </div>
+   521→   521→        </div>
+   522→   522→      </header>
+   523→   523→
+   524→   524→      <main className="max-w-5xl mx-auto px-4 pb-8">
+   525→   525→        {/* Welcome */}
+   526→   526→        <div className="mt-6 mb-6">
+   527→   527→          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
+   528→   528→            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center overflow-hidden border-2 border-white shadow-md">
+   529→   529→              {farmerPhoto ? (
+   530→   530→                <img src={farmerPhoto} alt="" className="w-full h-full object-cover" />
+   531→   531→              ) : (
+   532→   532→                <span className="text-base">👨‍🌾</span>
+   533→   533→              )}
+   534→   534→            </div>
+   535→   535→            <span>{t.welcomeBack}, {profile.name} 👋</span>
+   536→   536→          </h2>
+   537→   537→          <p className="text-gray-500 mt-1">{t.smarterDecisions}</p>
+   538→   538→        </div>
+   539→   539→
+   540→   540→        {/* Farm Summary Cards */}
+   541→   541→        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+   542→   542→          {[
+   543→   543→            { icon: '📍', label: t.village, value: profile.village },
+   544→   544→            { icon: '🌾', label: t.mainCrop, value: profile.mainCrop },
+   545→   545→            { icon: '📏', label: t.farmSizeLabel, value: profile.farmSize },
+   546→   546→            { icon: '🌱', label: t.farmStatus, value: t.good },
+   547→   547→          ].map((card) => (
+   548→   548→            <div key={card.label} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
+   549→   549→              <div className="text-2xl mb-2">{card.icon}</div>
+   550→   550→              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">{card.label}</p>
+   551→   551→              <p className="text-sm font-bold text-gray-800 mt-1 truncate">{card.value}</p>
+   552→   552→            </div>
+   553→   553→          ))}
+   554→   554→        </div>
+   555→   555→
+   556→   556→        {/* Next Best Action Card */}
+   557→   557→        <motion.button
+   558→   558→          initial={{ opacity: 0, y: 20 }}
+   559→   559→          animate={{ opacity: 1, y: 0 }}
+   560→   560→          transition={{ delay: 0.1 }}
+   561→   561→          onClick={() => navigate('nextbestaction')}
+   562→   562→          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 mb-4 shadow-md text-left hover:shadow-lg transition-all"
+   563→   563→        >
+   564→   564→          <div className="flex items-center gap-3 mb-2">
+   565→   565→            <span className="text-2xl">✨</span>
+   566→   566→            <h3 className="text-white font-bold">{t.nextBestAction}</h3>
+   567→   567→            <span className="ml-auto text-white/70 text-xs">→</span>
+   568→   568→          </div>
+   569→   569→          <p className="text-green-100 text-sm">{t.action1}</p>
+   570→   570→          <p className="text-green-200/60 text-xs mt-1">{t.action1Reason}</p>
+   571→   571→        </motion.button>
+   572→   572→
+   573→   573→        {/* Hero Section */}
+   574→   574→        <div className="relative rounded-3xl overflow-hidden mb-6 shadow-lg">
+   575→   575→          <img src="/images/hero-farm.png" alt="Farm landscape" className="w-full h-44 md:h-56 object-cover" />
+   576→   576→          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+   577→   577→          <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+   578→   578→            <h3 className="text-white text-xl md:text-2xl font-bold">{t.yourPersonalAi}</h3>
+   579→   579→            <p className="text-white/80 text-sm mt-1">{t.smarterDecisions}</p>
+   580→   580→          </div>
+   581→   581→        </div>
+   582→   582→
+   583→   583→        {/* Risk Radar Summary Strip */}
+   584→   584→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
+   585→   585→          <div className="flex items-center justify-between mb-3">
+   586→   586→            <h3 className="text-sm font-bold text-gray-700">🎯 {t.riskSummary}</h3>
+   587→   587→            <button onClick={() => navigate('riskradar')} className="text-xs text-green-600 font-semibold hover:text-green-800">View All →</button>
+   588→   588→          </div>
+   589→   589→          <div className="flex gap-2 overflow-x-auto pb-1">
+   590→   590→            {[
+   591→   591→              { label: t.rainRisk, level: 'medium' as const, icon: '🌧' },
+   592→   592→              { label: t.waterStressRisk, level: 'low' as const, icon: '💧' },
+   593→   593→              { label: t.diseaseRisk, level: 'low' as const, icon: '🐛' },
+   594→   594→              { label: t.heatRisk, level: 'low' as const, icon: '🌡' },
+   595→   595→              { label: t.costRisk, level: 'medium' as const, icon: '💸' },
+   596→   596→              { label: t.insuranceReady, level: 'high' as const, icon: '🛡' },
+   597→   597→            ].map((risk) => (
+   598→   598→              <div key={risk.label} className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${
+   599→   599→                risk.level === 'low' ? 'bg-green-100 text-green-700' : risk.level === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+   600→   600→              }`}>
+   601→   601→                <span>{risk.icon}</span>
+   602→   602→                <span>{risk.label.split(' ')[0]}</span>
+   603→   603→              </div>
+   604→   604→            ))}
+   605→   605→          </div>
+   606→   606→        </div>
+   607→   607→
+   608→   608→        {/* Feature Cards */}
+   609→   609→        <div className="mb-4">
+   610→   610→          <h3 className="text-lg font-bold text-gray-800 mb-4">{t.exploreFeatures}</h3>
+   611→   611→          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+   612→   612→            {features.map((feature, i) => (
+   613→   613→              <motion.button
+   614→   614→                key={feature.id}
+   615→   615→                initial={{ opacity: 0, y: 20 }}
+   616→   616→                animate={{ opacity: 1, y: 0 }}
+   617→   617→                transition={{ delay: i * 0.05, duration: 0.3 }}
+   618→   618→                onClick={() => navigate(feature.id)}
+   619→   619→                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group"
+   620→   620→              >
+   621→   621→                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-md mb-3 group-hover:scale-110 transition-transform`}>
+   622→   622→                  <span className="text-2xl">{feature.icon}</span>
+   623→   623→                </div>
+   624→   624→                <h4 className="font-bold text-gray-800 text-sm md:text-base">{feature.title}</h4>
+   625→   625→                <p className="text-gray-500 text-xs mt-1">{feature.desc}</p>
+   626→   626→              </motion.button>
+   627→   627→            ))}
+   628→   628→          </div>
+   629→   629→        </div>
+   630→   630→
+   631→   631→        {/* AI Agriculture Banner */}
+   632→   632→        <div className="relative rounded-3xl overflow-hidden mt-8 shadow-lg">
+   633→   633→          <img src="/images/ai-agriculture.png" alt="AI Agriculture" className="w-full h-40 md:h-56 object-cover" />
+   634→   634→          <div className="absolute inset-0 bg-gradient-to-r from-green-900/70 to-transparent" />
+   635→   635→          <div className="absolute inset-0 flex items-center p-5 md:p-8">
+   636→   636→            <div className="max-w-sm">
+   637→   637→              <h3 className="text-white text-lg md:text-xl font-bold">AI-Powered Farming</h3>
+   638→   638→              <p className="text-white/80 text-sm mt-1">Leverage artificial intelligence for smarter agricultural decisions.</p>
+   639→   639→              <button
+   640→   640→                onClick={() => navigate('insights')}
+   641→   641→                className="mt-3 px-4 py-2 bg-white/90 text-green-800 rounded-xl font-semibold text-sm hover:bg-white transition-colors"
+   642→   642→              >
+   643→   643→                {t.farmInsights} →
+   644→   644→              </button>
+   645→   645→            </div>
+   646→   646→          </div>
+   647→   647→        </div>
+   648→   648→      </main>
+   649→   649→
+   650→   650→      {/* Sticky Footer */}
+   651→   651→      <footer className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t border-green-100 mt-4">
+   652→   652→        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+   653→   653→          <span className="text-xs text-gray-400">KisanPilot AI v1.0</span>
+   654→   654→          <span className="text-xs text-green-600 font-medium">🌱 {t.tagline}</span>
+   655→   655→        </div>
+   656→   656→      </footer>
+   657→   657→    </PageWrapper>
+   658→   658→  );
+   659→   659→}
+   660→   660→
+   661→   661→// ============================================================
+   662→   662→// CHATBOT SCREEN
+   663→   663→// ============================================================
+   664→   664→interface ChatMessage {
+   665→   665→  id: number;
+   666→   666→  role: 'user' | 'bot';
+   667→   667→  text: string;
+   668→   668→}
+   669→   669→
+   670→   670→function ChatbotScreen() {
+   671→   671→  const { t, lang } = useApp();
+   672→   672→  const [messages, setMessages] = useState<ChatMessage[]>([]);
+   673→   673→  const [input, setInput] = useState('');
+   674→   674→  const [isTyping, setIsTyping] = useState(false);
+   675→   675→  const [voiceState, setVoiceState] = useState<'idle' | 'listening'>('idle');
+   676→   676→  const [liveTranscript, setLiveTranscript] = useState('');
+   677→   677→  const chatEndRef = React.useRef<HTMLDivElement>(null);
+   678→   678→  const recognitionRef = React.useRef<any>(null);
+   679→   679→
+   680→   680→  useEffect(() => {
+   681→   681→    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+   682→   682→  }, [messages, isTyping]);
+   683→   683→
+   684→   684→  const generateResponse = (userMsg: string): string => {
+   685→   685→    const lower = userMsg.toLowerCase();
+   686→   686→    if (lower.includes('water') || lower.includes('irrigat') || lower.includes('watering') || lower.includes('पानी') || lower.includes('सिंचाई')) {
+   687→   687→      return t.waterResponse;
+   688→   688→    }
+   689→   689→    if (lower.includes('yellow') || lower.includes('पील') || lower.includes('पिवळ')) {
+   690→   690→      return t.yellowLeavesResponse;
+   691→   691→    }
+   692→   692→    if (lower.includes('pest') || lower.includes('insect') || lower.includes('कीट') || lower.includes('bug')) {
+   693→   693→      return t.pestResponse;
+   694→   694→    }
+   695→   695→    if (lower.includes('fertilizer') || lower.includes('nutrient') || lower.includes('उर्वरक') || lower.includes('पोषक') || lower.includes('खत')) {
+   696→   696→      return t.fertilizerResponse;
+   697→   697→    }
+   698→   698→    if (lower.includes('weather') || lower.includes('मौसम') || lower.includes('हवामान')) {
+   699→   699→      return t.weatherResponse;
+   700→   700→    }
+   701→   701→    return t.defaultResponse;
+   702→   702→  };
+   703→   703→
+   704→   704→  const startVoice = () => {
+   705→   705→    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+   706→   706→    if (!SpeechRecognition) return;
+   707→   707→    const recognition = new SpeechRecognition();
+   708→   708→    recognition.lang = lang === 'hi' ? 'hi-IN' : lang === 'mr' ? 'mr-IN' : 'en-IN';
+   709→   709→    recognition.continuous = true;
+   710→   710→    recognition.interimResults = true;
+   711→   711→    recognition.onresult = (event: any) => {
+   712→   712→      let final = '';
+   713→   713→      let interim = '';
+   714→   714→      for (let i = event.resultIndex; i < event.results.length; i++) {
+   715→   715→        if (event.results[i].isFinal) {
+   716→   716→          final += event.results[i][0].transcript;
+   717→   717→        } else {
+   718→   718→          interim += event.results[i][0].transcript;
+   719→   719→        }
+   720→   720→      }
+   721→   721→      if (final) {
+   722→   722→        setInput(final);
+   723→   723→        setLiveTranscript('');
+   724→   724→      } else if (interim) {
+   725→   725→        setInput(interim);
+   726→   726→        setLiveTranscript(interim);
+   727→   727→      }
+   728→   728→    };
+   729→   729→    recognition.onerror = () => {
+   730→   730→      setVoiceState('idle');
+   731→   731→    };
+   732→   732→    recognition.onend = () => {
+   733→   733→      if (voiceState === 'listening') {
+   734→   734→        recognition.start();
+   735→   735→      }
+   736→   736→    };
+   737→   737→    recognitionRef.current = recognition;
+   738→   738→    recognition.start();
+   739→   739→    setVoiceState('listening');
+   740→   740→  };
+   741→   741→
+   742→   742→  const stopVoice = () => {
+   743→   743→    if (recognitionRef.current) {
+   744→   744→      recognitionRef.current.stop();
+   745→   745→      recognitionRef.current = null;
+   746→   746→    }
+   747→   747→    setVoiceState('idle');
+   748→   748→    setLiveTranscript('');
+   749→   749→    if (input.trim()) {
+   750→   750→      sendMessage();
+   751→   751→    }
+   752→   752→  };
+   753→   753→
+   754→   754→  const toggleVoice = () => {
+   755→   755→    if (voiceState === 'listening') {
+   756→   756→      stopVoice();
+   757→   757→    } else {
+   758→   758→      startVoice();
+   759→   759→    }
+   760→   760→  };
+   761→   761→
+   762→   762→  const sendMessage = (text?: string) => {
+   763→   763→    const msgText = text || input.trim();
+   764→   764→    if (!msgText) return;
+   765→   765→
+   766→   766→    const userMsg: ChatMessage = { id: Date.now(), role: 'user', text: msgText };
+   767→   767→    setMessages(prev => [...prev, userMsg]);
+   768→   768→    setInput('');
+   769→   769→    setIsTyping(true);
+   770→   770→
+   771→   771→    setTimeout(() => {
+   772→   772→      const botReply: ChatMessage = { id: Date.now() + 1, role: 'bot', text: generateResponse(msgText) };
+   773→   773→      setIsTyping(false);
+   774→   774→      setMessages(prev => [...prev, botReply]);
+   775→   775→    }, 800 + Math.random() * 700);
+   776→   776→  };
+   777→   777→
+   778→   778→  const handleKeyDown = (e: React.KeyboardEvent) => {
+   779→   779→    if (e.key === 'Enter' && !e.shiftKey) {
+   780→   780→      e.preventDefault();
+   781→   781→      sendMessage();
+   782→   782→    }
+   783→   783→  };
+   784→   784→
+   785→   785→  return (
+   786→   786→    <PageWrapper className="flex flex-col">
+   787→   787→      {/* Header */}
+   788→   788→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   789→   789→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+   790→   790→          <BackButton target="dashboard" label={t.backToDashboard} />
+   791→   791→          <div className="flex-1 flex items-center gap-2 justify-center">
+   792→   792→            <span className="text-xl">🤖</span>
+   793→   793→            <h1 className="text-lg font-bold text-green-800">{t.aiAssistant}</h1>
+   794→   794→          </div>
+   795→   795→        </div>
+   796→   796→      </header>
+   797→   797→
+   798→   798→      {/* Messages */}
+   799→   799→      <div className="flex-1 max-w-2xl mx-auto w-full px-4 py-4 overflow-y-auto">
+   800→   800→        {messages.length === 0 && (
+   801→   801→          <div className="text-center py-12">
+   802→   802→            <div className="text-5xl mb-4">🤖</div>
+   803→   803→            <h3 className="text-xl font-bold text-gray-800 mb-2">{t.aiAssistant}</h3>
+   804→   804→            <p className="text-gray-500 text-sm mb-8 max-w-sm mx-auto">{t.defaultResponse}</p>
+   805→   805→
+   806→   806→            {/* Quick Suggestions */}
+   807→   807→            <div className="space-y-2">
+   808→   808→              <p className="text-sm font-semibold text-gray-600 mb-3">{t.quickSuggestions}</p>
+   809→   809→              {[t.suggestion1, t.suggestion2, t.suggestion3, t.suggestion4].map((s, i) => (
+   810→   810→                <motion.button
+   811→   811→                  key={i}
+   812→   812→                  initial={{ opacity: 0, y: 10 }}
+   813→   813→                  animate={{ opacity: 1, y: 0 }}
+   814→   814→                  transition={{ delay: i * 0.1 }}
+   815→   815→                  onClick={() => sendMessage(s)}
+   816→   816→                  className="w-full text-left px-4 py-3 bg-white rounded-xl border border-green-200 text-sm text-green-800 hover:bg-green-50 hover:border-green-300 transition-all shadow-sm"
+   817→   817→                >
+   818→   818→                  {s}
+   819→   819→                </motion.button>
+   820→   820→              ))}
+   821→   821→            </div>
+   822→   822→          </div>
+   823→   823→        )}
+   824→   824→
+   825→   825→        {/* Message List */}
+   826→   826→        {messages.map((msg) => (
+   827→   827→          <motion.div
+   828→   828→            key={msg.id}
+   829→   829→            initial={{ opacity: 0, y: 10 }}
+   830→   830→            animate={{ opacity: 1, y: 0 }}
+   831→   831→            className={`flex mb-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+   832→   832→          >
+   833→   833→            <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+   834→   834→              msg.role === 'user'
+   835→   835→                ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-br-md'
+   836→   836→                : 'bg-white border border-gray-200 text-gray-800 shadow-sm rounded-bl-md'
+   837→   837→            }`}>
+   838→   838→              <div className="whitespace-pre-wrap break-words">{msg.text}</div>
+   839→   839→            </div>
+   840→   840→          </motion.div>
+   841→   841→        ))}
+   842→   842→
+   843→   843→        {isTyping && (
+   844→   844→          <div className="flex mb-4 justify-start">
+   845→   845→            <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+   846→   846→              <div className="flex gap-1.5">
+   847→   847→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+   848→   848→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+   849→   849→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+   850→   850→              </div>
+   851→   851→            </div>
+   852→   852→          </div>
+   853→   853→        )}
+   854→   854→        <div ref={chatEndRef} />
+   855→   855→      </div>
+   856→   856→
+   857→   857→      {/* Input */}
+   858→   858→      <div className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t border-green-100">
+   859→   859→        <div className="max-w-2xl mx-auto px-4 py-3">
+   860→   860→          {/* Voice status indicator */}
+   861→   861→          {voiceState === 'listening' && (
+   862→   862→            <motion.div
+   863→   863→              initial={{ opacity: 0, y: 10 }}
+   864→   864→              animate={{ opacity: 1, y: 0 }}
+   865→   865→              className="flex items-center gap-2 mb-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 w-fit"
+   866→   866→            >
+   867→   867→              <motion.span
+   868→   868→                animate={{ scale: [1, 1.3, 1] }}
+   869→   869→                transition={{ repeat: Infinity, duration: 1 }}
+   870→   870→                className="w-2.5 h-2.5 bg-red-500 rounded-full"
+   871→   871→              />
+   872→   872→              <span className="text-xs font-medium text-red-600">{t.listeningChat}</span>
+   873→   873→              <span className="text-xs text-red-400">{liveTranscript && `→ "${liveTranscript.slice(-40)}${liveTranscript.length > 40 ? '...' : ''}"`}</span>
+   874→   874→            </motion.div>
+   875→   875→          )}
+   876→   876→          <div className="flex gap-2">
+   877→   877→            <input
+   878→   878→              type="text"
+   879→   879→              value={input}
+   880→   880→              onChange={(e) => setInput(e.target.value)}
+   881→   881→              onKeyDown={handleKeyDown}
+   882→   882→              placeholder={t.typeMessage}
+   883→   883→              className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800 text-sm"
+   884→   884→            />
+   885→   885→            <button
+   886→   886→              onClick={toggleVoice}
+   887→   887→              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+   888→   888→                voiceState === 'listening'
+   889→   889→                  ? 'bg-red-500 shadow-lg shadow-red-200'
+   890→   890→                  : 'bg-gray-100 hover:bg-green-50'
+   891→   891→              }`}
+   892→   892→              title={voiceState === 'listening' ? t.stopVoiceChat : t.startVoiceChat}
+   893→   893→            >
+   894→   894→              {voiceState === 'listening' ? (
+   895→   895→                <motion.div
+   896→   896→                  animate={{ scale: [1, 1.2, 1] }}
+   897→   897→                  transition={{ repeat: Infinity, duration: 0.8 }}
+   898→   898→                  className="w-6 h-6 rounded-full bg-white flex items-center justify-center"
+   899→   899→                >
+   900→   900→                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+   901→   901→                    <path fillRule="evenodd" d="M4.5 12.75a6 6 0 0111.57 2.25M12 18.75a2.25 2.25 0 01-2.25-2.25V6.108c0-1.135.845-2.098 1.976-2.192a4.503 4.503 0 018.048 0c1.13.094 1.976 1.057 1.976 2.192V16.5a2.25 2.25 0 01-2.25 2.25H12z" clipRule="evenodd" />
+   902→   902→                  </svg>
+   903→   903→                </motion.div>
+   904→   904→              ) : (
+   905→   905→                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+   906→   906→                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+   907→   907→                </svg>
+   908→   908→              )}
+   909→   909→            </button>
+   910→   910→            <button
+   911→   911→              onClick={() => sendMessage()}
+   912→   912→              disabled={!input.trim() || isTyping}
+   913→   913→              className="px-5 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+   914→   914→            >
+   915→   915→              {t.send}
+   916→   916→            </button>
+   917→   917→          </div>
+   918→   918→        </div>
+   919→   919→      </div>
+   920→   920→    </PageWrapper>
+   921→   921→  );
+   922→   922→}
+   923→   923→
+   924→   924→// ============================================================
+   925→   925→// CROP DOCTOR SCREEN
+   926→   926→// ============================================================
+   927→   927→function CropDoctorScreen() {
+   928→   928→  const { t } = useApp();
+   929→   929→  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+   930→   930→  const [analyzing, setAnalyzing] = useState(false);
+   931→   931→  const [result, setResult] = useState<boolean>(false);
+   932→   932→  const fileInputRef = React.useRef<HTMLInputElement>(null);
+   933→   933→
+   934→   934→  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+   935→   935→    const file = e.target.files?.[0];
+   936→   936→    if (file) {
+   937→   937→      const reader = new FileReader();
+   938→   938→      reader.onload = (ev) => {
+   939→   939→        setSelectedImage(ev.target?.result as string);
+   940→   940→        setResult(false);
+   941→   941→      };
+   942→   942→      reader.readAsDataURL(file);
+   943→   943→    }
+   944→   944→  };
+   945→   945→
+   946→   946→  const handleAnalyze = () => {
+   947→   947→    setAnalyzing(true);
+   948→   948→    setTimeout(() => {
+   949→   949→      setAnalyzing(false);
+   950→   950→      setResult(true);
+   951→   951→    }, 2000);
+   952→   952→  };
+   953→   953→
+   954→   954→  const handleAnalyzeAnother = () => {
+   955→   955→    setSelectedImage(null);
+   956→   956→    setResult(false);
+   957→   957→    if (fileInputRef.current) fileInputRef.current.value = '';
+   958→   958→  };
+   959→   959→
+   960→   960→  return (
+   961→   961→    <PageWrapper className="flex flex-col">
+   962→   962→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   963→   963→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+   964→   964→          <BackButton target="dashboard" label={t.backToDashboard} />
+   965→   965→          <div className="flex-1 flex items-center gap-2 justify-center">
+   966→   966→            <span className="text-xl">📷</span>
+   967→   967→            <h1 className="text-lg font-bold text-green-800">{t.cropDoctorTitle}</h1>
+   968→   968→          </div>
+   969→   969→        </div>
+   970→   970→      </header>
+   971→   971→
+   972→   972→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+   973→   973→        <p className="text-gray-500 text-center mb-6">{t.cropDoctorSubtitle}</p>
+   974→   974→
+   975→   975→        {/* Default State */}
+   976→   976→        {!selectedImage && !result && (
+   977→   977→          <div className="space-y-6">
+   978→   978→            <div className="rounded-3xl overflow-hidden shadow-md">
+   979→   979→              <img src="/images/crop-doctor.png" alt="Crop health" className="w-full h-64 object-cover" />
+   980→   980→            </div>
+   981→   981→            <div
+   982→   982→              onClick={() => fileInputRef.current?.click()}
+   983→   983→              className="border-2 border-dashed border-green-300 rounded-3xl p-10 text-center hover:border-green-500 hover:bg-green-50/50 transition-all cursor-pointer"
+   984→   984→            >
+   985→   985→              <div className="text-5xl mb-3">📷</div>
+   986→   986→              <h3 className="text-lg font-bold text-gray-800">{t.uploadPhoto}</h3>
+   987→   987→              <p className="text-gray-500 text-sm mt-1">{t.uploadPhotoDesc}</p>
+   988→   988→            </div>
+   989→   989→            <input
+   990→   990→              ref={fileInputRef}
+   991→   991→              type="file"
+   992→   992→              accept="image/*"
+   993→   993→              onChange={handleFileSelect}
+   994→   994→              className="hidden"
+   995→   995→            />
+   996→   996→          </div>
+   997→   997→        )}
+   998→   998→
+   999→   999→        {/* Image Selected */}
+  1000→  1000→        {selectedImage && !result && (
+  1001→  1001→          <div className="space-y-6">
+  1002→  1002→            <div className="rounded-3xl overflow-hidden shadow-md">
+  1003→  1003→              <img src={selectedImage} alt="Selected crop" className="w-full h-64 object-cover" />
+  1004→  1004→            </div>
+  1005→  1005→            <button
+  1006→  1006→              onClick={handleAnalyze}
+  1007→  1007→              disabled={analyzing}
+  1008→  1008→              className="w-full py-4 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold text-lg shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-70 transition-all"
+  1009→  1009→            >
+  1010→  1010→              {analyzing ? (
+  1011→  1011→                <span className="flex items-center justify-center gap-3">
+  1012→  1012→                  <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+  1013→  1013→                  {t.analyzing}
+  1014→  1014→                </span>
+  1015→  1015→              ) : (
+  1016→  1016→                t.analyzeCrop
+  1017→  1017→              )}
+  1018→  1018→            </button>
+  1019→  1019→            <button
+  1020→  1020→              onClick={() => { setSelectedImage(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
+  1021→  1021→              className="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all"
+  1022→  1022→            >
+  1023→  1023→              {t.back}
+  1024→  1024→            </button>
+  1025→  1025→          </div>
+  1026→  1026→        )}
+  1027→  1027→
+  1028→  1028→        {/* Analysis Result */}
+  1029→  1029→        {result && (
+  1030→  1030→          <div className="space-y-5">
+  1031→  1031→            <div className="rounded-3xl overflow-hidden shadow-md">
+  1032→  1032→              <img src={selectedImage!} alt="Analyzed crop" className="w-full h-48 object-cover" />
+  1033→  1033→            </div>
+  1034→  1034→
+  1035→  1035→            {/* Health Score */}
+  1036→  1036→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+  1037→  1037→              <div className="flex items-center justify-between mb-3">
+  1038→  1038→                <span className="text-sm font-semibold text-gray-600">{t.cropHealthScore}</span>
+  1039→  1039→                <span className="text-2xl font-bold text-green-600">82%</span>
+  1040→  1040→              </div>
+  1041→  1041→              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+  1042→  1042→                <motion.div
+  1043→  1043→                  initial={{ width: 0 }}
+  1044→  1044→                  animate={{ width: '82%' }}
+  1045→  1045→                  transition={{ duration: 1, ease: 'easeOut' }}
+  1046→  1046→                  className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+  1047→  1047→                />
+  1048→  1048→              </div>
+  1049→  1049→            </div>
+  1050→  1050→
+  1051→  1051→            {/* Observation */}
+  1052→  1052→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+  1053→  1053→              <h4 className="text-sm font-semibold text-gray-600 mb-2">{t.possibleObservation}</h4>
+  1054→  1054→              <p className="text-gray-800">{t.mildNutrientStress}</p>
+  1055→  1055→            </div>
+  1056→  1056→
+  1057→  1057→            {/* Recommendations */}
+  1058→  1058→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+  1059→  1059→              <h4 className="text-sm font-semibold text-gray-600 mb-3">{t.recommendations}</h4>
+  1060→  1060→              <ul className="space-y-2">
+  1061→  1061→                {[
+  1062→  1062→                  { icon: '🧪', text: t.rec1 },
+  1063→  1063→                  { icon: '👁', text: t.rec2 },
+  1064→  1064→                  { icon: '💧', text: t.rec3 },
+  1065→  1065→                  { icon: '👨‍🔬', text: t.rec4 },
+  1066→  1066→                ].map((r, i) => (
+  1067→  1067→                  <motion.li
+  1068→  1068→                    key={i}
+  1069→  1069→                    initial={{ opacity: 0, x: -10 }}
+  1070→  1070→                    animate={{ opacity: 1, x: 0 }}
+  1071→  1071→                    transition={{ delay: i * 0.15 }}
+  1072→  1072→                    className="flex items-start gap-3 text-sm text-gray-700"
+  1073→  1073→                  >
+  1074→  1074→                    <span className="text-lg">{r.icon}</span>
+  1075→  1075→                    <span>{r.text}</span>
+  1076→  1076→                  </motion.li>
+  1077→  1077→                ))}
+  1078→  1078→              </ul>
+  1079→  1079→            </div>
+  1080→  1080→
+  1081→  1081→            {/* Expert Consultation */}
+  1082→  1082→            <motion.div
+  1083→  1083→              initial={{ opacity: 0, y: 20 }}
+  1084→  1084→              animate={{ opacity: 1, y: 0 }}
+  1085→  1085→              transition={{ delay: 0.7 }}
+  1086→  1086→              className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5 space-y-4"
+  1087→  1087→            >
+  1088→  1088→              <div className="flex items-center gap-2">
+  1089→  1089→                <span className="text-xl">👨‍🔬</span>
+  1090→  1090→                <h3 className="text-sm font-bold text-amber-800">{t.expertConsultation}</h3>
+  1091→  1091→              </div>
+  1092→  1092→              <p className="text-xs text-amber-700">{t.expertConsultationDesc}</p>
+  1093→  1093→
+  1094→  1094→              <div className="space-y-3">
+  1095→  1095→                {[
+  1096→  1096→                  { name: 'Dr. Ramesh Patil', specialty: 'Crop Pathology & Disease', phone: '+91 98765 43210', available: true },
+  1097→  1097→                  { name: 'Shri. Sunil Deshmukh', specialty: 'Soil Science & Fertilizers', phone: '+91 87654 32109', available: true },
+  1098→  1098→                  { name: 'Dr. Meena Kulkarni', specialty: 'Pest Management & Organic Farming', phone: '+91 76543 21098', available: false },
+  1099→  1099→                ].map((expert, i) => (
+  1100→  1100→                  <motion.div
+  1101→  1101→                    key={i}
+  1102→  1102→                    initial={{ opacity: 0, x: -10 }}
+  1103→  1103→                    animate={{ opacity: 1, x: 0 }}
+  1104→  1104→                    transition={{ delay: 0.8 + i * 0.1 }}
+  1105→  1105→                    className="bg-white rounded-xl p-3 flex items-center gap-3"
+  1106→  1106→                  >
+  1107→  1107→                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+  1108→  1108→                      {expert.name.charAt(0)}
+  1109→  1109→                    </div>
+  1110→  1110→                    <div className="flex-1 min-w-0">
+  1111→  1111→                      <p className="text-sm font-semibold text-gray-800">{expert.name}</p>
+  1112→  1112→                      <p className="text-xs text-gray-500">{expert.specialty}</p>
+  1113→  1113→                    </div>
+  1114→  1114→                    <div className="text-right flex-shrink-0">
+  1115→  1115→                      {expert.available ? (
+  1116→  1116→                        <span className="inline-block px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-medium mb-1">{t.expertAvailable}</span>
+  1117→  1117→                      ) : (
+  1118→  1118→                        <span className="inline-block px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs font-medium mb-1">Busy</span>
+  1119→  1119→                      )}
+  1120→  1120→                      <a href={`tel:${expert.phone.replace(/\s/g, '')}`} className="block text-xs text-green-600 font-semibold hover:text-green-800">{t.callExpert}</a>
+  1121→  1121→                    </div>
+  1122→  1122→                  </motion.div>
+  1123→  1123→                ))}
+  1124→  1124→              </div>
+  1125→  1125→              <p className="text-xs text-amber-600 italic">💡 {t.expertNote}</p>
+  1126→  1126→            </motion.div>
+  1127→  1127→
+  1128→  1128→            {/* Nearby Krushi Kendra */}
+  1129→  1129→            <motion.div
+  1130→  1130→              initial={{ opacity: 0, y: 20 }}
+  1131→  1131→              animate={{ opacity: 1, y: 0 }}
+  1132→  1132→              transition={{ delay: 0.9 }}
+  1133→  1133→              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4"
+  1134→  1134→            >
+  1135→  1135→              <div className="flex items-center gap-2">
+  1136→  1136→                <span className="text-xl">🏪</span>
+  1137→  1137→                <h3 className="text-sm font-bold text-gray-800">{t.nearbyKrushiKendra}</h3>
+  1138→  1138→              </div>
+  1139→  1139→              <p className="text-xs text-gray-500">{t.krushiKendraDesc}</p>
+  1140→  1140→
+  1141→  1141→              <div className="space-y-3">
+  1142→  1142→                {[
+  1143→  1143→                  { name: 'Krushi Kendra - Main Branch', address: 'Near Bus Stand, Taluka Road', phone: '+91 95553 44332', hours: '8:00 AM - 7:00 PM', services: 'Seeds, Fertilizers, Pesticides, Tools' },
+  1144→  1144→                  { name: 'Agri Service Center - West', address: 'NH-6 Highway, Village Entry Point', phone: '+91 84432 22119', hours: '7:00 AM - 6:30 PM', services: 'Seeds, Soil Testing, Spray Equipment' },
+  1145→  1145→                  { name: 'Gram Seva Kendra', address: 'Village Panchayat Office, Main Road', phone: '+91 73321 11008', hours: '9:00 AM - 5:00 PM', services: 'Subsidy Forms, Insurance, Seeds' },
+  1146→  1146→                ].map((center, i) => (
+  1147→  1147→                  <motion.div
+  1148→  1148→                    key={i}
+  1149→  1149→                    initial={{ opacity: 0, x: -10 }}
+  1150→  1150→                    animate={{ opacity: 1, x: 0 }}
+  1151→  1151→                    transition={{ delay: 1.0 + i * 0.1 }}
+  1152→  1152→                    className="border border-gray-100 rounded-xl p-3 space-y-2"
+  1153→  1153→                  >
+  1154→  1154→                    <div className="flex items-start gap-2">
+  1155→  1155→                      <span className="text-lg">📍</span>
+  1156→  1156→                      <div className="flex-1">
+  1157→  1157→                        <p className="text-sm font-semibold text-gray-800">{center.name}</p>
+  1158→  1158→                        <p className="text-xs text-gray-500">{center.address}</p>
+  1159→  1159→                      </div>
+  1160→  1160→                    </div>
+  1161→  1161→                    <div className="flex items-center gap-4 text-xs text-gray-600 ml-7">
+  1162→  1162→                      <span className="flex items-center gap-1">📞 {center.phone}</span>
+  1163→  1163→                    </div>
+  1164→  1164→                    <div className="flex items-center gap-4 text-xs text-gray-500 ml-7">
+  1165→  1165→                      <span className="flex items-center gap-1">🕐 {center.hours}</span>
+  1166→  1166→                    </div>
+  1167→  1167→                    <div className="ml-7">
+  1168→  1168→                      <span className="inline-block px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-xs">
+  1169→  1169→                        {center.services}
+  1170→  1170→                      </span>
+  1171→  1171→                    </div>
+  1172→  1172→                    <div className="ml-7 flex gap-2">
+  1173→  1173→                      <a href={`tel:${center.phone.replace(/\s/g, '')}`} className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition-colors">
+  1174→  1174→                        📞 {t.callExpert}
+  1175→  1175→                      </a>
+  1176→  1176→                      <a href={`https://maps.google.com/?q=${encodeURIComponent(center.address)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 transition-colors">
+  1177→  1177→                        🗺️ {t.directions}
+  1178→  1178→                      </a>
+  1179→  1179→                    </div>
+  1180→  1180→                  </motion.div>
+  1181→  1181→                ))}
+  1182→  1182→              </div>
+  1183→  1183→            </motion.div>
+  1184→  1184→
+  1185→  1185→            <button
+  1186→  1186→              onClick={handleAnalyzeAnother}
+  1187→  1187→              className="w-full py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+  1188→  1188→            >
+  1189→  1189→              {t.analyzeAnother}
+  1190→  1190→            </button>
+  1191→  1191→            <BackButton target="dashboard" label={t.backToDashboard} />
+  1192→  1192→          </div>
+  1193→  1193→        )}
+  1194→  1194→      </main>
+  1195→  1195→    </PageWrapper>
+  1196→  1196→  );
+  1197→  1197→}
+  1198→  1198→
+  1199→  1199→// ============================================================
+  1200→  1200→// WEATHER SCREEN
+  1201→  1201→// ============================================================
+  1202→  1202→function WeatherScreen() {
+  1203→  1203→  const { t } = useApp();
+  1204→  1204→
+  1205→  1205→  const forecast = [
+  1206→  1206→    { day: t.monday, icon: '☀️', temp: '30°C' },
+  1207→  1207→    { day: t.tuesday, icon: '🌤', temp: '29°C' },
+  1208→  1208→    { day: t.wednesday, icon: '🌧', temp: '26°C' },
+  1209→  1209→    { day: t.thursday, icon: '⛅', temp: '28°C' },
+  1210→  1210→    { day: t.friday, icon: '☀️', temp: '31°C' },
+  1211→  1211→  ];
+  1212→  1212→
+  1213→  1213→  return (
+  1214→  1214→    <PageWrapper className="flex flex-col">
+  1215→  1215→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1216→  1216→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1217→  1217→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1218→  1218→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1219→  1219→            <span className="text-xl">🌦</span>
+  1220→  1220→            <h1 className="text-lg font-bold text-green-800">{t.weatherTitle}</h1>
+  1221→  1221→          </div>
+  1222→  1222→        </div>
+  1223→  1223→      </header>
+  1224→  1224→
+  1225→  1225→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1226→  1226→        {/* Weather Hero Image */}
+  1227→  1227→        <div className="relative rounded-3xl overflow-hidden mb-6 shadow-lg">
+  1228→  1228→          <img src="/images/weather-farm.png" alt="Farm weather" className="w-full h-48 object-cover" />
+  1229→  1229→          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+  1230→  1230→          <div className="absolute bottom-4 left-4">
+  1231→  1231→            <span className="text-4xl font-bold text-white">28°C</span>
+  1232→  1232→            <span className="text-white/80 text-sm ml-2">{t.partlyCloudy}</span>
+  1233→  1233→          </div>
+  1234→  1234→        </div>
+  1235→  1235→
+  1236→  1236→        {/* Current Conditions */}
+  1237→  1237→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1238→  1238→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.currentWeather}</h3>
+  1239→  1239→          <div className="grid grid-cols-2 gap-4">
+  1240→  1240→            {[
+  1241→  1241→              { label: t.temperature, value: '28°C', icon: '🌡' },
+  1242→  1242→              { label: t.condition, value: t.partlyCloudy, icon: '⛅' },
+  1243→  1243→              { label: t.humidity, value: '65%', icon: '💧' },
+  1244→  1244→              { label: t.wind, value: '12 km/h', icon: '💨' },
+  1245→  1245→              { label: t.rainChance, value: '30%', icon: '🌧' },
+  1246→  1246→            ].map((item) => (
+  1247→  1247→              <div key={item.label} className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
+  1248→  1248→                <span className="text-2xl">{item.icon}</span>
+  1249→  1249→                <div>
+  1250→  1250→                  <p className="text-xs text-gray-500">{item.label}</p>
+  1251→  1251→                  <p className="text-sm font-bold text-gray-800">{item.value}</p>
+  1252→  1252→                </div>
+  1253→  1253→              </div>
+  1254→  1254→            ))}
+  1255→  1255→          </div>
+  1256→  1256→        </div>
+  1257→  1257→
+  1258→  1258→        {/* 5-Day Forecast */}
+  1259→  1259→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1260→  1260→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.fiveDayForecast}</h3>
+  1261→  1261→          <div className="space-y-3">
+  1262→  1262→            {forecast.map((day, i) => (
+  1263→  1263→              <motion.div
+  1264→  1264→                key={day.day}
+  1265→  1265→                initial={{ opacity: 0, x: -20 }}
+  1266→  1266→                animate={{ opacity: 1, x: 0 }}
+  1267→  1267→                transition={{ delay: i * 0.08 }}
+  1268→  1268→                className="flex items-center justify-between py-2 px-3 rounded-xl hover:bg-gray-50 transition-colors"
+  1269→  1269→              >
+  1270→  1270→                <span className="text-sm font-medium text-gray-700 w-24">{day.day}</span>
+  1271→  1271→                <span className="text-2xl">{day.icon}</span>
+  1272→  1272→                <span className="text-sm font-bold text-gray-800">{day.temp}</span>
+  1273→  1273→              </motion.div>
+  1274→  1274→            ))}
+  1275→  1275→          </div>
+  1276→  1276→        </div>
+  1277→  1277→
+  1278→  1278→        {/* Farming Advice */}
+  1279→  1279→        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 shadow-md text-white">
+  1280→  1280→          <div className="flex items-start gap-3">
+  1281→  1281→            <span className="text-2xl">💡</span>
+  1282→  1282→            <div>
+  1283→  1283→              <h3 className="font-bold mb-1">{t.farmingAdvice}</h3>
+  1284→  1284→              <p className="text-green-100 text-sm leading-relaxed">{t.rainAdvice}</p>
+  1285→  1285→            </div>
+  1286→  1286→          </div>
+  1287→  1287→        </div>
+  1288→  1288→      </main>
+  1289→  1289→    </PageWrapper>
+  1290→  1290→  );
+  1291→  1291→}
+  1292→  1292→
+  1293→  1293→// ============================================================
+  1294→  1294→// MY FARM SCREEN
+  1295→  1295→// ============================================================
+  1296→  1296→function MyFarmScreen() {
+  1297→  1297→  const { t, profile, setProfile } = useApp();
+  1298→  1298→  const [editing, setEditing] = useState(false);
+  1299→  1299→  const [name, setName] = useState(profile?.name || '');
+  1300→  1300→  const [village, setVillage] = useState(profile?.village || '');
+  1301→  1301→  const [farmSize, setFarmSize] = useState(profile?.farmSize || '');
+  1302→  1302→  const [mainCrop, setMainCrop] = useState(profile?.mainCrop || '');
+  1303→  1303→
+  1304→  1304→  const handleSave = () => {
+  1305→  1305→    setProfile({ name, village, farmSize, mainCrop });
+  1306→  1306→    setEditing(false);
+  1307→  1307→  };
+  1308→  1308→
+  1309→  1309→  const handleCancel = () => {
+  1310→  1310→    if (profile) {
+  1311→  1311→      setName(profile.name);
+  1312→  1312→      setVillage(profile.village);
+  1313→  1313→      setFarmSize(profile.farmSize);
+  1314→  1314→      setMainCrop(profile.mainCrop);
+  1315→  1315→    }
+  1316→  1316→    setEditing(false);
+  1317→  1317→  };
+  1318→  1318→
+  1319→  1319→  if (!profile) return null;
+  1320→  1320→
+  1321→  1321→  return (
+  1322→  1322→    <PageWrapper className="flex flex-col">
+  1323→  1323→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1324→  1324→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1325→  1325→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1326→  1326→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1327→  1327→            <span className="text-xl">🌾</span>
+  1328→  1328→            <h1 className="text-lg font-bold text-green-800">{t.myFarmTitle}</h1>
+  1329→  1329→          </div>
+  1330→  1330→        </div>
+  1331→  1331→      </header>
+  1332→  1332→
+  1333→  1333→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1334→  1334→        {/* Farm Details */}
+  1335→  1335→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1336→  1336→          <div className="flex items-center justify-between mb-4">
+  1337→  1337→            <h3 className="text-sm font-semibold text-gray-600">{t.farmDetails}</h3>
+  1338→  1338→            {!editing && (
+  1339→  1339→              <button
+  1340→  1340→                onClick={() => setEditing(true)}
+  1341→  1341→                className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-sm font-semibold hover:bg-green-200 transition-colors"
+  1342→  1342→              >
+  1343→  1343→                {t.editProfile}
+  1344→  1344→              </button>
+  1345→  1345→            )}
+  1346→  1346→          </div>
+  1347→  1347→
+  1348→  1348→          {editing ? (
+  1349→  1349→            <div className="space-y-4">
+  1350→  1350→              <div>
+  1351→  1351→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.farmerName}</label>
+  1352→  1352→                <input
+  1353→  1353→                  type="text"
+  1354→  1354→                  value={name}
+  1355→  1355→                  onChange={(e) => setName(e.target.value)}
+  1356→  1356→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1357→  1357→                />
+  1358→  1358→              </div>
+  1359→  1359→              <div>
+  1360→  1360→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.villageName}</label>
+  1361→  1361→                <input
+  1362→  1362→                  type="text"
+  1363→  1363→                  value={village}
+  1364→  1364→                  onChange={(e) => setVillage(e.target.value)}
+  1365→  1365→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1366→  1366→                />
+  1367→  1367→              </div>
+  1368→  1368→              <div>
+  1369→  1369→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.farmSize}</label>
+  1370→  1370→                <input
+  1371→  1371→                  type="text"
+  1372→  1372→                  value={farmSize}
+  1373→  1373→                  onChange={(e) => setFarmSize(e.target.value)}
+  1374→  1374→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1375→  1375→                />
+  1376→  1376→              </div>
+  1377→  1377→              <div>
+  1378→  1378→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.mainCrop}</label>
+  1379→  1379→                <input
+  1380→  1380→                  type="text"
+  1381→  1381→                  value={mainCrop}
+  1382→  1382→                  onChange={(e) => setMainCrop(e.target.value)}
+  1383→  1383→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1384→  1384→                />
+  1385→  1385→              </div>
+  1386→  1386→              <div className="flex gap-3">
+  1387→  1387→                <button
+  1388→  1388→                  onClick={handleCancel}
+  1389→  1389→                  className="flex-1 py-2.5 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all"
+  1390→  1390→                >
+  1391→  1391→                  {t.cancel}
+  1392→  1392→                </button>
+  1393→  1393→                <button
+  1394→  1394→                  onClick={handleSave}
+  1395→  1395→                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all"
+  1396→  1396→                >
+  1397→  1397→                  {t.saveChanges}
+  1398→  1398→                </button>
+  1399→  1399→              </div>
+  1400→  1400→            </div>
+  1401→  1401→          ) : (
+  1402→  1402→            <div className="space-y-3">
+  1403→  1403→              {[
+  1404→  1404→                { icon: '👨‍🌾', label: t.farmerName, value: profile.name },
+  1405→  1405→                { icon: '📍', label: t.villageName, value: profile.village },
+  1406→  1406→                { icon: '📏', label: t.farmSizeLabel, value: profile.farmSize },
+  1407→  1407→                { icon: '🌾', label: t.mainCrop, value: profile.mainCrop },
+  1408→  1408→              ].map((item) => (
+  1409→  1409→                <div key={item.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+  1410→  1410→                  <div className="flex items-center gap-3">
+  1411→  1411→                    <span className="text-lg">{item.icon}</span>
+  1412→  1412→                    <span className="text-sm text-gray-500">{item.label}</span>
+  1413→  1413→                  </div>
+  1414→  1414→                  <span className="text-sm font-bold text-gray-800">{item.value}</span>
+  1415→  1415→                </div>
+  1416→  1416→              ))}
+  1417→  1417→            </div>
+  1418→  1418→          )}
+  1419→  1419→        </div>
+  1420→  1420→
+  1421→  1421→        {/* Farm Status */}
+  1422→  1422→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+  1423→  1423→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.farmStatusSection}</h3>
+  1424→  1424→          <div className="space-y-4">
+  1425→  1425→            {[
+  1426→  1426→              { icon: '🌱', label: t.cropHealth, value: t.good, color: 'green' },
+  1427→  1427→              { icon: '💧', label: t.soilMoisture, value: t.moderate, color: 'yellow' },
+  1428→  1428→              { icon: '🚰', label: t.irrigationStatus, value: t.onTrack, color: 'blue' },
+  1429→  1429→            ].map((status) => (
+  1430→  1430→              <div key={status.label} className="flex items-center justify-between">
+  1431→  1431→                <div className="flex items-center gap-3">
+  1432→  1432→                  <span className="text-xl">{status.icon}</span>
+  1433→  1433→                  <span className="text-sm text-gray-700">{status.label}</span>
+  1434→  1434→                </div>
+  1435→  1435→                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+  1436→  1436→                  status.color === 'green' ? 'bg-green-100 text-green-700' :
+  1437→  1437→                  status.color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
+  1438→  1438→                  'bg-blue-100 text-blue-700'
+  1439→  1439→                }`}>
+  1440→  1440→                  {status.value}
+  1441→  1441→                </span>
+  1442→  1442→              </div>
+  1443→  1443→            ))}
+  1444→  1444→          </div>
+  1445→  1445→        </div>
+  1446→  1446→      </main>
+  1447→  1447→    </PageWrapper>
+  1448→  1448→  );
+  1449→  1449→}
+  1450→  1450→
+  1451→  1451→// ============================================================
+  1452→  1452→// FARM INSIGHTS SCREEN
+  1453→  1453→// ============================================================
+  1454→  1454→function InsightsScreen() {
+  1455→  1455→  const { t } = useApp();
+  1456→  1456→  const [insightIndex, setInsightIndex] = useState(0);
+  1457→  1457→  const [animatedValues, setAnimatedValues] = useState({ health: 0, moisture: 0, irrigation: 0 });
+  1458→  1458→
+  1459→  1459→  useEffect(() => {
+  1460→  1460→    const timer = setTimeout(() => {
+  1461→  1461→      setAnimatedValues({ health: 82, moisture: 68, irrigation: 75 });
+  1462→  1462→    }, 300);
+  1463→  1463→    return () => clearTimeout(timer);
+  1464→  1464→  }, []);
+  1465→  1465→
+  1466→  1466→  const insights = [t.insight1, t.insight2, t.insight3, t.insight4, t.insight5, t.insight6];
+  1467→  1467→
+  1468→  1468→  const handleGenerate = () => {
+  1469→  1469→    setAnimatedValues({ health: 0, moisture: 0, irrigation: 0 });
+  1470→  1470→    setInsightIndex(prev => (prev + 1) % insights.length);
+  1471→  1471→    setTimeout(() => {
+  1472→  1472→      setAnimatedValues({ health: 82, moisture: 68, irrigation: 75 });
+  1473→  1473→    }, 300);
+  1474→  1474→  };
+  1475→  1475→
+  1476→  1476→  const bars = [
+  1477→  1477→    { label: t.cropHealthScore2, value: animatedValues.health, color: 'from-green-500 to-emerald-500', bgColor: 'bg-green-100' },
+  1478→  1478→    { label: t.soilMoisture2, value: animatedValues.moisture, color: 'from-sky-500 to-blue-500', bgColor: 'bg-sky-100' },
+  1479→  1479→    { label: t.irrigationEfficiency, value: animatedValues.irrigation, color: 'from-amber-500 to-orange-500', bgColor: 'bg-amber-100' },
+  1480→  1480→  ];
+  1481→  1481→
+  1482→  1482→  return (
+  1483→  1483→    <PageWrapper className="flex flex-col">
+  1484→  1484→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1485→  1485→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1486→  1486→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1487→  1487→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1488→  1488→            <span className="text-xl">📊</span>
+  1489→  1489→            <h1 className="text-lg font-bold text-green-800">{t.insightsTitle}</h1>
+  1490→  1490→          </div>
+  1491→  1491→        </div>
+  1492→  1492→      </header>
+  1493→  1493→
+  1494→  1494→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1495→  1495→        {/* Progress Bars */}
+  1496→  1496→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1497→  1497→          <h3 className="text-sm font-semibold text-gray-600 mb-5">Farm Analytics</h3>
+  1498→  1498→          <div className="space-y-5">
+  1499→  1499→            {bars.map((bar) => (
+  1500→  1500→              <div key={bar.label}>
+  1501→  1501→                <div className="flex items-center justify-between mb-2">
+  1502→  1502→                  <span className="text-sm text-gray-700 font-medium">{bar.label}</span>
+  1503→  1503→                  <span className="text-sm font-bold text-gray-800">{bar.value}%</span>
+  1504→  1504→                </div>
+  1505→  1505→                <div className={`w-full h-3 ${bar.bgColor} rounded-full overflow-hidden`}>
+  1506→  1506→                  <motion.div
+  1507→  1507→                    className={`h-full bg-gradient-to-r ${bar.color} rounded-full`}
+  1508→  1508→                    initial={{ width: 0 }}
+  1509→  1509→                    animate={{ width: `${bar.value}%` }}
+  1510→  1510→                    transition={{ duration: 1, ease: 'easeOut' }}
+  1511→  1511→                  />
+  1512→  1512→                </div>
+  1513→  1513→              </div>
+  1514→  1514→            ))}
+  1515→  1515→          </div>
+  1516→  1516→        </div>
+  1517→  1517→
+  1518→  1518→        {/* AI Insight */}
+  1519→  1519→        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 mb-6 shadow-md text-white">
+  1520→  1520→          <div className="flex items-start gap-3">
+  1521→  1521→            <span className="text-2xl">🧠</span>
+  1522→  1522→            <div>
+  1523→  1523→              <h3 className="font-bold mb-1">{t.aiInsights}</h3>
+  1524→  1524→              <motion.p
+  1525→  1525→                key={insightIndex}
+  1526→  1526→                initial={{ opacity: 0, y: 10 }}
+  1527→  1527→                animate={{ opacity: 1, y: 0 }}
+  1528→  1528→                className="text-green-100 text-sm leading-relaxed"
+  1529→  1529→              >
+  1530→  1530→                {insights[insightIndex]}
+  1531→  1531→              </motion.p>
+  1532→  1532→            </div>
+  1533→  1533→          </div>
+  1534→  1534→        </div>
+  1535→  1535→
+  1536→  1536→        <button
+  1537→  1537→          onClick={handleGenerate}
+  1538→  1538→          className="w-full py-3.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all"
+  1539→  1539→        >
+  1540→  1540→          ✨ {t.generateInsight}
+  1541→  1541→        </button>
+  1542→  1542→      </main>
+  1543→  1543→    </PageWrapper>
+  1544→  1544→  );
+  1545→  1545→}
+  1546→  1546→
+  1547→  1547→// ============================================================
+  1548→  1548→// SMART ALERTS SCREEN
+  1549→  1549→// ============================================================
+  1550→  1550→function AlertsScreen() {
+  1551→  1551→  const { t, alerts, setAlerts } = useApp();
+  1552→  1552→
+  1553→  1553→  const markAsRead = (id: number) => {
+  1554→  1554→    setAlerts(alerts.map(a => a.id === id ? { ...a, read: true } : a));
+  1555→  1555→  };
+  1556→  1556→
+  1557→  1557→  const markAllAsRead = () => {
+  1558→  1558→    setAlerts(alerts.map(a => ({ ...a, read: true })));
+  1559→  1559→  };
+  1560→  1560→
+  1561→  1561→  const unreadCount = alerts.filter(a => !a.read).length;
+  1562→  1562→
+  1563→  1563→  return (
+  1564→  1564→    <PageWrapper className="flex flex-col">
+  1565→  1565→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1566→  1566→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1567→  1567→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1568→  1568→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1569→  1569→            <span className="text-xl">🔔</span>
+  1570→  1570→            <h1 className="text-lg font-bold text-green-800">{t.alertsTitle}</h1>
+  1571→  1571→            {unreadCount > 0 && (
+  1572→  1572→              <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+  1573→  1573→                {unreadCount}
+  1574→  1574→              </span>
+  1575→  1575→            )}
+  1576→  1576→          </div>
+  1577→  1577→        </div>
+  1578→  1578→      </header>
+  1579→  1579→
+  1580→  1580→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1581→  1581→        {unreadCount > 0 && (
+  1582→  1582→          <button
+  1583→  1583→            onClick={markAllAsRead}
+  1584→  1584→            className="w-full py-3 rounded-xl bg-green-100 text-green-700 font-semibold text-sm hover:bg-green-200 transition-colors mb-5"
+  1585→  1585→          >
+  1586→  1586→            ✅ {t.markAllAsRead}
+  1587→  1587→          </button>
+  1588→  1588→        )}
+  1589→  1589→
+  1590→  1590→        {unreadCount === 0 && (
+  1591→  1591→          <div className="text-center py-10 mb-5">
+  1592→  1592→            <div className="text-4xl mb-2">✅</div>
+  1593→  1593→            <p className="text-gray-500">{t.noUnreadAlerts}</p>
+  1594→  1594→          </div>
+  1595→  1595→        )}
+  1596→  1596→
+  1597→  1597→        <div className="space-y-3">
+  1598→  1598→          {alerts.map((alert) => (
+  1599→  1599→            <motion.div
+  1600→  1600→              key={alert.id}
+  1601→  1601→              initial={{ opacity: 0, y: 10 }}
+  1602→  1602→              animate={{ opacity: 1, y: 0 }}
+  1603→  1603→              className={`flex items-start gap-4 p-4 rounded-2xl border transition-all ${
+  1604→  1604→                alert.read
+  1605→  1605→                  ? 'bg-gray-50 border-gray-100 opacity-60'
+  1606→  1606→                  : 'bg-white border-green-200 shadow-sm'
+  1607→  1607→              }`}
+  1608→  1608→            >
+  1609→  1609→              <div className="text-2xl">{alert.icon}</div>
+  1610→  1610→              <div className="flex-1">
+  1611→  1611→                <p className={`text-sm ${alert.read ? 'text-gray-500' : 'text-gray-800 font-medium'}`}>
+  1612→  1612→                  {t[alert.text as keyof Translations] || alert.text}
+  1613→  1613→                </p>
+  1614→  1614→              </div>
+  1615→  1615→              {!alert.read && (
+  1616→  1616→                <button
+  1617→  1617→                  onClick={() => markAsRead(alert.id)}
+  1618→  1618→                  className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 transition-colors whitespace-nowrap"
+  1619→  1619→                >
+  1620→  1620→                  {t.markAsRead}
+  1621→  1621→                </button>
+  1622→  1622→              )}
+  1623→  1623→              {alert.read && (
+  1624→  1624→                <span className="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-500 text-xs font-medium">
+  1625→  1625→                  ✓
+  1626→  1626→                </span>
+  1627→  1627→              )}
+  1628→  1628→            </motion.div>
+  1629→  1629→          ))}
+  1630→  1630→        </div>
+  1631→  1631→      </main>
+  1632→  1632→    </PageWrapper>
+  1633→  1633→  );
+  1634→  1634→}
+  1635→  1635→
+  1636→  1636→// ============================================================
+  1637→  1637→// SETTINGS SCREEN
+  1638→  1638→// ============================================================
+  1639→  1639→function SettingsScreen() {
+  1640→  1640→  const { t, navigate, setLang, lang, setProfile, setAlerts, profile } = useApp();
+  1641→  1641→  const [showConfirm, setShowConfirm] = useState(false);
+  1642→  1642→
+  1643→  1643→  const handleChangeLanguage = () => {
+  1644→  1644→    navigate('language');
+  1645→  1645→  };
+  1646→  1646→
+  1647→  1647→  const handleEditProfile = () => {
+  1648→  1648→    navigate('myfarm');
+  1649→  1649→  };
+  1650→  1650→
+  1651→  1651→  const handleReset = () => {
+  1652→  1652→    setShowConfirm(true);
+  1653→  1653→  };
+  1654→  1654→
+  1655→  1655→  const confirmReset = () => {
+  1656→  1656→    localStorage.removeItem('kp_lang');
+  1657→  1657→    localStorage.removeItem('kp_profile');
+  1658→  1658→    localStorage.removeItem('kp_alerts');
+  1659→  1659→    setLang('en');
+  1660→  1660→    setProfile(null!);
+  1661→  1661→    setAlerts(defaultAlerts);
+  1662→  1662→    navigate('language');
+  1663→  1663→  };
+  1664→  1664→
+  1665→  1665→  const settings = [
+  1666→  1666→    { icon: '🌐', label: t.changeLanguageOption, desc: getLanguageLabel(lang), action: handleChangeLanguage, color: 'bg-violet-100 text-violet-700' },
+  1667→  1667→    { icon: '👨‍🌾', label: t.editProfileOption, desc: profile?.name || '', action: handleEditProfile, color: 'bg-amber-100 text-amber-700' },
+  1668→  1668→    { icon: '🗑', label: t.resetData, desc: '', action: handleReset, color: 'bg-red-100 text-red-700' },
+  1669→  1669→  ];
+  1670→  1670→
+  1671→  1671→  return (
+  1672→  1672→    <PageWrapper className="flex flex-col">
+  1673→  1673→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1674→  1674→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1675→  1675→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1676→  1676→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1677→  1677→            <span className="text-xl">⚙️</span>
+  1678→  1678→            <h1 className="text-lg font-bold text-green-800">{t.settingsTitle}</h1>
+  1679→  1679→          </div>
+  1680→  1680→        </div>
+  1681→  1681→      </header>
+  1682→  1682→
+  1683→  1683→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1684→  1684→        {/* Confirm Reset Dialog */}
+  1685→  1685→        {showConfirm && (
+  1686→  1686→          <motion.div
+  1687→  1687→            initial={{ opacity: 0 }}
+  1688→  1688→            animate={{ opacity: 1 }}
+  1689→  1689→            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+  1690→  1690→            onClick={() => setShowConfirm(false)}
+  1691→  1691→          >
+  1692→  1692→            <motion.div
+  1693→  1693→              initial={{ scale: 0.9, opacity: 0 }}
+  1694→  1694→              animate={{ scale: 1, opacity: 1 }}
+  1695→  1695→              onClick={(e) => e.stopPropagation()}
+  1696→  1696→              className="bg-white rounded-3xl shadow-2xl p-6 max-w-sm w-full"
+  1697→  1697→            >
+  1698→  1698→              <div className="text-center mb-4">
+  1699→  1699→                <div className="text-4xl mb-2">⚠️</div>
+  1700→  1700→                <h3 className="text-lg font-bold text-gray-800">{t.resetData}</h3>
+  1701→  1701→              </div>
+  1702→  1702→              <p className="text-gray-600 text-sm text-center mb-6">{t.resetConfirm}</p>
+  1703→  1703→              <div className="flex gap-3">
+  1704→  1704→                <button
+  1705→  1705→                  onClick={() => setShowConfirm(false)}
+  1706→  1706→                  className="flex-1 py-2.5 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all"
+  1707→  1707→                >
+  1708→  1708→                  {t.cancelReset}
+  1709→  1709→                </button>
+  1710→  1710→                <button
+  1711→  1711→                  onClick={confirmReset}
+  1712→  1712→                  className="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-semibold text-sm shadow-md hover:bg-red-600 transition-all"
+  1713→  1713→                >
+  1714→  1714→                  {t.confirmReset}
+  1715→  1715→                </button>
+  1716→  1716→              </div>
+  1717→  1717→            </motion.div>
+  1718→  1718→          </motion.div>
+  1719→  1719→        )}
+  1720→  1720→
+  1721→  1721→        <div className="space-y-3">
+  1722→  1722→          {settings.map((setting, i) => (
+  1723→  1723→            <motion.button
+  1724→  1724→              key={setting.label}
+  1725→  1725→              initial={{ opacity: 0, y: 10 }}
+  1726→  1726→              animate={{ opacity: 1, y: 0 }}
+  1727→  1727→              transition={{ delay: i * 0.08 }}
+  1728→  1728→              onClick={setting.action}
+  1729→  1729→              className="w-full flex items-center gap-4 p-5 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all text-left"
+  1730→  1730→            >
+  1731→  1731→              <div className={`w-12 h-12 rounded-xl ${setting.color} flex items-center justify-center`}>
+  1732→  1732→                <span className="text-xl">{setting.icon}</span>
+  1733→  1733→              </div>
+  1734→  1734→              <div className="flex-1">
+  1735→  1735→                <h3 className="font-semibold text-gray-800">{setting.label}</h3>
+  1736→  1736→                {setting.desc && <p className="text-xs text-gray-500 mt-0.5">{setting.desc}</p>}
+  1737→  1737→              </div>
+  1738→  1738→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+  1739→  1739→                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+  1740→  1740→              </svg>
+  1741→  1741→            </motion.button>
+  1742→  1742→          ))}
+  1743→  1743→        </div>
+  1744→  1744→
+  1745→  1745→        {/* App Info */}
+  1746→  1746→        <div className="mt-8 text-center">
+  1747→  1747→          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-md mx-auto mb-3">
+  1748→  1748→            <span className="text-2xl">🌾</span>
+  1749→  1749→          </div>
+  1750→  1750→          <h3 className="font-bold text-green-800">KisanPilot AI</h3>
+  1751→  1751→          <p className="text-xs text-gray-500 mt-1">v1.0 — {t.tagline}</p>
+  1752→  1752→        </div>
+  1753→  1753→      </main>
+  1754→  1754→    </PageWrapper>
+  1755→  1755→  );
+  1756→  1756→}
+  1757→  1757→

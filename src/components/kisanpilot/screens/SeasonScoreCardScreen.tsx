@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '../KisanPilotApp';
 
@@ -78,6 +78,282 @@ const alerts = [
 ];
 
 // ============================================================
+// PDF Generation Helper
+// ============================================================
+
+function generatePdfHtml(t: any, labelMap: Record<string, string>): string {
+  const season = getCurrentSeason(t);
+  const ratingLabel = getRatingLabel(overallScore, t);
+  const ratingColor = overallScore >= 80 ? '#22c55e' : overallScore >= 70 ? '#f59e0b' : '#ef4444';
+  const today = new Date().toLocaleDateString('en-IN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  function scoreBarColor(s: number): string {
+    if (s >= 80) return '#22c55e';
+    if (s >= 70) return '#f59e0b';
+    return '#ef4444';
+  }
+
+  function ratingBadgeColor(s: number): string {
+    if (s >= 80) return 'background:#dcfce7;color:#15803d;';
+    if (s >= 70) return 'background:#fef3c7;color:#92400e;';
+    return 'background:#fee2e2;color:#991b1b;';
+  }
+
+  const metricsHtml = metrics
+    .map((m) => {
+      const s = scores[m.key];
+      const r = getRatingLabel(s, t);
+      return `
+      <tr>
+        <td style="padding:12px 0;border-bottom:1px solid #e5e7eb;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:20px;">${m.icon}</span>
+            <div style="flex:1;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span style="font-weight:600;font-size:14px;color:#374151;">${labelMap[m.key] || m.defaultLabel}</span>
+                <span style="font-weight:700;font-size:14px;color:${scoreBarColor(s)};">${s}/100</span>
+              </div>
+              <div style="width:100%;height:10px;background:#e5e7eb;border-radius:5px;overflow:hidden;">
+                <div style="width:${s}%;height:100%;background:${scoreBarColor(s)};border-radius:5px;"></div>
+              </div>
+              <div style="margin-top:4px;text-align:right;">
+                <span style="display:inline-block;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600;${ratingBadgeColor(s)}">${r}</span>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>`;
+    })
+    .join('');
+
+  const highlightsHtml = highlights
+    .map((h) => `<li style="margin-bottom:8px;color:#374151;font-size:13px;">✅ ${h}</li>`)
+    .join('');
+
+  const alertsHtml = alerts
+    .map((a) => `<li style="margin-bottom:8px;color:#374151;font-size:13px;">⚠️ ${a}</li>`)
+    .join('');
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${t.seasonScoreCard} - KisanPilot AI</title>
+  <style>
+    @page { size: A4; margin: 15mm; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #1f2937;
+      background: #ffffff;
+      line-height: 1.6;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+    .header {
+      background: linear-gradient(135deg, #16a34a, #059669);
+      padding: 30px 40px;
+      text-align: center;
+      color: #ffffff;
+    }
+    .header img {
+      height: 48px;
+      margin-bottom: 12px;
+    }
+    .header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .content {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 30px 40px;
+    }
+    .season-badge {
+      display: inline-block;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 20px;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #15803d;
+      margin: 20px auto;
+      text-align: center;
+    }
+    .score-section {
+      text-align: center;
+      padding: 30px 0;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .score-circle {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 8px solid ${ratingColor};
+      margin: 0 auto 16px;
+    }
+    .score-number {
+      font-size: 48px;
+      font-weight: 800;
+      color: ${ratingColor};
+      line-height: 1;
+    }
+    .score-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    .rating-badge {
+      display: inline-block;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      background: ${ratingColor};
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #15803d;
+      margin: 24px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #bbf7d0;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .tip-card {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .tip-card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #15803d;
+      margin-bottom: 8px;
+    }
+    .tip-card p {
+      font-size: 13px;
+      color: #166534;
+      line-height: 1.7;
+    }
+    .alert-card {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .footer {
+      text-align: center;
+      padding: 24px 40px;
+      border-top: 2px solid #e5e7eb;
+      margin-top: 20px;
+    }
+    .footer p {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    .date-row {
+      text-align: right;
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="/images/logo.png" alt="KisanPilot AI" onerror="this.style.display='none'; this.parentElement.querySelector('h1').style.fontSize='32px';" />
+    <h1>🏆 ${t.seasonScoreCard}</h1>
+    <p>${t.seasonScoreCardDesc}</p>
+  </div>
+
+  <div class="content">
+    <div style="text-align:center;">
+      <span class="season-badge">🌾 ${t.currentSeason}: <strong>${season}</strong></span>
+    </div>
+
+    <div class="score-section">
+      <div class="score-circle">
+        <span class="score-number">${overallScore}</span>
+        <span class="score-label">${t.overallScore}</span>
+      </div>
+      <br/>
+      <span class="rating-badge">${ratingLabel}</span>
+    </div>
+
+    <div class="date-row">${t.scorecardGeneratedDate}: ${today}</div>
+
+    <h2 class="section-title">📊 ${t.seasonBreakdown}</h2>
+    <div class="card">
+      <table style="width:100%;border-collapse:collapse;">
+        ${metricsHtml}
+      </table>
+    </div>
+
+    <h2 class="section-title">✅ ${t.seasonHighlights}</h2>
+    <div class="card">
+      <ul style="list-style:none;padding:0;">
+        ${highlightsHtml}
+      </ul>
+    </div>
+
+    <h2 class="section-title">⚠️ ${t.seasonAlerts}</h2>
+    <div class="alert-card">
+      <ul style="list-style:none;padding:0;">
+        ${alertsHtml}
+      </ul>
+    </div>
+
+    <h2 class="section-title">💡 ${t.seasonTip}</h2>
+    <div class="tip-card">
+      <h4>${t.seasonTip}</h4>
+      <p>Focus on improving soil health this season — consider adding organic compost and getting a soil test done before the next sowing cycle. Healthy soil is the foundation of high yields.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>${t.poweredBy} | ${t.scorecardGeneratedDate}: ${today}</p>
+  </div>
+
+  <script>
+    window.onload = function() {
+      setTimeout(function() { window.print(); }, 300);
+    };
+  </script>
+</body>
+</html>`;
+}
+
+// ============================================================
 // Sub-Components
 // ============================================================
 
@@ -111,6 +387,8 @@ function BackButton({ label }: { label: string }) {
 
 export default function SeasonScoreCardScreen() {
   const { t } = useApp();
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState<string | null>(null);
 
   const labelMap: Record<string, string> = {
     cropHealth: t.cropHealthScore,
@@ -130,8 +408,71 @@ export default function SeasonScoreCardScreen() {
   const fadeIn = {
     initial: { opacity: 0, y: 16 },
     animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -16 },
+    exit: { opacity: 0, y: -16 },
   };
+
+  // ============================================================
+  // PDF Download
+  // ============================================================
+
+  const downloadPdf = useCallback(() => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      const htmlContent = generatePdfHtml(t, labelMap);
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+        printWindow.onafterprint = () => {
+          printWindow.close();
+          setIsGenerating(false);
+        };
+        // Fallback close after timeout
+        setTimeout(() => {
+          if (!printWindow.closed) {
+            printWindow.close();
+            setIsGenerating(false);
+          }
+        }, 3000);
+      } else {
+        setIsGenerating(false);
+      }
+    }, 500); // Brief loading animation
+  }, [t, labelMap]);
+
+  // ============================================================
+  // Share Scorecard
+  // ============================================================
+
+  const shareScorecard = useCallback(async () => {
+    const season = getCurrentSeason(t);
+    const text = `🏆 ${t.seasonScoreCard}\n${t.currentSeason}: ${season}\n${t.overallScore}: ${overallScore}/100 (${getRatingLabel(overallScore, t)})\n\n📊 ${t.seasonBreakdown}:\n${metrics
+      .map(
+        (m) =>
+          `${m.icon} ${labelMap[m.key] || m.defaultLabel}: ${scores[m.key]}/100`
+      )
+      .join('\n')}\n\n✅ ${t.seasonHighlights}:\n${highlights.map((h) => `• ${h}`).join('\n')}\n\n⚠️ ${t.seasonAlerts}:\n${alerts.map((a) => `• ${a}`).join('\n')}\n\n💡 ${t.seasonTip}: Focus on improving soil health this season.\n\n${t.poweredBy}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${t.seasonScoreCard} - ${season}`,
+          text,
+        });
+      } catch {
+        // User cancelled or error — silently ignore
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(text);
+        setShareFeedback(t.copiedToClipboard);
+        setTimeout(() => setShareFeedback(null), 2500);
+      } catch {
+        setShareFeedback(t.shareNotSupported);
+        setTimeout(() => setShareFeedback(null), 2500);
+      }
+    }
+  }, [t, labelMap]);
 
   return (
     <motion.div
@@ -164,6 +505,78 @@ export default function SeasonScoreCardScreen() {
           <span className="inline-flex items-center gap-2 rounded-full bg-green-50 border border-green-200 px-4 py-1.5 text-sm font-medium text-green-700">
             🌾 {t.currentSeason}: <strong>{currentSeason}</strong>
           </span>
+        </motion.div>
+
+        {/* Download / Share Buttons Card */}
+        <motion.div
+          {...fadeIn}
+          transition={{ delay: 0.08 }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4"
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Download PDF Button */}
+            <button
+              onClick={downloadPdf}
+              disabled={isGenerating}
+              className="relative flex items-center justify-center gap-2.5 w-full rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-semibold text-sm px-5 py-3.5 shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98] disabled:opacity-80 disabled:cursor-wait"
+            >
+              {isGenerating ? (
+                <>
+                  <svg
+                    className="animate-spin h-4.5 w-4.5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  <span>{t.pdfGenerating}</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-lg">📄</span>
+                  <span>{t.downloadScorecardPdf}</span>
+                </>
+              )}
+            </button>
+
+            {/* Share Button */}
+            <div className="relative">
+              <button
+                onClick={shareScorecard}
+                className="flex items-center justify-center gap-2.5 w-full rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold text-sm px-5 py-3.5 shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
+              >
+                <span className="text-lg">📤</span>
+                <span>{t.shareScorecard}</span>
+              </button>
+              {/* Share feedback toast */}
+              {shareFeedback && (
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  className="absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg z-10"
+                >
+                  {shareFeedback}
+                </motion.div>
+              )}
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 text-center mt-2.5">
+            {t.downloadScorecardDesc}
+          </p>
         </motion.div>
 
         {/* Overall Score Circle */}

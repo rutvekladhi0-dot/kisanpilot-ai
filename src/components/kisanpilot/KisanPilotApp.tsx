@@ -236,8 +236,8 @@ function LanguageScreen() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-2xl mx-auto mb-4">
-            <span className="text-4xl">🌾</span>
+          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-2xl mx-auto mb-4 overflow-hidden">
+            <img src="/images/logo.png" alt="KisanPilot AI" className="w-full h-full object-cover" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-green-800 mb-2">KisanPilot AI</h1>
           <p className="text-green-600 font-medium text-lg">{t.yourPersonalAi}</p>
@@ -499,8 +499,8 @@ function DashboardScreen() {
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-md">
-              <span className="text-lg">🌾</span>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-md overflow-hidden">
+              <img src="/images/logo.png" alt="KisanPilot AI" className="w-full h-full object-cover" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-green-800 leading-tight">KisanPilot AI</h1>

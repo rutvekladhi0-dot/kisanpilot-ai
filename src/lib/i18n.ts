@@ -450,6 +450,55 @@ export interface Translations {
   seasonBreakdown: string;
   scoreOutOf: string;
   viewSeasonCard: string;
+  downloadScorecardPdf: string;
+  downloadScorecardDesc: string;
+  shareScorecard: string;
+  pdfGenerating: string;
+  copiedToClipboard: string;
+  shareNotSupported: string;
+  scorecardGeneratedDate: string;
+  poweredBy: string;
+
+  // Last Season Review
+  lastSeasonReview: string;
+  lastSeasonReviewDesc: string;
+  lastSeasonCrop: string;
+  lastSeasonCropPlaceholder: string;
+  lastSeasonCropWheat: string;
+  lastSeasonCropCotton: string;
+  lastSeasonCropSoybean: string;
+  lastSeasonCropRice: string;
+  lastSeasonCropSugarcane: string;
+  lastSeasonCropOnion: string;
+  lastSeasonCropOther: string;
+  lastSeasonYield: string;
+  lastSeasonYieldPlaceholder: string;
+  lastSeasonIncome: string;
+  lastSeasonIncomePlaceholder: string;
+  lastSeasonExpense: string;
+  lastSeasonExpensePlaceholder: string;
+  lastSeasonMajorProblem: string;
+  lastSeasonMajorProblemPlaceholder: string;
+  problemPest: string;
+  problemWater: string;
+  problemMarket: string;
+  problemDisease: string;
+  problemWeather: string;
+  problemLabor: string;
+  problemNone: string;
+  lastSeasonPestIssue: string;
+  lastSeasonPestIssuePlaceholder: string;
+  lastSeasonSatisfaction: string;
+  lastSeasonSatisfactionPlaceholder: string;
+  satisfactionVerySatisfied: string;
+  satisfactionSatisfied: string;
+  satisfactionNeutral: string;
+  satisfactionDissatisfied: string;
+  satisfactionVeryDissatisfied: string;
+  lastSeasonLesson: string;
+  lastSeasonLessonPlaceholder: string;
+  lastSeasonCropDamage: string;
+  lastSeasonCropDamagePlaceholder: string;
 
   // Voice Chat in Chatbot
   micButton: string;
@@ -896,6 +945,55 @@ const en: Translations = {
   seasonBreakdown: 'Score Breakdown',
   scoreOutOf: '/100',
   viewSeasonCard: 'View Season Card',
+  downloadScorecardPdf: 'Download Scorecard PDF',
+  downloadScorecardDesc: 'Save your season performance report',
+  shareScorecard: 'Share',
+  pdfGenerating: 'Generating PDF...',
+  copiedToClipboard: 'Copied to clipboard!',
+  shareNotSupported: 'Share not supported',
+  scorecardGeneratedDate: 'Generated on',
+  poweredBy: 'Powered by KisanPilot AI',
+
+  // Last Season Review
+  lastSeasonReview: 'Last Season Review',
+  lastSeasonReviewDesc: 'Tell us about your previous farming season',
+  lastSeasonCrop: 'Last Season Crop',
+  lastSeasonCropPlaceholder: "Select last season's crop",
+  lastSeasonCropWheat: 'Wheat',
+  lastSeasonCropCotton: 'Cotton',
+  lastSeasonCropSoybean: 'Soybean',
+  lastSeasonCropRice: 'Rice',
+  lastSeasonCropSugarcane: 'Sugarcane',
+  lastSeasonCropOnion: 'Onion',
+  lastSeasonCropOther: 'Other',
+  lastSeasonYield: 'Yield per Acre',
+  lastSeasonYieldPlaceholder: 'e.g. 15 quintals/acre',
+  lastSeasonIncome: 'Total Income',
+  lastSeasonIncomePlaceholder: 'e.g. ₹50,000',
+  lastSeasonExpense: 'Total Expense',
+  lastSeasonExpensePlaceholder: 'e.g. ₹25,000',
+  lastSeasonMajorProblem: 'Major Problem Faced',
+  lastSeasonMajorProblemPlaceholder: 'Select main problem',
+  problemPest: 'Pest Attack',
+  problemWater: 'Water Shortage',
+  problemMarket: 'Low Market Price',
+  problemDisease: 'Crop Disease',
+  problemWeather: 'Weather Damage',
+  problemLabor: 'Labor Shortage',
+  problemNone: 'No Major Problem',
+  lastSeasonPestIssue: 'Pest/Disease Details',
+  lastSeasonPestIssuePlaceholder: 'Which pest or disease?',
+  lastSeasonSatisfaction: 'Satisfaction Level',
+  lastSeasonSatisfactionPlaceholder: 'How satisfied were you?',
+  satisfactionVerySatisfied: 'Very Satisfied',
+  satisfactionSatisfied: 'Satisfied',
+  satisfactionNeutral: 'Neutral',
+  satisfactionDissatisfied: 'Dissatisfied',
+  satisfactionVeryDissatisfied: 'Very Dissatisfied',
+  lastSeasonLesson: 'Key Learning',
+  lastSeasonLessonPlaceholder: 'What did you learn from last season?',
+  lastSeasonCropDamage: 'Crop Damage %',
+  lastSeasonCropDamagePlaceholder: 'e.g. 10%',
 
   // Voice Chat in Chatbot
   micButton: 'Mic',
@@ -1342,6 +1440,55 @@ const hi: Translations = {
   seasonBreakdown: 'स्कोर विवरण',
   scoreOutOf: '/100',
   viewSeasonCard: 'सीज़न कार्ड देखें',
+  downloadScorecardPdf: 'स्कोरकार्ड PDF डाउनलोड करें',
+  downloadScorecardDesc: 'अपना मौसमी प्रदर्शन रिपोर्ट सेव करें',
+  shareScorecard: 'शेयर करें',
+  pdfGenerating: 'PDF बना रहा है...',
+  copiedToClipboard: 'क्लिपबोर्ड पर कॉपी हो गया!',
+  shareNotSupported: 'शेयर समर्थित नहीं है',
+  scorecardGeneratedDate: 'तैयार किया गया',
+  poweredBy: 'KisanPilot AI द्वारा संचालित',
+
+  // Last Season Review
+  lastSeasonReview: 'पिछले मौसम की समीक्षा',
+  lastSeasonReviewDesc: 'अपने पिछले खेती मौसम के बारे में बताएं',
+  lastSeasonCrop: 'पिछले मौसम की फसल',
+  lastSeasonCropPlaceholder: 'पिछले मौसम की फसल चुनें',
+  lastSeasonCropWheat: 'गेहूं',
+  lastSeasonCropCotton: 'कपास',
+  lastSeasonCropSoybean: 'सोयाबीन',
+  lastSeasonCropRice: 'चावल',
+  lastSeasonCropSugarcane: 'गन्ना',
+  lastSeasonCropOnion: 'प्याज',
+  lastSeasonCropOther: 'अन्य',
+  lastSeasonYield: 'प्रति एकड़ उपज',
+  lastSeasonYieldPlaceholder: 'जैसे 15 क्विंटल/एकड़',
+  lastSeasonIncome: 'कुल आय',
+  lastSeasonIncomePlaceholder: 'जैसे ₹50,000',
+  lastSeasonExpense: 'कुल खर्च',
+  lastSeasonExpensePlaceholder: 'जैसे ₹25,000',
+  lastSeasonMajorProblem: 'प्रमुख समस्या',
+  lastSeasonMajorProblemPlaceholder: 'मुख्य समस्या चुनें',
+  problemPest: 'कीट का हमला',
+  problemWater: 'पानी की कमी',
+  problemMarket: 'कम बाजार भाव',
+  problemDisease: 'फसल रोग',
+  problemWeather: 'मौसम का नुकसान',
+  problemLabor: 'मजदूरों की कमी',
+  problemNone: 'कोई बड़ी समस्या नहीं',
+  lastSeasonPestIssue: 'कीट/रोग विवरण',
+  lastSeasonPestIssuePlaceholder: 'कौन सा कीट या रोग?',
+  lastSeasonSatisfaction: 'संतुष्टि स्तर',
+  lastSeasonSatisfactionPlaceholder: 'आप कितने संतुष्ट थे?',
+  satisfactionVerySatisfied: 'बहुत संतुष्ट',
+  satisfactionSatisfied: 'संतुष्ट',
+  satisfactionNeutral: 'सामान्य',
+  satisfactionDissatisfied: 'असंतुष्ट',
+  satisfactionVeryDissatisfied: 'बहुत असंतुष्ट',
+  lastSeasonLesson: 'मुख्य सीख',
+  lastSeasonLessonPlaceholder: 'पिछले मौसम से आपने क्या सीखा?',
+  lastSeasonCropDamage: 'फसल नुकसान %',
+  lastSeasonCropDamagePlaceholder: 'जैसे 10%',
 
   // Voice Chat in Chatbot
   micButton: 'माइक',
@@ -1788,6 +1935,55 @@ const mr: Translations = {
   seasonBreakdown: 'स्कोअर तपशील',
   scoreOutOf: '/100',
   viewSeasonCard: 'हंगाम कार्ड पहा',
+  downloadScorecardPdf: 'स्कोअरकार्ड PDF डाउनलोड करा',
+  downloadScorecardDesc: 'तुमचा हंगामी कामगिरी अहवाल जतन करा',
+  shareScorecard: 'शेअर करा',
+  pdfGenerating: 'PDF तयार होत आहे...',
+  copiedToClipboard: 'क्लिपबोर्डवर कॉपी झाले!',
+  shareNotSupported: 'शेअर समर्थित नाही',
+  scorecardGeneratedDate: 'तयार केले',
+  poweredBy: 'KisanPilot AI द्वारे संचालित',
+
+  // Last Season Review
+  lastSeasonReview: 'मागील हंगाम समीक्षा',
+  lastSeasonReviewDesc: 'तुमच्या मागील शेती हंगामाबद्दल सांगा',
+  lastSeasonCrop: 'मागील हंगामाचे पीक',
+  lastSeasonCropPlaceholder: 'मागील हंगामाचे पीक निवडा',
+  lastSeasonCropWheat: 'गहू',
+  lastSeasonCropCotton: 'कापूस',
+  lastSeasonCropSoybean: 'सोयाबीन',
+  lastSeasonCropRice: 'तांदूळ',
+  lastSeasonCropSugarcane: 'ऊस',
+  lastSeasonCropOnion: 'कांदा',
+  lastSeasonCropOther: 'इतर',
+  lastSeasonYield: 'एकरी उत्पादन',
+  lastSeasonYieldPlaceholder: 'उदा. 15 क्विंटल/एकर',
+  lastSeasonIncome: 'एकूण उत्पन्न',
+  lastSeasonIncomePlaceholder: 'उदा. ₹50,000',
+  lastSeasonExpense: 'एकूण खर्च',
+  lastSeasonExpensePlaceholder: 'उदा. ₹25,000',
+  lastSeasonMajorProblem: 'मुख्य समस्या',
+  lastSeasonMajorProblemPlaceholder: 'मुख्य समस्या निवडा',
+  problemPest: 'कीटाचा हल्ला',
+  problemWater: 'पाण्याची कमी',
+  problemMarket: 'कमी बाजारभाव',
+  problemDisease: 'पीक रोग',
+  problemWeather: 'हवामान नुकसान',
+  problemLabor: 'मजूरांची कमी',
+  problemNone: 'मोठी समस्या नाही',
+  lastSeasonPestIssue: 'कीड/रोग तपशील',
+  lastSeasonPestIssuePlaceholder: 'कोणती कीड किंवा रोग?',
+  lastSeasonSatisfaction: 'समाधान पातळी',
+  lastSeasonSatisfactionPlaceholder: 'तुम्ही किती समाधानी होता?',
+  satisfactionVerySatisfied: 'खूप समाधानी',
+  satisfactionSatisfied: 'समाधानी',
+  satisfactionNeutral: 'तटस्थ',
+  satisfactionDissatisfied: 'असमाधानी',
+  satisfactionVeryDissatisfied: 'खूप असमाधानी',
+  lastSeasonLesson: 'मुख्य शिक्षा',
+  lastSeasonLessonPlaceholder: 'मागील हंगामातून तुम्ही काय शिकलात?',
+  lastSeasonCropDamage: 'पीक नुकसान %',
+  lastSeasonCropDamagePlaceholder: 'उदा. 10%',
 
   // Voice Chat in Chatbot
   micButton: 'माइक',
