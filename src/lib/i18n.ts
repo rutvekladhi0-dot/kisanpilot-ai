@@ -529,7 +529,34 @@ export interface Translations {
   chatWeedResponse: string;
   chatTechResponse: string;
   chatCropRotationResponse: string;
-  chatHelpResponse: string;
+  // Family Members
+  familyMembers: string;
+  familyMembersDesc: string;
+  addMember: string;
+  memberName: string;
+  memberNamePlaceholder: string;
+  memberRelation: string;
+  memberPhone: string;
+  memberPhonePlaceholder: string;
+  saveMember: string;
+  cancelMember: string;
+  removeMember: string;
+  sharedWith: string;
+  maxMembersReached: string;
+  relationWife: string;
+  relationSon: string;
+  relationDaughter: string;
+  relationFather: string;
+  relationMother: string;
+  relationBrother: string;
+  relationOther: string;
+  selectRelation: string;
+  memberAdded: string;
+  memberRemoved: string;
+  voiceSmartParsing: string;
+  voiceParsed: string;
+  currentMonth: string;
+  pastMonth: string;
 }
 
 const en: Translations = {
@@ -1027,10 +1054,10 @@ const en: Translations = {
   stopTalking: 'Stop',
 
   // Enhanced Chatbot Responses
-  suggestion5: 'What is my last month transaction?',
-  suggestion6: 'Is everything OK with my farm?',
-  suggestion7: 'What should I do today?',
-  suggestion8: 'Tell me about soil health',
+  suggestion5: 'What is my current month transaction?',
+  suggestion6: 'Show me everything about my farm',
+  suggestion7: 'Who are my family members?',
+  suggestion8: 'What are the risks for my farm?',
   chatGreeting: '🌱 Namaste! I\'m your KisanPilot AI assistant. I can help with crop care, irrigation, pest management, market prices, insurance, and much more. Ask me anything about your farm!',
   chatThankYou: '🙏 You\'re welcome! Happy farming! If you need any more help, I\'m always here.',
   chatFarmStatusResponse: '🌾 **Farm Status Report:**\n\n✅ **Last Crop:** {crop}\n🧪 **Soil Type:** {soil}\n😊 **Last Season Satisfaction:** {satisfaction}\n\n📊 Overall, your farm appears to be in stable condition. Keep monitoring your crops regularly and maintain proper irrigation. For a detailed score, check the Season Score Card feature!',
@@ -1052,6 +1079,33 @@ const en: Translations = {
   chatTechResponse: '🚜 **Modern Farming Technology:**\n\n**Available Technologies:**\n1. **Drones** — Crop health monitoring, spraying pesticides over large areas\n2. **Soil moisture sensors** — Real-time irrigation planning\n3. **Mobile apps** — Weather alerts, market prices, expert advice\n4. **Solar pumps** — Cost-effective irrigation solution\n5. **Micro-irrigation** — Drip/sprinkler for water efficiency\n6. **AI advisory** — Like KisanPilot! Smart farming decisions\n\n💰 Government subsidies (up to 50%) available for drip irrigation and solar pumps!',
   chatCropRotationResponse: '🔄 **Crop Rotation Guide:**\n\n**Why Rotate?** Prevents soil depletion, breaks pest cycles, improves yield.\n\n**Recommended Rotations:**\n• **Year 1:** Cereal (Wheat/Rice)\n• **Year 2:** Legume (Gram/Soybean) — fixes nitrogen naturally\n• **Year 3:** Cash crop (Cotton/Sugarcane)\n• **Year 4:** Oilseed (Groundnut/Mustard)\n\n**Benefits:**\n✅ 10-20% yield improvement\n✅ Reduced fertilizer need by 25%\n✅ Fewer pest problems\n✅ Better soil structure\n\n💡 Legumes in rotation can save ₹2,000-4,000/acre in fertilizer costs!',
   chatHelpResponse: '🤖 **I can help you with:**\n\n💧 **Irrigation** — When and how much to water\n🐛 **Pest Management** — Identify and control pests\n🧪 **Fertilizer** — NPK guidance and schedules\n🌦 **Weather** — Farming advice based on weather\n💰 **Transactions** — View your monthly income/expense\n🌾 **Farm Status** — Overall farm health check\n🌱 **Seeds & Sowing** — Best practices for planting\n🛡 **Insurance** — PMFBY and KCC details\n🏪 **Market Prices** — Mandi rates and selling tips\n🌿 **Organic Farming** — Chemical-free methods\n📉 **Loan & Subsidy** — Government schemes\n\nJust type or ask your question — in English, Hindi, or Marathi!',
+  familyMembers: '👨‍👩‍👧‍👦 Family Members',
+  familyMembersDesc: 'Share farm details with your family members',
+  addMember: '+ Add Member',
+  memberName: 'Name',
+  memberNamePlaceholder: 'Enter family member name',
+  memberRelation: 'Relation',
+  memberPhone: 'Phone',
+  memberPhonePlaceholder: 'Enter phone number',
+  saveMember: 'Save',
+  cancelMember: 'Cancel',
+  removeMember: 'Remove',
+  sharedWith: 'Shared with {count} members',
+  maxMembersReached: 'Maximum 4 members allowed',
+  relationWife: 'Wife',
+  relationSon: 'Son',
+  relationDaughter: 'Daughter',
+  relationFather: 'Father',
+  relationMother: 'Mother',
+  relationBrother: 'Brother',
+  relationOther: 'Other',
+  selectRelation: 'Select relation',
+  memberAdded: 'Member added successfully!',
+  memberRemoved: 'Member removed',
+  voiceSmartParsing: 'Smart Voice',
+  voiceParsed: 'Parsed: ₹{amount} - {type} - {category}',
+  currentMonth: 'Current Month',
+  pastMonth: 'Past Month',
 };
 
 const hi: Translations = {
@@ -1549,10 +1603,10 @@ const hi: Translations = {
   stopTalking: 'बंद करें',
 
   // Enhanced Chatbot Responses
-  suggestion5: 'पिछले महीने का लेनदेन क्या है?',
-  suggestion6: 'मेरा खेत ठीक तो है?',
-  suggestion7: 'मुझे आज क्या करना चाहिए?',
-  suggestion8: 'मिट्टी की सेहत के बारे में बताएं',
+  suggestion5: 'इस महीने का लेनदेन क्या है?',
+  suggestion6: 'मेरे खेत के बारे में सब कुछ बताएं',
+  suggestion7: 'मेरे परिवार के सदस्य कौन हैं?',
+  suggestion8: 'मेरे खेत के जोखिम क्या हैं?',
   chatGreeting: '🌱 नमस्ते! मैं आपका किसानपायलट AI सहायक हूं। मैं फसल देखभाल, सिंचाई, कीट प्रबंधन, बाजार भाव, बीमा और बहुत कुछ में आपकी मदद कर सकता हूं। अपने खेत के बारे में कुछ भी पूछें!',
   chatThankYou: '🙏 आपका स्वागत है! खुश किसानी! अगर आपको और मदद चाहिए तो मैं हमेशा यहीं हूं।',
   chatFarmStatusResponse: '🌾 **खेत स्थिति रिपोर्ट:**\n\n✅ **पिछली फसल:** {crop}\n🧪 **मिट्टी का प्रकार:** {soil}\n😊 **पिछले मौसम की संतुष्टि:** {satisfaction}\n\n📊 समग्र रूप से, आपका खेत स्थिर स्थिति में प्रतीत हो रहा है। नियमित निगरानी जारी रखें और उचित सिंचाई बनाए रखें। विस्तृत स्कोर के लिए सीज़न स्कोर कार्ड देखें!',
@@ -1574,6 +1628,33 @@ const hi: Translations = {
   chatTechResponse: '🚜 **आधुनिक खेती तकनीक:**\n\n1. **ड्रोन** — फसल स्वास्थ्य निगरानी, कीटनाशक छिड़काव\n2. **मिट्टी नमी सेंसर** — रियल-टाइम सिंचाई\n3. **मोबाइल ऐप्स** — मौसम, बाजार, सलाह\n4. **सोलर पंप** — सस्ती सिंचाई\n5. **माइक्रो सिंचाई** — ड्रिप/स्प्रिंकलर\n\n💰 सरकारी सब्सिडी ड्रिप और सोलर पंप पर!',
   chatCropRotationResponse: '🔄 **फसल रोटेशन गाइड:**\n\n**लाभ:** मिट्टी सुधार, कीट चक्र तोड़ें, उपज बढ़ाएं।\n\n**सुझावित रोटेशन:**\n• **साल 1:** अनाज (गेहूं/चावल)\n• **साल 2:** दलहन (चना/सोयाबीन)\n• **साल 3:** नकदी फसल (कपास/गन्ना)\n• **साल 4:** तिलहन (मूंगफली/सरसों)\n\n✅ 10-20% उपज वृद्धि, 25% कम खर्चा!',
   chatHelpResponse: '🤖 **मैं इनमें मदद कर सकता हूं:**\n\n💧 सिंचाई | 🐛 कीट प्रबंधन | 🧪 खत\n🌦 मौसम | 💰 लेनदेन | 🌾 खेत स्थिति\n🌱 बीज | 🛡 बीमा | 🏪 बाजार भाव\n🌿 जैविक खेती | 📉 ऋण और सब्सिडी\n\nअंग्रेजी, हिंदी या मराठी में पूछें!',
+  familyMembers: '👨‍👩‍👧‍👦 परिवार के सदस्य',
+  familyMembersDesc: 'अपने परिवार के सदस्यों के साथ खेत का विवरण साझा करें',
+  addMember: '+ सदस्य जोड़ें',
+  memberName: 'नाम',
+  memberNamePlaceholder: 'परिवार के सदस्य का नाम दर्ज करें',
+  memberRelation: 'रिश्ता',
+  memberPhone: 'फोन',
+  memberPhonePlaceholder: 'फोन नंबर दर्ज करें',
+  saveMember: 'सहेजें',
+  cancelMember: 'रद्द करें',
+  removeMember: 'हटाएं',
+  sharedWith: '{count} सदस्यों के साथ साझा किया',
+  maxMembersReached: 'अधिकतम 4 सदस्य अनुमत हैं',
+  relationWife: 'पत्नी',
+  relationSon: 'बेटा',
+  relationDaughter: 'बेटी',
+  relationFather: 'पिता',
+  relationMother: 'माता',
+  relationBrother: 'भाई',
+  relationOther: 'अन्य',
+  selectRelation: 'रिश्ता चुनें',
+  memberAdded: 'सदस्य जोड़ा गया!',
+  memberRemoved: 'सदस्य हटाया गया',
+  voiceSmartParsing: 'स्मार्ट वॉइस',
+  voiceParsed: 'पार्स: ₹{amount} - {type} - {category}',
+  currentMonth: 'वर्तमान महीना',
+  pastMonth: 'पिछला महीना',
 };
 
 const mr: Translations = {
@@ -2071,10 +2152,10 @@ const mr: Translations = {
   stopTalking: 'बंद करा',
 
   // Enhanced Chatbot Responses
-  suggestion5: 'मागील महिन्यातील लेनदेन काय आहे?',
-  suggestion6: 'माझे शेत ठीक आहे का?',
-  suggestion7: 'मला आज काय करावे?',
-  suggestion8: 'मातीचे आरोग्य सांगा',
+  suggestion5: 'या महिन्यातील लेनदेन काय आहे?',
+  suggestion6: 'माझ्या शेताबद्दल सर्व सांगा',
+  suggestion7: 'माझ्या कुटुंबातील सदस्य कोण आहेत?',
+  suggestion8: 'माझ्या शेताचे धोके काय आहेत?',
   chatGreeting: '🌱 नमस्कार! मी तुमचा किसानपायलट AI सहाय्यक आहे. मी पिक काळजी, सिंचाई, कीड व्यवस्थापन, बाजारभाव, विमा आणि बरेच काही मध्ये तुम्हाला मदत करू शकतो.',
   chatThankYou: '🙏 आभार! शुभ शेती! अधिक मदत हवी असल्या, मी नेहमी इथे आहे.',
   chatFarmStatusResponse: '🌾 **शेत स्थिती अहवाल:**\n\n✅ **मागील पीक:** {crop}\n🧪 **मातीचा प्रकार:** {soil}\n😊 **मागील हंगाम समाधान:** {satisfaction}\n\n📊 एकंदरीत, तुमचे शेत स्थिर स्थितीत आहे. नियमित निरीक्षण ठेवा आणि योग्य सिंचाई ठेवा.',
@@ -2096,6 +2177,33 @@ const mr: Translations = {
   chatTechResponse: '🚜 **आधुनिक शेती तंत्रज्ञान:**\n\n1. **ड्रोन** — पीक आरोग्य निरीक्षण\n2. **माती ओलावा सेन्सर** — रिअल-टाइम सिंचाई\n3. **मोबाइल अॅप्स** — हवामान, बाजार, सल्ला\n4. **सोलर पंप** — स्वस्त सिंचाई\n5. **मायक्रो सिंचाई** — ड्रिप/स्प्रिंकलर',
   chatCropRotationResponse: '🔄 **पीक रोटेशन मार्गदर्शक:**\n\n**सुचव:**\n• **वर्ष 1:** अन्न (गहू/तांदूळ)\n• **वर्ष 2:** डालिंगण (चणा/सोयाबीन)\n• **वर्ष 3:** रोपण पीक (कापूस/ऊस)\n• **वर्ष 4:** तेलबीज (मूगफली/सरसो)\n\n✅ 10-20% उत्पादन वाढ, 25% कम खर्चा!',
   chatHelpResponse: '🤖 **मी यामध्ये मदत करू शकतो:**\n\n💧 सिंचाई | 🐛 कीड व्यवस्थापन | 🧪 खत\n🌦 हवामान | 💰 लेनदेन | 🌾 शेत स्थिती\n🌱 बियाणे | 🛡 विमा | 🏪 बाजारभाव\n🌿 जैविक शेती | 📉 कर्ज आणि अनुदान\n\nइंग्रजी, हिंदी किंवा मराठीत विचारा!',
+  familyMembers: '👨‍👩‍👧‍👦 कुटुंबातील सदस्य',
+  familyMembersDesc: 'तुमच्या कुटुंबातील सदस्यांसह शेत माहिती शेअर करा',
+  addMember: '+ सदस्य जोडा',
+  memberName: 'नाव',
+  memberNamePlaceholder: 'कुटुंबातील सदस्याचे नाव लिहा',
+  memberRelation: 'नाते',
+  memberPhone: 'फोन',
+  memberPhonePlaceholder: 'फोन नंबर लिहा',
+  saveMember: 'जतन करा',
+  cancelMember: 'रद्द करा',
+  removeMember: 'काढा',
+  sharedWith: '{count} सदस्यांसह शेअर केले',
+  maxMembersReached: 'जास्तीत जास्त 4 सदस्य परवानगी',
+  relationWife: 'पत्नी',
+  relationSon: 'मुलगा',
+  relationDaughter: 'मुलगी',
+  relationFather: 'वडील',
+  relationMother: 'आई',
+  relationBrother: 'भाऊ',
+  relationOther: 'इतर',
+  selectRelation: 'नाते निवडा',
+  memberAdded: 'सदस्य जोडला!',
+  memberRemoved: 'सदस्य काढला',
+  voiceSmartParsing: 'स्मार्ट व्हॉइस',
+  voiceParsed: 'पार्स: ₹{amount} - {type} - {category}',
+  currentMonth: 'सध्याचा महिना',
+  pastMonth: 'मागील महिना',
 };
 
 const translations: Record<Language, Translations> = { en, hi, mr };

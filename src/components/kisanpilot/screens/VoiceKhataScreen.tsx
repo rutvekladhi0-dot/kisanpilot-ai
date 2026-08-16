@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '../KisanPilotApp';
 import type { Translations } from '@/lib/i18n';
@@ -68,6 +68,80 @@ function formatINR(amount: number): string {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
 }
 
+interface VoiceParseResult {
+  amount: string;
+  type: 'income' | 'expense';
+  description: string;
+  category: string;
+}
+
+function parseVoiceCommand(text: string): VoiceParseResult {
+  // Remove ₹ symbol if present
+  const cleaned = text.replace(/[₹\s]/g, ' ').trim();
+
+  // Extract the first number found (digits only)
+  const numberMatch = cleaned.match(/\d+/);
+  const amountStr = numberMatch ? numberMatch[0] : '0';
+
+  // Remove the number (and ₹) from text to build description
+  let description = text.replace(/[₹]/g, '').replace(/\d+/, '').trim();
+  // Remove leading/trailing whitespace and common filler words
+  description = description.replace(/^(rupees|rupaye|rs)\s*/i, '').trim();
+
+  // Detect income vs expense
+  const expenseKeywords = ['gives', 'given', 'paid', 'kharcha', 'खर्च', 'de diya', 'dediye', 'bheja', 'for', 'ke liye', 'wages', 'cost', 'spend', 'spent', 'bought', 'kharida', 'kharid', 'to labour', 'to workers', 'diya', 'deta', 'deti', 'debit', 'expense'];
+  const incomeKeywords = ['received', 'mil gaya', 'mila', 'milne', 'earned', 'sold', 'sale', 'becha', 'bech', 'income', 'aya', 'aaya', 'from mandi', 'from market', 'credit', 'profit', 'mila mandi', 'milne ka', 'paise aaye', 'paisa aaya', 'fasal bechi', 'crop sold'];
+
+  const lowerText = text.toLowerCase();
+  let type: 'income' | 'expense' = 'expense'; // default to expense
+
+  let incomeMatched = false;
+  let expenseMatched = false;
+
+  for (const kw of incomeKeywords) {
+    if (lowerText.includes(kw.toLowerCase())) {
+      incomeMatched = true;
+      break;
+    }
+  }
+  for (const kw of expenseKeywords) {
+    if (lowerText.includes(kw.toLowerCase())) {
+      expenseMatched = true;
+      break;
+    }
+  }
+
+  if (incomeMatched && !expenseMatched) {
+    type = 'income';
+  }
+
+  // Detect category
+  const categoryMap: [RegExp, string][] = [
+    [/\b(labour|workers|mazdoor|मजदूर|kamjar|कामगार)\b/i, 'catLabour'],
+    [/\b(fertilizer|khad|खाद|npk|urea|यूरिया|dap)\b/i, 'catFertilizer'],
+    [/\b(seeds|beej|बीज|बियाणे)\b/i, 'catSeeds'],
+    [/\b(pesticide|spray|dawai|दवाई|कीटनाशक)\b/i, 'catPesticides'],
+    [/\b(water|irrigation|paani|पानी|सिंचाई|motor|pump|boring)\b/i, 'catIrrigation'],
+    [/\b(transport|gaadi|गाड़ी|truck|रोड)\b/i, 'catTransport'],
+    [/\b(crop|sale|mandi|market|sold|fasal|फसल|becha|bech|cotton|wheat|onion|rice|sugarcane|soybean)\b/i, 'catCropSale'],
+  ];
+
+  let category = 'catOther';
+  for (const [pattern, cat] of categoryMap) {
+    if (pattern.test(text)) {
+      category = cat;
+      break;
+    }
+  }
+
+  // If type is income and category is still catOther but we detected sale/market/mandi, use catCropSale
+  if (type === 'income' && category === 'catOther') {
+    category = 'catCropSale';
+  }
+
+  return { amount: amountStr, type, description, category };
+}
+
 function loadEntries(): LedgerEntry[] {
   if (typeof window === 'undefined') return demoEntries;
   const stored = localStorage.getItem(STORAGE_KEY);
@@ -82,7 +156,7 @@ export default function VoiceKhataScreen() {
   const { t, navigate, lang } = useApp();
   const [entries, setEntries] = useState<LedgerEntry[]>(loadEntries);
   const [entryType, setEntryType] = useState<'income' | 'expense'>('income');
-  const [category, setCategory] = useState(categoryOptions[0]);
+  const [category, setCategory] = useState<string>(categoryOptions[0]);
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
 
@@ -90,8 +164,26 @@ export default function VoiceKhataScreen() {
   type VoiceState = 'idle' | 'listening' | 'processing' | 'error';
   const [voiceState, setVoiceState] = useState<VoiceState>('idle');
   const [voiceErrorText, setVoiceErrorText] = useState('');
+  const [voiceParseResult, setVoiceParseResult] = useState<string | null>(null);
+  const [amountFlash, setAmountFlash] = useState(false);
   const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<any>(null);
+
+  // Auto-clear voice parse result after 4 seconds
+  useEffect(() => {
+    if (voiceParseResult) {
+      const timer = setTimeout(() => setVoiceParseResult(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [voiceParseResult]);
+
+  // Auto-clear amount flash after 1 second
+  useEffect(() => {
+    if (amountFlash) {
+      const timer = setTimeout(() => setAmountFlash(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [amountFlash]);
 
   const totalIncome = entries.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
   const totalExpense = entries.filter(e => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
@@ -139,7 +231,18 @@ export default function VoiceKhataScreen() {
       setVoiceState('processing');
       const transcript = event.results[0][0].transcript;
       if (transcript && transcript.trim()) {
-        setDescription(transcript.trim());
+        // Smart voice parsing
+        const parsed = parseVoiceCommand(transcript.trim());
+        setAmount(parsed.amount);
+        setEntryType(parsed.type);
+        setCategory(parsed.category);
+        setDescription(parsed.description);
+        // Set parse result display
+        const typeLabel = parsed.type === 'income' ? t.incomeLabel : t.expenseLabel;
+        const catLabel = getCategoryLabel(parsed.category, t);
+        setVoiceParseResult(`✅ ₹${parsed.amount} · ${typeLabel} · ${catLabel}`);
+        // Flash the amount field
+        setAmountFlash(true);
       } else {
         setVoiceState('error');
         setVoiceErrorText(t.couldNotHear);
@@ -279,12 +382,14 @@ export default function VoiceKhataScreen() {
           {/* Amount */}
           <div>
             <label className="text-xs text-gray-500 mb-1 block">{t.amount} (₹)</label>
-            <input
+            <motion.input
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0"
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              animate={amountFlash ? { boxShadow: ['0 0 0 0 rgba(34,197,94,0)', '0 0 0 6px rgba(34,197,94,0.3)', '0 0 0 0 rgba(34,197,94,0)'] } : {}}
+              transition={{ duration: 0.6 }}
+              className={`w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-colors ${amountFlash ? 'border-green-400 bg-green-50' : 'border-gray-200'}`}
             />
           </div>
 
@@ -308,52 +413,58 @@ export default function VoiceKhataScreen() {
               {t.saveEntry}
             </button>
 
-            {/* Microphone Button */}
+            {/* Microphone Button with Smart Voice Badge */}
             <div className="flex flex-col items-center gap-1">
-              <button
-                onClick={toggleListening}
-                disabled={voiceState === 'processing'}
-                className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  voiceState === 'listening'
-                    ? 'bg-red-500 text-white'
-                    : voiceState === 'error'
-                    ? 'bg-red-100 text-red-500 border-2 border-red-300'
-                    : voiceState === 'processing'
-                    ? 'bg-yellow-100 text-yellow-600'
-                    : 'bg-green-50 text-green-600 border-2 border-green-200 hover:bg-green-100 hover:border-green-300'
-                }`}
-                aria-label={voiceState === 'listening' ? t.listening : t.tapToSpeak}
-              >
-                {voiceState === 'listening' && (
-                  <motion.span
-                    className="absolute inset-0 rounded-full bg-red-400"
-                    animate={{
-                      scale: [1, 1.5, 1],
-                      opacity: [0.6, 0, 0.6],
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                )}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5 relative z-10"
+              <div className="relative">
+                <button
+                  onClick={toggleListening}
+                  disabled={voiceState === 'processing'}
+                  className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    voiceState === 'listening'
+                      ? 'bg-red-500 text-white'
+                      : voiceState === 'error'
+                      ? 'bg-red-100 text-red-500 border-2 border-red-300'
+                      : voiceState === 'processing'
+                      ? 'bg-yellow-100 text-yellow-600'
+                      : 'bg-green-50 text-green-600 border-2 border-green-200 hover:bg-green-100 hover:border-green-300'
+                  }`}
+                  aria-label={voiceState === 'listening' ? t.listening : t.tapToSpeak}
                 >
-                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                  <line x1="12" x2="12" y1="19" y2="22" />
-                </svg>
-              </button>
-              <span className="text-[10px] text-gray-400 leading-tight text-center max-w-[64px]">
+                  {voiceState === 'listening' && (
+                    <motion.span
+                      className="absolute inset-0 rounded-full bg-red-400"
+                      animate={{
+                        scale: [1, 1.5, 1],
+                        opacity: [0.6, 0, 0.6],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                    />
+                  )}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-5 h-5 relative z-10"
+                  >
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" x2="12" y1="19" y2="22" />
+                  </svg>
+                </button>
+                {/* Smart Voice Badge */}
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-emerald-500 to-green-500 text-white text-[7px] font-bold px-1.5 py-0.5 rounded-full shadow-sm leading-none">
+                  ✨ AI
+                </span>
+              </div>
+              <span className="text-[10px] text-gray-400 leading-tight text-center max-w-[80px]">
                 {voiceState === 'idle' && t.speakNow}
                 {voiceState === 'listening' && t.voiceDetected}
                 {voiceState === 'processing' && '...'}
@@ -362,6 +473,22 @@ export default function VoiceKhataScreen() {
             </div>
           </div>
         </motion.div>
+
+        {/* Smart Voice Parse Result Indicator */}
+        {voiceParseResult && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            className="rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 shadow-sm px-4 py-3 text-center"
+          >
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-sm font-semibold text-green-700">Smart Voice</span>
+              <span className="text-gray-300">·</span>
+              <span className="text-sm text-green-600">{voiceParseResult}</span>
+            </div>
+          </motion.div>
+        )}
 
         {/* Entry List */}
         <div>

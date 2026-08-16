@@ -289,3 +289,103 @@ Stage Summary:
 - Smart data-driven answers for transactions and farm status
 - Trilingual keyword matching (English, Hindi, Marathi) for each topic
 - 8 quick suggestion buttons for easy access
+
+---
+Task ID: 2
+Agent: Smart Voice Parsing Agent
+Task: Enhance Voice Khata screen with smart voice command parsing
+
+Work Log:
+- Added `useEffect` to React imports in VoiceKhataScreen.tsx
+- Created `VoiceParseResult` interface with amount, type, description, category fields
+- Created `parseVoiceCommand(text: string)` function with:
+  - ₹ symbol removal
+  - First number extraction via regex (`/\d+/`)
+  - Description generation by removing number and filler words (rupees, rupaye, rs)
+  - Income/expense detection with 25 expense keywords and 26 income keywords (English + Hindi)
+  - Priority logic: income only if no expense keyword matched, defaults to expense
+  - Category detection with 7 regex patterns: catLabour, catFertilizer, catSeeds, catPesticides, catIrrigation, catTransport, catCropSale
+  - Fallback: income with no category → catCropSale
+- Added `voiceParseResult` state (string | null) with `useEffect` auto-clear after 4 seconds
+- Added `amountFlash` state (boolean) with `useEffect` auto-clear after 1 second
+- Modified `recognition.onresult` callback to call `parseVoiceCommand` and set all form fields (amount, entryType, category, description) from parsed result
+- Set `voiceParseResult` display string: "✅ ₹2000 · Expense · Labour" format using i18n labels
+- Added green flash animation on amount input field using `motion.input` with animated boxShadow and green border/bg classes
+- Added "✨ AI" Smart Voice badge on mic button (absolute positioned, emerald gradient, rounded-full)
+- Added Smart Voice parse result indicator card below form (green gradient background, animated entrance)
+- Fixed pre-existing TypeScript error by explicitly typing `category` state as `useState<string>`
+- All existing functionality preserved: save, delete, entry list, summary cards, type toggle, category select
+
+Stage Summary:
+- Voice Khata now has smart voice parsing that auto-fills all form fields from spoken commands
+- Supports English and Hindi voice commands with keyword detection
+- Visual feedback: green flash on amount field, animated parse result card, AI badge on mic
+- Zero lint errors, zero TypeScript errors in VoiceKhataScreen.tsx
+- All pre-existing features untouched
+
+---
+Task ID: 3
+Agent: General-Purpose Agent
+Task: Add Family Members invite feature to Profile screen
+
+Work Log:
+- Added 27 new i18n translation keys to Translations interface and all 3 language objects (EN/HI/MR) in i18n.ts
+  - Keys: familyMembers, familyMembersDesc, addMember, memberName, memberNamePlaceholder, memberRelation, memberPhone, memberPhonePlaceholder, saveMember, cancelMember, removeMember, sharedWith, maxMembersReached, relationWife/Son/Daughter/Father/Mother/Brother/Other, selectRelation, memberAdded, memberRemoved, voiceSmartParsing, voiceParsed, currentMonth, pastMonth
+- Added Family Members section to ProfileScreen in KisanPilotApp.tsx (after main crop select, before save/back buttons)
+  - State: familyMembers array with id/name/relation/phone, showAddMember toggle, form fields, form errors, toast notification
+- Pre-loads family members from localStorage key `kp_family_members` on mount
+- Saves family members to localStorage on add/remove
+- Inline add-member form with: name input, relation dropdown (7 options), phone input, save/cancel buttons
+- Validates name and phone as required fields
+- Maximum 4 members with warning message when full
+- Member cards show: avatar emoji by relation, name, relation badge (green), masked phone (****1234), remove button
+- Animated entry for each card using framer-motion (slide-in from left with staggered delay)
+- Toast notifications for add/remove actions
+- Added shared members indicator to DashboardScreen welcome section: "👨‍👩‍👧‍👦 Shared with X members" (small green text below welcome subtitle)
+- Dashboard reads family member count from localStorage on mount
+- Zero lint errors, zero runtime errors
+
+Stage Summary:
+- Family Members invite feature fully implemented in ProfileScreen
+- 27 new i18n keys across 3 languages (total ~487+ keys)
+- Dashboard shows shared members count indicator
+- All data persisted in localStorage (kp_family_members)
+- Zero lint errors
+
+---
+Task ID: 4
+Agent: General-Purpose Agent
+Task: Enhance chatbot data-driven responses with current/past month transactions, comprehensive farm report, family members, risk radar, market prices, and farm goals
+
+Work Log:
+- Enhanced `getTransactionSummary()` to accept optional `period` parameter ('current', 'past', or undefined for last 30 days)
+  - 'current': filters entries from 1st of current month
+  - 'past': filters entries for the full previous month
+  - Default: last 30 days (original behavior)
+  - Fixed localStorage key from `kp_voicekhata` to `kp_ledger` (matching VoiceKhataScreen)
+- Added 5 new helper functions after `formatCurrency`:
+  - `getFamilyMembers()`: reads from kp_family_members
+  - `getRiskRadarData()`: reads from kp_risk_radar (future use)
+  - `getSeasonScorecardData()`: reads from kp_season_scorecard (future use)
+  - `getAlertsData()`: reads from kp_alerts
+  - `buildComprehensiveFarmReport()`: aggregates data from profile, farm memory, transactions (current month), family members, and alerts into a formatted report string
+- Enhanced `generateResponse()` with 6 new/updated handlers:
+  - **Transaction queries with period detection**: Detects 'current month'/'this month' vs 'past month'/'last month' keywords in EN/HI/MR, passes period to getTransactionSummary, shows dynamic label
+  - **Family members**: Reads from kp_family_members, lists members with masked phone numbers
+  - **Farm goals**: Shows current period income/expense/net from transaction data
+  - **Scorecard with actual data**: Shows comprehensive farm report instead of static response
+  - **Risk / Risk Radar**: Shows last season problem and crop damage % from farm memory
+  - **Market prices with data**: Shows recent sales income from transactions plus selling tips
+  - **Comprehensive farm report**: Aggregates all farm data (profile, memory, transactions, family, alerts) into one response
+- Updated 4 quick suggestion buttons (suggestion5-8) in all 3 languages:
+  - EN: 'What is my current month transaction?', 'Show me everything about my farm', 'Who are my family members?', 'What are the risks for my farm?'
+  - HI: 'इस महीने का लेनदेन क्या है?', 'मेरे खेत के बारे में सब कुछ बताएं', 'मेरे परिवार के सदस्य कौन हैं?', 'मेरे खेत के जोखिम क्या हैं?'
+  - MR: 'या महिन्यातील लेनदेन काय आहे?', 'माझ्या शेताबद्दल सर्व सांगा', 'माझ्या कुटुंबातील सदस्य कोण आहेत?', 'माझ्या शेताचे धोके काय आहेत?'
+- Zero lint errors, zero runtime errors
+
+Stage Summary:
+- Chatbot now has 30+ topic handlers with 6 data-driven responses pulling real localStorage data
+- Transaction queries support current month, past month, and last 30 days with trilingual period detection
+- Comprehensive farm report aggregates data from 5+ localStorage sources
+- Quick suggestions updated to data-driven queries
+- All existing functionality preserved

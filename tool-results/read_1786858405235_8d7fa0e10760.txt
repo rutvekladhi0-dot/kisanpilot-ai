@@ -1,0 +1,2002 @@
+     1→'use client';
+     2→
+     3→import React, { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import { getTranslations, getLanguageLabel, type Language, type Translations } from '@/lib/i18n';
+     6→import VoiceKhataScreen from './screens/VoiceKhataScreen';
+     7→import FarmEconomicsScreen from './screens/FarmEconomicsScreen';
+     8→import BajarBhavScreen from './screens/BajarBhavScreen';
+     9→import RiskRadarScreen from './screens/RiskRadarScreen';
+    10→import SimulatorScreen from './screens/SimulatorScreen';
+    11→import PMFBYScreen from './screens/PMFBYScreen';
+    12→import FarmGoalsScreen from './screens/FarmGoalsScreen';
+    13→import NextBestActionScreen from './screens/NextBestActionScreen';
+    14→import MonthlyPhotoTrackerScreen from './screens/MonthlyPhotoTrackerScreen';
+    15→import FarmMemoryScreen from './screens/FarmMemoryScreen';
+    16→import SeasonScoreCardScreen from './screens/SeasonScoreCardScreen';
+    17→
+    18→// ============================================================
+    19→// Types
+    20→// ============================================================
+    21→export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction' | 'phototracker' | 'farmmemory' | 'seasonscorecard';
+    22→
+    23→export interface FarmerProfile {
+    24→  name: string;
+    25→  village: string;
+    26→  farmSize: string;
+    27→  mainCrop: string;
+    28→}
+    29→
+    30→export interface AlertItem {
+    31→  id: number;
+    32→  text: string;
+    33→  icon: string;
+    34→  read: boolean;
+    35→}
+    36→
+    37→// ============================================================
+    38→// App Context
+    39→// ============================================================
+    40→interface AppContextType {
+    41→  lang: Language;
+    42→  t: Translations;
+    43→  setLang: (l: Language) => void;
+    44→  profile: FarmerProfile | null;
+    45→  setProfile: (p: FarmerProfile) => void;
+    46→  screen: Screen;
+    47→  navigate: (s: Screen) => void;
+    48→  alerts: AlertItem[];
+    49→  setAlerts: (a: AlertItem[]) => void;
+    50→}
+    51→
+    52→const AppContext = createContext<AppContextType>({} as AppContextType);
+    53→
+    54→export function useApp() {
+    55→  return useContext(AppContext);
+    56→}
+    57→
+    58→const defaultAlerts: AlertItem[] = [
+    59→  { id: 1, icon: '🌧', text: 'rainExpected', read: false },
+    60→  { id: 2, icon: '💧', text: 'monitorSoil', read: false },
+    61→  { id: 3, icon: '🐛', text: 'checkPestSigns', read: false },
+    62→  { id: 4, icon: '🧪', text: 'fertilizerReminder', read: false },
+    63→];
+    64→
+    65→// ============================================================
+    66→// Main App Component
+    67→// ============================================================
+    68→export default function KisanPilotApp() {
+    69→  const initialized = useRef(false);
+    70→  const [lang, setLangState] = useState<Language>(() => {
+    71→    if (typeof window !== 'undefined') {
+    72→      return (localStorage.getItem('kp_lang') as Language) || 'en';
+    73→    }
+    74→    return 'en';
+    75→  });
+    76→  const [profile, setProfileState] = useState<FarmerProfile | null>(() => {
+    77→    if (typeof window !== 'undefined') {
+    78→      try {
+    79→        const saved = localStorage.getItem('kp_profile');
+    80→        return saved ? JSON.parse(saved) : null;
+    81→      } catch { return null; }
+    82→    }
+    83→    return null;
+    84→  });
+    85→  const [screen, setScreen] = useState<Screen>(() => {
+    86→    if (typeof window !== 'undefined') {
+    87→      const savedLang = localStorage.getItem('kp_lang');
+    88→      const savedProfile = localStorage.getItem('kp_profile');
+    89→      if (savedLang && savedProfile) return 'dashboard';
+    90→      if (savedLang) return 'profile';
+    91→    }
+    92→    return 'language';
+    93→  });
+    94→  const [alerts, setAlertsState] = useState<AlertItem[]>(() => {
+    95→    if (typeof window !== 'undefined') {
+    96→      try {
+    97→        const saved = localStorage.getItem('kp_alerts');
+    98→        return saved ? JSON.parse(saved) : defaultAlerts;
+    99→      } catch { return defaultAlerts; }
+   100→    }
+   101→    return defaultAlerts;
+   102→  });
+   103→
+   104→  const [mounted, setMounted] = useState(false);
+   105→
+   106→  useEffect(() => {
+   107→    if (!initialized.current) {
+   108→      initialized.current = true;
+   109→      requestAnimationFrame(() => setMounted(true));
+   110→    }
+   111→  }, []);
+   112→
+   113→  const t = getTranslations(lang);
+   114→
+   115→  const setLang = useCallback((l: Language) => {
+   116→    setLangState(l);
+   117→    localStorage.setItem('kp_lang', l);
+   118→  }, []);
+   119→
+   120→  const setProfile = useCallback((p: FarmerProfile) => {
+   121→    setProfileState(p);
+   122→    localStorage.setItem('kp_profile', JSON.stringify(p));
+   123→  }, []);
+   124→
+   125→  const navigate = useCallback((s: Screen) => {
+   126→    setScreen(s);
+   127→    window.scrollTo(0, 0);
+   128→  }, []);
+   129→
+   130→  const setAlerts = useCallback((a: AlertItem[]) => {
+   131→    setAlertsState(a);
+   132→    localStorage.setItem('kp_alerts', JSON.stringify(a));
+   133→  }, []);
+   134→
+   135→  if (!mounted) {
+   136→    return null;
+   137→  }
+   138→
+   139→  return (
+   140→    <AppContext.Provider value={{ lang, t, setLang, profile, setProfile, screen, navigate, alerts, setAlerts }}>
+   141→      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+   142→        <AnimatePresence mode="wait">
+   143→          {screen === 'language' && <LanguageScreen key="language" />}
+   144→          {screen === 'profile' && <ProfileScreen key="profile" />}
+   145→          {screen === 'dashboard' && <DashboardScreen key="dashboard" />}
+   146→          {screen === 'chatbot' && <ChatbotScreen key="chatbot" />}
+   147→          {screen === 'myfarm' && <MyFarmScreen key="myfarm" />}
+   148→          {screen === 'cropdoctor' && <CropDoctorScreen key="cropdoctor" />}
+   149→          {screen === 'weather' && <WeatherScreen key="weather" />}
+   150→          {screen === 'insights' && <InsightsScreen key="insights" />}
+   151→          {screen === 'alerts' && <AlertsScreen key="alerts" />}
+   152→          {screen === 'settings' && <SettingsScreen key="settings" />}
+   153→          {screen === 'voicekhata' && <VoiceKhataScreen key="voicekhata" />}
+   154→          {screen === 'farmeconomics' && <FarmEconomicsScreen key="farmeconomics" />}
+   155→          {screen === 'bajarbhav' && <BajarBhavScreen key="bajarbhav" />}
+   156→          {screen === 'riskradar' && <RiskRadarScreen key="riskradar" />}
+   157→          {screen === 'simulator' && <SimulatorScreen key="simulator" />}
+   158→          {screen === 'pmfby' && <PMFBYScreen key="pmfby" />}
+   159→          {screen === 'farmgoals' && <FarmGoalsScreen key="farmgoals" />}
+   160→          {screen === 'nextbestaction' && <NextBestActionScreen key="nextbestaction" />}
+   161→          {screen === 'phototracker' && <MonthlyPhotoTrackerScreen key="phototracker" />}
+   162→          {screen === 'farmmemory' && <FarmMemoryScreen key="farmmemory" />}
+   163→          {screen === 'seasonscorecard' && <SeasonScoreCardScreen key="seasonscorecard" />}
+   164→        </AnimatePresence>
+   165→      </div>
+   166→    </AppContext.Provider>
+   167→  );
+   168→}
+   169→
+   170→// ============================================================
+   171→// Shared Animation Variants
+   172→// ============================================================
+   173→const pageVariants = {
+   174→  initial: { opacity: 0, y: 20 },
+   175→  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+   176→  exit: { opacity: 0, y: -20, transition: { duration: 0.2, ease: 'easeIn' } },
+   177→};
+   178→
+   179→function PageWrapper({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+   180→  return (
+   181→    <motion.div
+   182→      variants={pageVariants}
+   183→      initial="initial"
+   184→      animate="animate"
+   185→      exit="exit"
+   186→      className={`min-h-screen ${className}`}
+   187→    >
+   188→      {children}
+   189→    </motion.div>
+   190→  );
+   191→}
+   192→
+   193→// ============================================================
+   194→// Shared Back Button Component
+   195→// ============================================================
+   196→function BackButton({ target, label }: { target: Screen; label: string }) {
+   197→  const { navigate } = useApp();
+   198→  return (
+   199→    <button
+   200→      onClick={() => navigate(target)}
+   201→      className="flex items-center gap-2 text-green-700 hover:text-green-900 font-medium transition-colors px-3 py-2 rounded-lg hover:bg-green-50"
+   202→    >
+   203→      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+   204→        <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+   205→      </svg>
+   206→      {label}
+   207→    </button>
+   208→  );
+   209→}
+   210→
+   211→// ============================================================
+   212→// LANGUAGE SELECTION SCREEN
+   213→// ============================================================
+   214→function LanguageScreen() {
+   215→  const { setLang, navigate } = useApp();
+   216→  const t = getTranslations('en');
+   217→
+   218→  const languages = [
+   219→    { code: 'mr' as Language, flag: '🇮🇳', label: t.marathi },
+   220→    { code: 'hi' as Language, flag: '🇮🇳', label: t.hindi },
+   221→    { code: 'en' as Language, flag: '🌐', label: t.english },
+   222→  ];
+   223→
+   224→  const handleSelect = (code: Language) => {
+   225→    setLang(code);
+   226→    navigate('profile');
+   227→  };
+   228→
+   229→  return (
+   230→    <PageWrapper className="flex items-center justify-center px-4">
+   231→      <div className="w-full max-w-lg text-center">
+   232→        {/* Logo */}
+   233→        <motion.div
+   234→          initial={{ scale: 0.8, opacity: 0 }}
+   235→          animate={{ scale: 1, opacity: 1 }}
+   236→          transition={{ duration: 0.5 }}
+   237→          className="mb-8"
+   238→        >
+   239→          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-2xl mx-auto mb-4 overflow-hidden">
+   240→            <img src="/images/logo.png" alt="KisanPilot AI" className="w-full h-full object-cover" />
+   241→          </div>
+   242→          <h1 className="text-3xl md:text-4xl font-bold text-green-800 mb-2">KisanPilot AI</h1>
+   243→          <p className="text-green-600 font-medium text-lg">{t.yourPersonalAi}</p>
+   244→        </motion.div>
+   245→
+   246→        {/* Language Cards */}
+   247→        <div className="space-y-4 mb-8">
+   248→          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.chooseYourLanguage}</h2>
+   249→          <p className="text-gray-500 text-sm mb-6">{t.languageSubtitle[0]}</p>
+   250→          {languages.map((lang, i) => (
+   251→            <motion.button
+   252→              key={lang.code}
+   253→              initial={{ opacity: 0, x: -30 }}
+   254→              animate={{ opacity: 1, x: 0 }}
+   255→              transition={{ delay: i * 0.1, duration: 0.3 }}
+   256→              onClick={() => handleSelect(lang.code)}
+   257→              className="w-full flex items-center gap-4 p-5 bg-white rounded-2xl shadow-md hover:shadow-xl border-2 border-transparent hover:border-green-500 transition-all duration-200 group"
+   258→            >
+   259→              <span className="text-4xl group-hover:scale-110 transition-transform">{lang.flag}</span>
+   260→              <span className="text-lg font-semibold text-gray-800 group-hover:text-green-700 transition-colors">
+   261→                {lang.label}
+   262→              </span>
+   263→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-auto text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" viewBox="0 0 20 20" fill="currentColor">
+   264→                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+   265→              </svg>
+   266→            </motion.button>
+   267→          ))}
+   268→        </div>
+   269→      </div>
+   270→    </PageWrapper>
+   271→  );
+   272→}
+   273→
+   274→// ============================================================
+   275→// PROFILE SETUP SCREEN
+   276→// ============================================================
+   277→function ProfileScreen() {
+   278→  const { t, navigate, setProfile } = useApp();
+   279→  const [name, setName] = useState('');
+   280→  const [village, setVillage] = useState('');
+   281→  const [farmSize, setFarmSize] = useState('');
+   282→  const [mainCrop, setMainCrop] = useState('');
+   283→  const [photo, setPhoto] = useState<string | null>(null);
+   284→  const [errors, setErrors] = useState<{ name?: string; village?: string }>({});
+   285→  const fileInputRef = React.useRef<HTMLInputElement>(null);
+   286→
+   287→  // Family Members state
+   288→  const [familyMembers, setFamilyMembers] = useState<Array<{ id: number; name: string; relation: string; phone: string }>>([]);
+   289→  const [showAddMember, setShowAddMember] = useState(false);
+   290→  const [memberName, setMemberName] = useState('');
+   291→  const [memberRelation, setMemberRelation] = useState('');
+   292→  const [memberPhone, setMemberPhone] = useState('');
+   293→  const [memberFormErrors, setMemberFormErrors] = useState<{ name?: string; phone?: string }>({});
+   294→  const [memberToast, setMemberToast] = useState<string | null>(null);
+   295→
+   296→  React.useEffect(() => {
+   297→    if (typeof window !== 'undefined') {
+   298→      const saved = localStorage.getItem('kp_family_members');
+   299→      if (saved) {
+   300→        try { setFamilyMembers(JSON.parse(saved)); } catch { /* ignore */ }
+   301→      }
+   302→    }
+   303→  }, []);
+   304→
+   305→  const saveFamilyMembers = (members: Array<{ id: number; name: string; relation: string; phone: string }>) => {
+   306→    setFamilyMembers(members);
+   307→    localStorage.setItem('kp_family_members', JSON.stringify(members));
+   308→  };
+   309→
+   310→  const handleAddMember = () => {
+   311→    const newErrors: { name?: string; phone?: string } = {};
+   312→    if (!memberName.trim()) newErrors.name = t.memberName + ' ' + t.nameRequired;
+   313→    if (!memberPhone.trim()) newErrors.phone = t.memberPhone + ' ' + t.nameRequired;
+   314→    if (Object.keys(newErrors).length > 0) {
+   315→      setMemberFormErrors(newErrors);
+   316→      return;
+   317→    }
+   318→    const newMember = {
+   319→      id: Date.now(),
+   320→      name: memberName.trim(),
+   321→      relation: memberRelation || t.relationOther,
+   322→      phone: memberPhone.trim(),
+   323→    };
+   324→    const updated = [...familyMembers, newMember];
+   325→    saveFamilyMembers(updated);
+   326→    setMemberName('');
+   327→    setMemberRelation('');
+   328→    setMemberPhone('');
+   329→    setMemberFormErrors({});
+   330→    setShowAddMember(false);
+   331→    setMemberToast(t.memberAdded);
+   332→    setTimeout(() => setMemberToast(null), 2000);
+   333→  };
+   334→
+   335→  const handleRemoveMember = (id: number) => {
+   336→    const updated = familyMembers.filter(m => m.id !== id);
+   337→    saveFamilyMembers(updated);
+   338→    setMemberToast(t.memberRemoved);
+   339→    setTimeout(() => setMemberToast(null), 2000);
+   340→  };
+   341→
+   342→  const maskPhone = (phone: string) => {
+   343→    if (phone.length <= 4) return '****' + phone.slice(-4);
+   344→    return '****' + phone.slice(-4);
+   345→  };
+   346→
+   347→  const relations = [
+   348→    { value: 'Wife', label: t.relationWife },
+   349→    { value: 'Son', label: t.relationSon },
+   350→    { value: 'Daughter', label: t.relationDaughter },
+   351→    { value: 'Father', label: t.relationFather },
+   352→    { value: 'Mother', label: t.relationMother },
+   353→    { value: 'Brother', label: t.relationBrother },
+   354→    { value: 'Other', label: t.relationOther },
+   355→  ];
+   356→
+   357→  const farmSizes = [
+   358→    { value: '<1', label: t.lessThanOneAcre },
+   359→    { value: '1-5', label: t.oneToFiveAcres },
+   360→    { value: '5-10', label: t.fiveToTenAcres },
+   361→    { value: '>10', label: t.moreThanTenAcres },
+   362→  ];
+   363→
+   364→  const crops = [t.cropWheat, t.cropRice, t.cropCotton, t.cropSoybean, t.cropSugarcane, t.cropTomato, t.cropOnion, t.cropOther];
+   365→
+   366→  const handleSave = () => {
+   367→    const newErrors: { name?: string; village?: string } = {};
+   368→    if (!name.trim()) newErrors.name = t.nameRequired;
+   369→    if (!village.trim()) newErrors.village = t.villageRequired;
+   370→    if (Object.keys(newErrors).length > 0) {
+   371→      setErrors(newErrors);
+   372→      return;
+   373→    }
+   374→    setProfile({
+   375→      name: name.trim(),
+   376→      village: village.trim(),
+   377→      farmSize: farmSize || t.lessThanOneAcre,
+   378→      mainCrop: mainCrop || t.cropWheat,
+   379→    });
+   380→    if (photo) {
+   381→      localStorage.setItem('kp_farmer_photo', photo);
+   382→    }
+   383→    navigate('dashboard');
+   384→  };
+   385→
+   386→  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+   387→    const file = e.target.files?.[0];
+   388→    if (file) {
+   389→      const reader = new FileReader();
+   390→      reader.onload = (ev) => {
+   391→        setPhoto(ev.target?.result as string);
+   392→      };
+   393→      reader.readAsDataURL(file);
+   394→    }
+   395→  };
+   396→
+   397→  const removePhoto = () => {
+   398→    setPhoto(null);
+   399→    localStorage.removeItem('kp_farmer_photo');
+   400→    if (fileInputRef.current) fileInputRef.current.value = '';
+   401→  };
+   402→
+   403→  return (
+   404→    <PageWrapper className="flex items-center justify-center px-4 py-8">
+   405→      <div className="w-full max-w-md">
+   406→        <div className="text-center mb-8">
+   407→          <motion.div
+   408→            whileHover={{ scale: 1.05 }}
+   409→            onClick={() => fileInputRef.current?.click()}
+   410→            className="w-24 h-24 rounded-full bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-lg mx-auto mb-3 cursor-pointer overflow-hidden border-4 border-white shadow-green-200"
+   411→          >
+   412→            {photo ? (
+   413→              <img src={photo} alt="Profile" className="w-full h-full object-cover" />
+   414→            ) : (
+   415→              <span className="text-4xl">👨‍🌾</span>
+   416→            )}
+   417→          </motion.div>
+   418→          <div className="flex items-center justify-center gap-3 mb-1">
+   419→            <button
+   420→              onClick={() => fileInputRef.current?.click()}
+   421→              className="text-xs text-green-600 font-semibold hover:text-green-800"
+   422→            >
+   423→              {t.changePhoto}
+   424→            </button>
+   425→            {photo && (
+   426→              <button
+   427→                onClick={removePhoto}
+   428→                className="text-xs text-red-500 font-semibold hover:text-red-700"
+   429→              >
+   430→                {t.removePhoto}
+   431→              </button>
+   432→            )}
+   433→          </div>
+   434→          <p className="text-xs text-gray-400">{t.uploadPhotoLabel}</p>
+   435→          <input
+   436→            ref={fileInputRef}
+   437→            type="file"
+   438→            accept="image/*"
+   439→            capture="user"
+   440→            onChange={handlePhotoSelect}
+   441→            className="hidden"
+   442→          />
+   443→          <h1 className="text-2xl font-bold text-gray-800 mt-4">{t.setupProfile}</h1>
+   444→          <p className="text-gray-500 mt-1">{t.setupProfileSubtitle}</p>
+   445→        </div>
+   446→
+   447→        <div className="bg-white rounded-3xl shadow-lg p-6 md:p-8 space-y-5">
+   448→          {/* Farmer Name */}
+   449→          <div>
+   450→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.farmerName}</label>
+   451→            <input
+   452→              type="text"
+   453→              value={name}
+   454→              onChange={(e) => { setName(e.target.value); setErrors(p => ({ ...p, name: undefined })); }}
+   455→              placeholder={t.farmerNamePlaceholder}
+   456→              className={`w-full px-4 py-3 rounded-xl border-2 ${errors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+   457→            />
+   458→            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+   459→          </div>
+   460→
+   461→          {/* Village Name */}
+   462→          <div>
+   463→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.villageName}</label>
+   464→            <input
+   465→              type="text"
+   466→              value={village}
+   467→              onChange={(e) => { setVillage(e.target.value); setErrors(p => ({ ...p, village: undefined })); }}
+   468→              placeholder={t.villageNamePlaceholder}
+   469→              className={`w-full px-4 py-3 rounded-xl border-2 ${errors.village ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+   470→            />
+   471→            {errors.village && <p className="text-red-500 text-sm mt-1">{errors.village}</p>}
+   472→          </div>
+   473→
+   474→          {/* Farm Size */}
+   475→          <div>
+   476→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.farmSize}</label>
+   477→            <div className="grid grid-cols-2 gap-2">
+   478→              {farmSizes.map((fs) => (
+   479→                <button
+   480→                  key={fs.value}
+   481→                  onClick={() => setFarmSize(fs.label)}
+   482→                  className={`px-3 py-2.5 rounded-xl text-sm font-medium border-2 transition-all ${
+   483→                    farmSize === fs.label
+   484→                      ? 'border-green-500 bg-green-50 text-green-700'
+   485→                      : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300'
+   486→                  }`}
+   487→                >
+   488→                  {fs.label}
+   489→                </button>
+   490→              ))}
+   491→            </div>
+   492→          </div>
+   493→
+   494→          {/* Main Crop */}
+   495→          <div>
+   496→            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.mainCrop}</label>
+   497→            <select
+   498→              value={mainCrop}
+   499→              onChange={(e) => setMainCrop(e.target.value)}
+   500→              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800"
+   501→            >
+   502→              <option value="">{t.selectCrop}</option>
+   503→              {crops.map((c) => (
+   504→                <option key={c} value={c}>{c}</option>
+   505→              ))}
+   506→            </select>
+   507→          </div>
+   508→
+   509→          {/* Family Members Section */}
+   510→          <div className="border-t border-gray-100 pt-5">
+   511→            <div className="flex items-center justify-between mb-1">
+   512→              <div>
+   513→                <h3 className="text-sm font-semibold text-gray-700">{t.familyMembers}</h3>
+   514→                <p className="text-xs text-gray-400 mt-0.5">{t.familyMembersDesc}</p>
+   515→              </div>
+   516→              {familyMembers.length < 4 && (
+   517→                <button
+   518→                  onClick={() => setShowAddMember(!showAddMember)}
+   519→                  className="text-xs font-semibold text-green-600 border-2 border-green-500 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all"
+   520→                >
+   521→                  {t.addMember}
+   522→                </button>
+   523→              )}
+   524→            </div>
+   525→
+   526→            {familyMembers.length >= 4 && (
+   527→              <p className="text-xs text-amber-500 font-medium mb-2">⚠️ {t.maxMembersReached}</p>
+   528→            )}
+   529→
+   530→            {/* Toast */}
+   531→            {memberToast && (
+   532→              <motion.div
+   533→                initial={{ opacity: 0, y: -10 }}
+   534→                animate={{ opacity: 1, y: 0 }}
+   535→                exit={{ opacity: 0 }}
+   536→                className="text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2 mb-2 text-center"
+   537→              >
+   538→                ✅ {memberToast}
+   539→              </motion.div>
+   540→            )}
+   541→
+   542→            {/* Add Member Form */}
+   543→            {showAddMember && (
+   544→              <motion.div
+   545→                initial={{ opacity: 0, height: 0 }}
+   546→                animate={{ opacity: 1, height: 'auto' }}
+   547→                exit={{ opacity: 0, height: 0 }}
+   548→                className="bg-green-50 rounded-xl p-4 mb-3 space-y-3 border border-green-100"
+   549→              >
+   550→                <div>
+   551→                  <label className="block text-xs font-semibold text-gray-600 mb-1">{t.memberName}</label>
+   552→                  <input
+   553→                    type="text"
+   554→                    value={memberName}
+   555→                    onChange={(e) => { setMemberName(e.target.value); setMemberFormErrors(p => ({ ...p, name: undefined })); }}
+   556→                    placeholder={t.memberNamePlaceholder}
+   557→                    className={`w-full px-3 py-2 rounded-lg border-2 text-sm ${memberFormErrors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+   558→                  />
+   559→                  {memberFormErrors.name && <p className="text-red-500 text-xs mt-0.5">{memberFormErrors.name}</p>}
+   560→                </div>
+   561→                <div>
+   562→                  <label className="block text-xs font-semibold text-gray-600 mb-1">{t.memberRelation}</label>
+   563→                  <select
+   564→                    value={memberRelation}
+   565→                    onChange={(e) => setMemberRelation(e.target.value)}
+   566→                    className="w-full px-3 py-2 rounded-lg border-2 border-gray-200 bg-white text-sm focus:border-green-500 focus:outline-none transition-all text-gray-800"
+   567→                  >
+   568→                    <option value="">{t.selectRelation}</option>
+   569→                    {relations.map((r) => (
+   570→                      <option key={r.value} value={r.value}>{r.label}</option>
+   571→                    ))}
+   572→                  </select>
+   573→                </div>
+   574→                <div>
+   575→                  <label className="block text-xs font-semibold text-gray-600 mb-1">{t.memberPhone}</label>
+   576→                  <input
+   577→                    type="tel"
+   578→                    value={memberPhone}
+   579→                    onChange={(e) => { setMemberPhone(e.target.value); setMemberFormErrors(p => ({ ...p, phone: undefined })); }}
+   580→                    placeholder={t.memberPhonePlaceholder}
+   581→                    className={`w-full px-3 py-2 rounded-lg border-2 text-sm ${memberFormErrors.phone ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+   582→                  />
+   583→                  {memberFormErrors.phone && <p className="text-red-500 text-xs mt-0.5">{memberFormErrors.phone}</p>}
+   584→                </div>
+   585→                <div className="flex gap-2 pt-1">
+   586→                  <button
+   587→                    onClick={handleAddMember}
+   588→                    className="flex-1 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-all"
+   589→                  >
+   590→                    {t.saveMember}
+   591→                  </button>
+   592→                  <button
+   593→                    onClick={() => { setShowAddMember(false); setMemberName(''); setMemberRelation(''); setMemberPhone(''); setMemberFormErrors({}); }}
+   594→                    className="flex-1 py-2 rounded-lg border-2 border-gray-300 text-gray-600 text-sm font-semibold hover:bg-gray-50 transition-all"
+   595→                  >
+   596→                    {t.cancelMember}
+   597→                  </button>
+   598→                </div>
+   599→              </motion.div>
+   600→            )}
+   601→
+   602→            {/* Member List */}
+   603→            <div className="space-y-2">
+   604→              {familyMembers.map((member, idx) => (
+   605→                <motion.div
+   606→                  key={member.id}
+   607→                  initial={{ opacity: 0, x: -20 }}
+   608→                  animate={{ opacity: 1, x: 0 }}
+   609→                  transition={{ delay: idx * 0.05 }}
+   610→                  className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2.5 border border-gray-100"
+   611→                >
+   612→                  <div className="flex items-center gap-2.5 min-w-0">
+   613→                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-sm flex-shrink-0">
+   614→                      {member.relation === 'Wife' ? '👩' : member.relation === 'Son' ? '👦' : member.relation === 'Daughter' ? '👧' : member.relation === 'Father' ? '👴' : member.relation === 'Mother' ? '👵' : member.relation === 'Brother' ? '👦' : '👤'}
+   615→                    </div>
+   616→                    <div className="min-w-0">
+   617→                      <p className="text-sm font-semibold text-gray-800 truncate">{member.name}</p>
+   618→                      <div className="flex items-center gap-2">
+   619→                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">{member.relation}</span>
+   620→                        <span className="text-xs text-gray-400">{maskPhone(member.phone)}</span>
+   621→                      </div>
+   622→                    </div>
+   623→                  </div>
+   624→                  <button
+   625→                    onClick={() => handleRemoveMember(member.id)}
+   626→                    className="text-xs text-red-400 hover:text-red-600 font-medium flex-shrink-0 ml-2 transition-colors"
+   627→                  >
+   628→                    ✕ {t.removeMember}
+   629→                  </button>
+   630→                </motion.div>
+   631→              ))}
+   632→            </div>
+   633→          </div>
+   634→
+   635→          {/* Buttons */}
+   636→          <div className="flex gap-3 pt-2">
+   637→            <button
+   638→              onClick={() => navigate('language')}
+   639→              className="flex-1 py-3 px-4 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all"
+   640→            >
+   641→              {t.back}
+   642→            </button>
+   643→            <button
+   644→              onClick={handleSave}
+   645→              className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all"
+   646→            >
+   647→              {t.saveAndContinue}
+   648→            </button>
+   649→          </div>
+   650→        </div>
+   651→      </div>
+   652→    </PageWrapper>
+   653→  );
+   654→}
+   655→
+   656→// ============================================================
+   657→// DASHBOARD SCREEN
+   658→// ============================================================
+   659→function DashboardScreen() {
+   660→  const { t, profile, navigate, lang } = useApp();
+   661→  const [farmerPhoto, setFarmerPhoto] = useState<string | null>(null);
+   662→  const [familyCount, setFamilyCount] = useState(0);
+   663→
+   664→  React.useEffect(() => {
+   665→    if (typeof window !== 'undefined') {
+   666→      const saved = localStorage.getItem('kp_farmer_photo');
+   667→      if (saved) setFarmerPhoto(saved);
+   668→      const members = localStorage.getItem('kp_family_members');
+   669→      if (members) {
+   670→        try { setFamilyCount(JSON.parse(members).length); } catch { /* ignore */ }
+   671→      }
+   672→    }
+   673→  }, []);
+   674→
+   675→  if (!profile) return null;
+   676→
+   677→  const features = [
+   678→    { id: 'chatbot' as Screen, icon: '🤖', title: t.aiChatbot, desc: t.aiChatbotDesc, color: 'from-violet-500 to-purple-600' },
+   679→    { id: 'myfarm' as Screen, icon: '🌾', title: t.myFarm, desc: t.myFarmDesc, color: 'from-amber-500 to-orange-600' },
+   680→    { id: 'cropdoctor' as Screen, icon: '📷', title: t.cropDoctor, desc: t.cropDoctorDesc, color: 'from-rose-500 to-pink-600' },
+   681→    { id: 'weather' as Screen, icon: '🌦', title: t.weather, desc: t.weatherDesc, color: 'from-sky-500 to-blue-600' },
+   682→    { id: 'voicekhata' as Screen, icon: '🎙', title: t.voiceKhata, desc: t.voiceKhataDesc, color: 'from-emerald-500 to-green-600' },
+   683→    { id: 'farmeconomics' as Screen, icon: '💰', title: t.farmEconomics, desc: t.farmEconomicsDesc, color: 'from-green-500 to-emerald-600' },
+   684→    { id: 'bajarbhav' as Screen, icon: '🏪', title: t.bajarBhav, desc: t.bajarBhavDesc, color: 'from-yellow-500 to-amber-600' },
+   685→    { id: 'riskradar' as Screen, icon: '🎯', title: t.riskRadar, desc: t.riskRadarDesc, color: 'from-orange-500 to-red-600' },
+   686→    { id: 'simulator' as Screen, icon: '⚖️', title: t.whatIfSimulator, desc: t.whatIfDesc, color: 'from-indigo-500 to-violet-600' },
+   687→    { id: 'pmfby' as Screen, icon: '🏛', title: t.pmfbySchemes, desc: t.pmfbyDesc, color: 'from-blue-500 to-indigo-600' },
+   688→    { id: 'farmgoals' as Screen, icon: '🎯', title: t.farmGoals, desc: t.farmGoalsDesc, color: 'from-teal-500 to-cyan-600' },
+   689→    { id: 'nextbestaction' as Screen, icon: '✨', title: t.nextBestAction, desc: t.nextBestActionDesc, color: 'from-lime-500 to-green-600' },
+   690→    { id: 'phototracker' as Screen, icon: '📸', title: t.monthlyPhotoTracker, desc: t.monthlyPhotoTrackerDesc, color: 'from-pink-500 to-rose-600' },
+   691→    { id: 'farmmemory' as Screen, icon: '🧠', title: t.farmMemory, desc: t.farmMemoryDesc, color: 'from-emerald-500 to-teal-600' },
+   692→    { id: 'seasonscorecard' as Screen, icon: '🏆', title: t.seasonScoreCard, desc: t.seasonScoreCardDesc, color: 'from-amber-500 to-yellow-600' },
+   693→    { id: 'insights' as Screen, icon: '📊', title: t.farmInsights, desc: t.farmInsightsDesc, color: 'from-cyan-500 to-teal-600' },
+   694→    { id: 'alerts' as Screen, icon: '🔔', title: t.smartAlerts, desc: t.smartAlertsDesc, color: 'from-red-500 to-rose-600' },
+   695→  ];
+   696→
+   697→  return (
+   698→    <PageWrapper>
+   699→      {/* Header */}
+   700→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+   701→        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+   702→          <div className="flex items-center gap-3">
+   703→            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center shadow-md overflow-hidden">
+   704→              <img src="/images/logo.png" alt="KisanPilot AI" className="w-full h-full object-cover" />
+   705→            </div>
+   706→            <div>
+   707→              <h1 className="text-lg font-bold text-green-800 leading-tight">KisanPilot AI</h1>
+   708→              <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-medium">
+   709→                {getLanguageLabel(lang)}
+   710→              </span>
+   711→            </div>
+   712→          </div>
+   713→          <div className="flex items-center gap-2">
+   714→            <button
+   715→              onClick={() => navigate('settings')}
+   716→              className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+   717→              aria-label={t.settings}
+   718→            >
+   719→              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+   720→            </button>
+   721→          </div>
+   722→        </div>
+   723→      </header>
+   724→
+   725→      <main className="max-w-5xl mx-auto px-4 pb-8">
+   726→        {/* Welcome */}
+   727→        <div className="mt-6 mb-6">
+   728→          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
+   729→            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center overflow-hidden border-2 border-white shadow-md">
+   730→              {farmerPhoto ? (
+   731→                <img src={farmerPhoto} alt="" className="w-full h-full object-cover" />
+   732→              ) : (
+   733→                <span className="text-base">👨‍🌾</span>
+   734→              )}
+   735→            </div>
+   736→            <span>{t.welcomeBack}, {profile.name} 👋</span>
+   737→          </h2>
+   738→          <p className="text-gray-500 mt-1">{t.smarterDecisions}</p>
+   739→          {familyCount > 0 && (
+   740→            <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+   741→              👨‍👩‍👧‍👦 {t.sharedWith.replace('{count}', String(familyCount))}
+   742→            </p>
+   743→          )}
+   744→        </div>
+   745→
+   746→        {/* Farm Summary Cards */}
+   747→        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+   748→          {[
+   749→            { icon: '📍', label: t.village, value: profile.village },
+   750→            { icon: '🌾', label: t.mainCrop, value: profile.mainCrop },
+   751→            { icon: '📏', label: t.farmSizeLabel, value: profile.farmSize },
+   752→            { icon: '🌱', label: t.farmStatus, value: t.good },
+   753→          ].map((card) => (
+   754→            <div key={card.label} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
+   755→              <div className="text-2xl mb-2">{card.icon}</div>
+   756→              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">{card.label}</p>
+   757→              <p className="text-sm font-bold text-gray-800 mt-1 truncate">{card.value}</p>
+   758→            </div>
+   759→          ))}
+   760→        </div>
+   761→
+   762→        {/* Next Best Action Card */}
+   763→        <motion.button
+   764→          initial={{ opacity: 0, y: 20 }}
+   765→          animate={{ opacity: 1, y: 0 }}
+   766→          transition={{ delay: 0.1 }}
+   767→          onClick={() => navigate('nextbestaction')}
+   768→          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 mb-4 shadow-md text-left hover:shadow-lg transition-all"
+   769→        >
+   770→          <div className="flex items-center gap-3 mb-2">
+   771→            <span className="text-2xl">✨</span>
+   772→            <h3 className="text-white font-bold">{t.nextBestAction}</h3>
+   773→            <span className="ml-auto text-white/70 text-xs">→</span>
+   774→          </div>
+   775→          <p className="text-green-100 text-sm">{t.action1}</p>
+   776→          <p className="text-green-200/60 text-xs mt-1">{t.action1Reason}</p>
+   777→        </motion.button>
+   778→
+   779→        {/* Hero Section */}
+   780→        <div className="relative rounded-3xl overflow-hidden mb-6 shadow-lg">
+   781→          <img src="/images/hero-farm.png" alt="Farm landscape" className="w-full h-44 md:h-56 object-cover" />
+   782→          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+   783→          <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+   784→            <h3 className="text-white text-xl md:text-2xl font-bold">{t.yourPersonalAi}</h3>
+   785→            <p className="text-white/80 text-sm mt-1">{t.smarterDecisions}</p>
+   786→          </div>
+   787→        </div>
+   788→
+   789→        {/* Risk Radar Summary Strip */}
+   790→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
+   791→          <div className="flex items-center justify-between mb-3">
+   792→            <h3 className="text-sm font-bold text-gray-700">🎯 {t.riskSummary}</h3>
+   793→            <button onClick={() => navigate('riskradar')} className="text-xs text-green-600 font-semibold hover:text-green-800">View All →</button>
+   794→          </div>
+   795→          <div className="flex gap-2 overflow-x-auto pb-1">
+   796→            {[
+   797→              { label: t.rainRisk, level: 'medium' as const, icon: '🌧' },
+   798→              { label: t.waterStressRisk, level: 'low' as const, icon: '💧' },
+   799→              { label: t.diseaseRisk, level: 'low' as const, icon: '🐛' },
+   800→              { label: t.heatRisk, level: 'low' as const, icon: '🌡' },
+   801→              { label: t.costRisk, level: 'medium' as const, icon: '💸' },
+   802→              { label: t.insuranceReady, level: 'high' as const, icon: '🛡' },
+   803→            ].map((risk) => (
+   804→              <div key={risk.label} className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${
+   805→                risk.level === 'low' ? 'bg-green-100 text-green-700' : risk.level === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+   806→              }`}>
+   807→                <span>{risk.icon}</span>
+   808→                <span>{risk.label.split(' ')[0]}</span>
+   809→              </div>
+   810→            ))}
+   811→          </div>
+   812→        </div>
+   813→
+   814→        {/* Feature Cards */}
+   815→        <div className="mb-4">
+   816→          <h3 className="text-lg font-bold text-gray-800 mb-4">{t.exploreFeatures}</h3>
+   817→          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+   818→            {features.map((feature, i) => (
+   819→              <motion.button
+   820→                key={feature.id}
+   821→                initial={{ opacity: 0, y: 20 }}
+   822→                animate={{ opacity: 1, y: 0 }}
+   823→                transition={{ delay: i * 0.05, duration: 0.3 }}
+   824→                onClick={() => navigate(feature.id)}
+   825→                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group"
+   826→              >
+   827→                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-md mb-3 group-hover:scale-110 transition-transform`}>
+   828→                  <span className="text-2xl">{feature.icon}</span>
+   829→                </div>
+   830→                <h4 className="font-bold text-gray-800 text-sm md:text-base">{feature.title}</h4>
+   831→                <p className="text-gray-500 text-xs mt-1">{feature.desc}</p>
+   832→              </motion.button>
+   833→            ))}
+   834→          </div>
+   835→        </div>
+   836→
+   837→        {/* AI Agriculture Banner */}
+   838→        <div className="relative rounded-3xl overflow-hidden mt-8 shadow-lg">
+   839→          <img src="/images/ai-agriculture.png" alt="AI Agriculture" className="w-full h-40 md:h-56 object-cover" />
+   840→          <div className="absolute inset-0 bg-gradient-to-r from-green-900/70 to-transparent" />
+   841→          <div className="absolute inset-0 flex items-center p-5 md:p-8">
+   842→            <div className="max-w-sm">
+   843→              <h3 className="text-white text-lg md:text-xl font-bold">AI-Powered Farming</h3>
+   844→              <p className="text-white/80 text-sm mt-1">Leverage artificial intelligence for smarter agricultural decisions.</p>
+   845→              <button
+   846→                onClick={() => navigate('insights')}
+   847→                className="mt-3 px-4 py-2 bg-white/90 text-green-800 rounded-xl font-semibold text-sm hover:bg-white transition-colors"
+   848→              >
+   849→                {t.farmInsights} →
+   850→              </button>
+   851→            </div>
+   852→          </div>
+   853→        </div>
+   854→      </main>
+   855→
+   856→      {/* Sticky Footer */}
+   857→      <footer className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t border-green-100 mt-4">
+   858→        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+   859→          <span className="text-xs text-gray-400">KisanPilot AI v1.0</span>
+   860→          <span className="text-xs text-green-600 font-medium">🌱 {t.tagline}</span>
+   861→        </div>
+   862→      </footer>
+   863→    </PageWrapper>
+   864→  );
+   865→}
+   866→
+   867→// ============================================================
+   868→// CHATBOT SCREEN
+   869→// ============================================================
+   870→interface ChatMessage {
+   871→  id: number;
+   872→  role: 'user' | 'bot';
+   873→  text: string;
+   874→}
+   875→
+   876→function ChatbotScreen() {
+   877→  const { t, lang } = useApp();
+   878→  const [messages, setMessages] = useState<ChatMessage[]>([]);
+   879→  const [input, setInput] = useState('');
+   880→  const [isTyping, setIsTyping] = useState(false);
+   881→  const [voiceState, setVoiceState] = useState<'idle' | 'listening'>('idle');
+   882→  const [liveTranscript, setLiveTranscript] = useState('');
+   883→  const chatEndRef = React.useRef<HTMLDivElement>(null);
+   884→  const recognitionRef = React.useRef<any>(null);
+   885→
+   886→  useEffect(() => {
+   887→    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+   888→  }, [messages, isTyping]);
+   889→
+   890→  const getTransactionSummary = (period?: string): string => {
+   891→    try {
+   892→      const stored = localStorage.getItem('kp_ledger');
+   893→      if (!stored) return 'NO_DATA';
+   894→      const entries: any[] = JSON.parse(stored);
+   895→      const now = new Date();
+   896→      let startDate: Date;
+   897→
+   898→      if (period === 'current') {
+   899→        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+   900→      } else if (period === 'past') {
+   901→        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+   902→        const endDate = new Date(now.getFullYear(), now.getMonth(), 1);
+   903→        const filtered = entries.filter((e: any) => {
+   904→          if (!e.date) return false;
+   905→          const d = new Date(e.date);
+   906→          return d >= startDate && d < endDate;
+   907→        });
+   908→        if (filtered.length === 0) return 'NO_DATA';
+   909→        const income = filtered.filter((e: any) => e.type === 'income').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
+   910→        const expense = filtered.filter((e: any) => e.type === 'expense').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
+   911→        const net = income - expense;
+   912→        const incCount = filtered.filter((e: any) => e.type === 'income').length;
+   913→        const expCount = filtered.filter((e: any) => e.type === 'expense').length;
+   914→        return JSON.stringify({ income, expense, net, incCount, expCount, total: filtered.length });
+   915→      } else {
+   916→        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30);
+   917→      }
+   918→
+   919→      const filtered = entries.filter((e: any) => {
+   920→        if (!e.date) return false;
+   921→        return new Date(e.date) >= startDate;
+   922→      });
+   923→      if (filtered.length === 0) return 'NO_DATA';
+   924→      const income = filtered.filter((e: any) => e.type === 'income').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
+   925→      const expense = filtered.filter((e: any) => e.type === 'expense').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
+   926→      const net = income - expense;
+   927→      const incCount = filtered.filter((e: any) => e.type === 'income').length;
+   928→      const expCount = filtered.filter((e: any) => e.type === 'expense').length;
+   929→      return JSON.stringify({ income, expense, net, incCount, expCount, total: filtered.length });
+   930→    } catch { return 'NO_DATA'; }
+   931→  };
+   932→
+   933→  const getFarmMemorySummary = (): string => {
+   934→    try {
+   935→      const stored = localStorage.getItem('kp_farm_memory');
+   936→      if (!stored) return 'NO_DATA';
+   937→      return stored;
+   938→    } catch { return 'NO_DATA'; }
+   939→  };
+   940→
+   941→  const formatCurrency = (amount: number): string => {
+   942→    return '₹' + amount.toLocaleString('en-IN');
+   943→  };
+   944→
+   945→  const generateResponse = (userMsg: string): string => {
+   946→    const lower = userMsg.toLowerCase();
+   947→
+   948→    // Greeting
+   949→    if (/^(hi|hello|hey|namaste|नमस्ते|हेलो|हाय)/i.test(lower.trim())) {
+   950→      return t.chatGreeting;
+   951→    }
+   952→    // Thank you
+   953→    if (/^(thank|thanks|धन्य|शुक्रिया|thank you)/i.test(lower.trim())) {
+   954→      return t.chatThankYou;
+   955→    }
+   956→    // Everything OK / Farm Status / Health Check
+   957→    if (lower.includes('everything ok') || lower.includes('everything is ok') || lower.includes('कुछ ठीक') || lower.includes('farm status') || lower.includes('खेत कैसा') || lower.includes('खेत कसा') || lower.includes('how is my farm') || lower.includes('overall health') || lower.includes('farm health')) {
+   958→      const mem = getFarmMemorySummary();
+   959→      if (mem !== 'NO_DATA') {
+   960→        const fm: any = JSON.parse(mem);
+   961→        const crop = fm.lastCrop || fm.lastSeasonCrop || t.defaultResponse;
+   962→        const soil = fm.soilType || 'N/A';
+   963→        const satisfaction = fm.lastSeasonSatisfaction || 'N/A';
+   964→        return t.chatFarmStatusResponse
+   965→          .replace('{crop}', crop)
+   966→          .replace('{soil}', soil)
+   967→          .replace('{satisfaction}', satisfaction);
+   968→      }
+   969→      return t.chatFarmStatusDefault;
+   970→    }
+   971→    // Transaction / Last Month / Expense / Income Summary
+   972→    if (lower.includes('transaction') || lower.includes('last month') || lower.includes('expense') || lower.includes('income') || lower.includes('my spend') || lower.includes('my earning') || lower.includes('khata') || lower.includes('राशि') || lower.includes('खर्च') || lower.includes('आय') || lower.includes('लेनदेन') || lower.includes('बाजार') || lower.includes('profit') || lower.includes('loss')) {
+   973→      const summary = getTransactionSummary();
+   974→      if (summary !== 'NO_DATA') {
+   975→        const data: any = JSON.parse(summary);
+   976→        const netLabel = data.net >= 0 ? t.netProfit : (t.totalExpense);
+   977→        return t.chatTransactionResponse
+   978→          .replace('{income}', formatCurrency(data.income))
+   979→          .replace('{expense}', formatCurrency(data.expense))
+   980→          .replace('{net}', formatCurrency(Math.abs(data.net)))
+   981→          .replace('{netLabel}', data.net >= 0 ? t.netProfit : 'Loss')
+   982→          .replace('{total}', String(data.total))
+   983→          .replace('{incCount}', String(data.incCount))
+   984→          .replace('{expCount}', String(data.expCount));
+   985→      }
+   986→      return t.chatTransactionNoData;
+   987→    }
+   988→    // Water / Irrigation
+   989→    if (lower.includes('water') || lower.includes('irrigat') || lower.includes('watering') || lower.includes('पानी') || lower.includes('सिंचाई')) {
+   990→      return t.waterResponse;
+   991→    }
+   992→    // Yellow Leaves
+   993→    if (lower.includes('yellow') || lower.includes('पील') || lower.includes('पिवळ')) {
+   994→      return t.yellowLeavesResponse;
+   995→    }
+   996→    // Pest / Insect
+   997→    if (lower.includes('pest') || lower.includes('insect') || lower.includes('कीट') || lower.includes('bug')) {
+   998→      return t.pestResponse;
+   999→    }
+  1000→    // Fertilizer / Nutrient
+  1001→    if (lower.includes('fertilizer') || lower.includes('nutrient') || lower.includes('उर्वरक') || lower.includes('पोषक') || lower.includes('खत')) {
+  1002→      return t.fertilizerResponse;
+  1003→    }
+  1004→    // Weather
+  1005→    if (lower.includes('weather') || lower.includes('मौसम') || lower.includes('हवामान') || lower.includes('rain') || lower.includes('बारिश') || lower.includes('बारसात')) {
+  1006→      return t.weatherResponse;
+  1007→    }
+  1008→    // Soil / Soil Test / Soil Health
+  1009→    if (lower.includes('soil') || lower.includes('मिट्टी') || lower.includes('माती') || lower.includes('soil test')) {
+  1010→      return t.chatSoilResponse;
+  1011→    }
+  1012→    // Seed / Sowing / Planting
+  1013→    if (lower.includes('seed') || lower.includes('sowing') || lower.includes('planting') || lower.includes('बीज') || lower.includes('बियाणे') || lower.includes('बुवाई')) {
+  1014→      return t.chatSeedResponse;
+  1015→    }
+  1016→    // Harvest / Crop Ready
+  1017→    if (lower.includes('harvest') || lower.includes('crop ready') || lower.includes('कटाई') || lower.includes('फसल तैयार') || lower.includes('कापणी')) {
+  1018→      return t.chatHarvestResponse;
+  1019→    }
+  1020→    // Insurance / PMFBY
+  1021→    if (lower.includes('insurance') || lower.includes('pmfby') || lower.includes('बीमा') || lower.includes('विमा')) {
+  1022→      return t.chatInsuranceResponse;
+  1023→    }
+  1024→    // Loan / Credit / KCC
+  1025→    if (lower.includes('loan') || lower.includes('credit') || lower.includes('kcc') || lower.includes('कर्ज') || lower.includes('क्रेडिट') || lower.includes('ऋण')) {
+  1026→      return t.chatLoanResponse;
+  1027→    }
+  1028→    // Subsidy / Government Scheme
+  1029→    if (lower.includes('subsidy') || lower.includes('scheme') || lower.includes('government') || lower.includes('सब्सिडी') || lower.includes('योजना') || lower.includes('सरकार')) {
+  1030→      return t.chatSubsidyResponse;
+  1031→    }
+  1032→    // Organic Farming / Compost
+  1033→    if (lower.includes('organic') || lower.includes('compost') || lower.includes('vermicompost') || lower.includes('जैविक') || lower.includes('कम्पोस्ट') || lower.includes('खाद')) {
+  1034→      return t.chatOrganicResponse;
+  1035→    }
+  1036→    // Disease / Rot / Fungus / Blight
+  1037→    if (lower.includes('disease') || lower.includes('rot') || lower.includes('fungus') || lower.includes('blight') || lower.includes('रोग') || lower.includes('बुरसी') || lower.includes('सड़न')) {
+  1038→      return t.chatDiseaseResponse;
+  1039→    }
+  1040→    // Market Price / Mandi / Bajar Bhav
+  1041→    if (lower.includes('market price') || lower.includes('mandi') || lower.includes('bajar') || lower.includes('bhav') || lower.includes('मंडी') || lower.includes('बाजार') || lower.includes('भाव')) {
+  1042→      return t.chatMarketResponse;
+  1043→    }
+  1044→    // What should I do today / Next Action
+  1045→    if (lower.includes('what should i do') || lower.includes('next action') || lower.includes('today') || lower.includes('आज') || lower.includes('करा') || lower.includes('करू') || lower.includes('करना चाहिए')) {
+  1046→      return t.chatNextActionResponse;
+  1047→    }
+  1048→    // Scorecard / Season Performance
+  1049→    if (lower.includes('scorecard') || lower.includes('score card') || lower.includes('season performance') || lower.includes('स्कोर') || lower.includes('प्रदर्शन')) {
+  1050→      return t.chatScorecardResponse;
+  1051→    }
+  1052→    // Weed / Weed Control
+  1053→    if (lower.includes('weed') || lower.includes('grass') || lower.includes('खरपतवार') || lower.includes('गवत')) {
+  1054→      return t.chatWeedResponse;
+  1055→    }
+  1056→    // Drone / Technology / Modern
+  1057→    if (lower.includes('drone') || lower.includes('technology') || lower.includes('modern') || lower.includes('ड्रोन') || lower.includes('तकनीक') || lower.includes('आधुनिक')) {
+  1058→      return t.chatTechResponse;
+  1059→    }
+  1060→    // Crop rotation / Crop selection
+  1061→    if (lower.includes('rotation') || lower.includes('which crop') || lower.includes('best crop') || lower.includes('फसल चुन') || lower.includes('फसल बदल') || lower.includes('फसल निवड')) {
+  1062→      return t.chatCropRotationResponse;
+  1063→    }
+  1064→    // Help / What can you do
+  1065→    if (lower.includes('help') || lower.includes('what can you') || lower.includes('मदद') || lower.includes('क्या कर') || lower.includes('मदत')) {
+  1066→      return t.chatHelpResponse;
+  1067→    }
+  1068→    return t.defaultResponse;
+  1069→  };
+  1070→
+  1071→  const startVoice = () => {
+  1072→    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+  1073→    if (!SpeechRecognition) return;
+  1074→    const recognition = new SpeechRecognition();
+  1075→    recognition.lang = lang === 'hi' ? 'hi-IN' : lang === 'mr' ? 'mr-IN' : 'en-IN';
+  1076→    recognition.continuous = true;
+  1077→    recognition.interimResults = true;
+  1078→    recognition.onresult = (event: any) => {
+  1079→      let final = '';
+  1080→      let interim = '';
+  1081→      for (let i = event.resultIndex; i < event.results.length; i++) {
+  1082→        if (event.results[i].isFinal) {
+  1083→          final += event.results[i][0].transcript;
+  1084→        } else {
+  1085→          interim += event.results[i][0].transcript;
+  1086→        }
+  1087→      }
+  1088→      if (final) {
+  1089→        setInput(final);
+  1090→        setLiveTranscript('');
+  1091→      } else if (interim) {
+  1092→        setInput(interim);
+  1093→        setLiveTranscript(interim);
+  1094→      }
+  1095→    };
+  1096→    recognition.onerror = () => {
+  1097→      setVoiceState('idle');
+  1098→    };
+  1099→    recognition.onend = () => {
+  1100→      if (voiceState === 'listening') {
+  1101→        recognition.start();
+  1102→      }
+  1103→    };
+  1104→    recognitionRef.current = recognition;
+  1105→    recognition.start();
+  1106→    setVoiceState('listening');
+  1107→  };
+  1108→
+  1109→  const stopVoice = () => {
+  1110→    if (recognitionRef.current) {
+  1111→      recognitionRef.current.stop();
+  1112→      recognitionRef.current = null;
+  1113→    }
+  1114→    setVoiceState('idle');
+  1115→    setLiveTranscript('');
+  1116→    if (input.trim()) {
+  1117→      sendMessage();
+  1118→    }
+  1119→  };
+  1120→
+  1121→  const toggleVoice = () => {
+  1122→    if (voiceState === 'listening') {
+  1123→      stopVoice();
+  1124→    } else {
+  1125→      startVoice();
+  1126→    }
+  1127→  };
+  1128→
+  1129→  const sendMessage = (text?: string) => {
+  1130→    const msgText = text || input.trim();
+  1131→    if (!msgText) return;
+  1132→
+  1133→    const userMsg: ChatMessage = { id: Date.now(), role: 'user', text: msgText };
+  1134→    setMessages(prev => [...prev, userMsg]);
+  1135→    setInput('');
+  1136→    setIsTyping(true);
+  1137→
+  1138→    setTimeout(() => {
+  1139→      const botReply: ChatMessage = { id: Date.now() + 1, role: 'bot', text: generateResponse(msgText) };
+  1140→      setIsTyping(false);
+  1141→      setMessages(prev => [...prev, botReply]);
+  1142→    }, 800 + Math.random() * 700);
+  1143→  };
+  1144→
+  1145→  const handleKeyDown = (e: React.KeyboardEvent) => {
+  1146→    if (e.key === 'Enter' && !e.shiftKey) {
+  1147→      e.preventDefault();
+  1148→      sendMessage();
+  1149→    }
+  1150→  };
+  1151→
+  1152→  return (
+  1153→    <PageWrapper className="flex flex-col">
+  1154→      {/* Header */}
+  1155→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1156→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1157→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1158→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1159→            <span className="text-xl">🤖</span>
+  1160→            <h1 className="text-lg font-bold text-green-800">{t.aiAssistant}</h1>
+  1161→          </div>
+  1162→        </div>
+  1163→      </header>
+  1164→
+  1165→      {/* Messages */}
+  1166→      <div className="flex-1 max-w-2xl mx-auto w-full px-4 py-4 overflow-y-auto">
+  1167→        {messages.length === 0 && (
+  1168→          <div className="text-center py-12">
+  1169→            <div className="text-5xl mb-4">🤖</div>
+  1170→            <h3 className="text-xl font-bold text-gray-800 mb-2">{t.aiAssistant}</h3>
+  1171→            <p className="text-gray-500 text-sm mb-8 max-w-sm mx-auto">{t.defaultResponse}</p>
+  1172→
+  1173→            {/* Quick Suggestions */}
+  1174→            <div className="space-y-2">
+  1175→              <p className="text-sm font-semibold text-gray-600 mb-3">{t.quickSuggestions}</p>
+  1176→              <div className="grid grid-cols-1 gap-2">
+  1177→                {[t.suggestion1, t.suggestion2, t.suggestion3, t.suggestion4, t.suggestion5, t.suggestion6, t.suggestion7, t.suggestion8].map((s, i) => (
+  1178→                <motion.button
+  1179→                  key={i}
+  1180→                  initial={{ opacity: 0, y: 10 }}
+  1181→                  animate={{ opacity: 1, y: 0 }}
+  1182→                  transition={{ delay: i * 0.1 }}
+  1183→                  onClick={() => sendMessage(s)}
+  1184→                  className="w-full text-left px-4 py-3 bg-white rounded-xl border border-green-200 text-sm text-green-800 hover:bg-green-50 hover:border-green-300 transition-all shadow-sm"
+  1185→                >
+  1186→                  {s}
+  1187→                </motion.button>
+  1188→              ))}
+  1189→              </div>
+  1190→            </div>
+  1191→          </div>
+  1192→        )}
+  1193→
+  1194→        {/* Message List */}
+  1195→        {messages.map((msg) => (
+  1196→          <motion.div
+  1197→            key={msg.id}
+  1198→            initial={{ opacity: 0, y: 10 }}
+  1199→            animate={{ opacity: 1, y: 0 }}
+  1200→            className={`flex mb-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+  1201→          >
+  1202→            <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+  1203→              msg.role === 'user'
+  1204→                ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-br-md'
+  1205→                : 'bg-white border border-gray-200 text-gray-800 shadow-sm rounded-bl-md'
+  1206→            }`}>
+  1207→              <div className="whitespace-pre-wrap break-words">{msg.text}</div>
+  1208→            </div>
+  1209→          </motion.div>
+  1210→        ))}
+  1211→
+  1212→        {isTyping && (
+  1213→          <div className="flex mb-4 justify-start">
+  1214→            <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+  1215→              <div className="flex gap-1.5">
+  1216→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+  1217→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+  1218→                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+  1219→              </div>
+  1220→            </div>
+  1221→          </div>
+  1222→        )}
+  1223→        <div ref={chatEndRef} />
+  1224→      </div>
+  1225→
+  1226→      {/* Input */}
+  1227→      <div className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t border-green-100">
+  1228→        <div className="max-w-2xl mx-auto px-4 py-3">
+  1229→          {/* Voice status indicator */}
+  1230→          {voiceState === 'listening' && (
+  1231→            <motion.div
+  1232→              initial={{ opacity: 0, y: 10 }}
+  1233→              animate={{ opacity: 1, y: 0 }}
+  1234→              className="flex items-center gap-2 mb-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 w-fit"
+  1235→            >
+  1236→              <motion.span
+  1237→                animate={{ scale: [1, 1.3, 1] }}
+  1238→                transition={{ repeat: Infinity, duration: 1 }}
+  1239→                className="w-2.5 h-2.5 bg-red-500 rounded-full"
+  1240→              />
+  1241→              <span className="text-xs font-medium text-red-600">{t.listeningChat}</span>
+  1242→              <span className="text-xs text-red-400">{liveTranscript && `→ "${liveTranscript.slice(-40)}${liveTranscript.length > 40 ? '...' : ''}"`}</span>
+  1243→            </motion.div>
+  1244→          )}
+  1245→          <div className="flex gap-2">
+  1246→            <input
+  1247→              type="text"
+  1248→              value={input}
+  1249→              onChange={(e) => setInput(e.target.value)}
+  1250→              onKeyDown={handleKeyDown}
+  1251→              placeholder={t.typeMessage}
+  1252→              className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800 text-sm"
+  1253→            />
+  1254→            <button
+  1255→              onClick={toggleVoice}
+  1256→              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+  1257→                voiceState === 'listening'
+  1258→                  ? 'bg-red-500 shadow-lg shadow-red-200'
+  1259→                  : 'bg-gray-100 hover:bg-green-50'
+  1260→              }`}
+  1261→              title={voiceState === 'listening' ? t.stopVoiceChat : t.startVoiceChat}
+  1262→            >
+  1263→              {voiceState === 'listening' ? (
+  1264→                <motion.div
+  1265→                  animate={{ scale: [1, 1.2, 1] }}
+  1266→                  transition={{ repeat: Infinity, duration: 0.8 }}
+  1267→                  className="w-6 h-6 rounded-full bg-white flex items-center justify-center"
+  1268→                >
+  1269→                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+  1270→                    <path fillRule="evenodd" d="M4.5 12.75a6 6 0 0111.57 2.25M12 18.75a2.25 2.25 0 01-2.25-2.25V6.108c0-1.135.845-2.098 1.976-2.192a4.503 4.503 0 018.048 0c1.13.094 1.976 1.057 1.976 2.192V16.5a2.25 2.25 0 01-2.25 2.25H12z" clipRule="evenodd" />
+  1271→                  </svg>
+  1272→                </motion.div>
+  1273→              ) : (
+  1274→                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+  1275→                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+  1276→                </svg>
+  1277→              )}
+  1278→            </button>
+  1279→            <button
+  1280→              onClick={() => sendMessage()}
+  1281→              disabled={!input.trim() || isTyping}
+  1282→              className="px-5 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+  1283→            >
+  1284→              {t.send}
+  1285→            </button>
+  1286→          </div>
+  1287→        </div>
+  1288→      </div>
+  1289→    </PageWrapper>
+  1290→  );
+  1291→}
+  1292→
+  1293→// ============================================================
+  1294→// CROP DOCTOR SCREEN
+  1295→// ============================================================
+  1296→function CropDoctorScreen() {
+  1297→  const { t } = useApp();
+  1298→  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  1299→  const [analyzing, setAnalyzing] = useState(false);
+  1300→  const [result, setResult] = useState<boolean>(false);
+  1301→  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  1302→
+  1303→  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  1304→    const file = e.target.files?.[0];
+  1305→    if (file) {
+  1306→      const reader = new FileReader();
+  1307→      reader.onload = (ev) => {
+  1308→        setSelectedImage(ev.target?.result as string);
+  1309→        setResult(false);
+  1310→      };
+  1311→      reader.readAsDataURL(file);
+  1312→    }
+  1313→  };
+  1314→
+  1315→  const handleAnalyze = () => {
+  1316→    setAnalyzing(true);
+  1317→    setTimeout(() => {
+  1318→      setAnalyzing(false);
+  1319→      setResult(true);
+  1320→    }, 2000);
+  1321→  };
+  1322→
+  1323→  const handleAnalyzeAnother = () => {
+  1324→    setSelectedImage(null);
+  1325→    setResult(false);
+  1326→    if (fileInputRef.current) fileInputRef.current.value = '';
+  1327→  };
+  1328→
+  1329→  return (
+  1330→    <PageWrapper className="flex flex-col">
+  1331→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1332→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1333→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1334→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1335→            <span className="text-xl">📷</span>
+  1336→            <h1 className="text-lg font-bold text-green-800">{t.cropDoctorTitle}</h1>
+  1337→          </div>
+  1338→        </div>
+  1339→      </header>
+  1340→
+  1341→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1342→        <p className="text-gray-500 text-center mb-6">{t.cropDoctorSubtitle}</p>
+  1343→
+  1344→        {/* Default State */}
+  1345→        {!selectedImage && !result && (
+  1346→          <div className="space-y-6">
+  1347→            <div className="rounded-3xl overflow-hidden shadow-md">
+  1348→              <img src="/images/crop-doctor.png" alt="Crop health" className="w-full h-64 object-cover" />
+  1349→            </div>
+  1350→            <div
+  1351→              onClick={() => fileInputRef.current?.click()}
+  1352→              className="border-2 border-dashed border-green-300 rounded-3xl p-10 text-center hover:border-green-500 hover:bg-green-50/50 transition-all cursor-pointer"
+  1353→            >
+  1354→              <div className="text-5xl mb-3">📷</div>
+  1355→              <h3 className="text-lg font-bold text-gray-800">{t.uploadPhoto}</h3>
+  1356→              <p className="text-gray-500 text-sm mt-1">{t.uploadPhotoDesc}</p>
+  1357→            </div>
+  1358→            <input
+  1359→              ref={fileInputRef}
+  1360→              type="file"
+  1361→              accept="image/*"
+  1362→              onChange={handleFileSelect}
+  1363→              className="hidden"
+  1364→            />
+  1365→          </div>
+  1366→        )}
+  1367→
+  1368→        {/* Image Selected */}
+  1369→        {selectedImage && !result && (
+  1370→          <div className="space-y-6">
+  1371→            <div className="rounded-3xl overflow-hidden shadow-md">
+  1372→              <img src={selectedImage} alt="Selected crop" className="w-full h-64 object-cover" />
+  1373→            </div>
+  1374→            <button
+  1375→              onClick={handleAnalyze}
+  1376→              disabled={analyzing}
+  1377→              className="w-full py-4 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold text-lg shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-70 transition-all"
+  1378→            >
+  1379→              {analyzing ? (
+  1380→                <span className="flex items-center justify-center gap-3">
+  1381→                  <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+  1382→                  {t.analyzing}
+  1383→                </span>
+  1384→              ) : (
+  1385→                t.analyzeCrop
+  1386→              )}
+  1387→            </button>
+  1388→            <button
+  1389→              onClick={() => { setSelectedImage(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
+  1390→              className="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all"
+  1391→            >
+  1392→              {t.back}
+  1393→            </button>
+  1394→          </div>
+  1395→        )}
+  1396→
+  1397→        {/* Analysis Result */}
+  1398→        {result && (
+  1399→          <div className="space-y-5">
+  1400→            <div className="rounded-3xl overflow-hidden shadow-md">
+  1401→              <img src={selectedImage!} alt="Analyzed crop" className="w-full h-48 object-cover" />
+  1402→            </div>
+  1403→
+  1404→            {/* Health Score */}
+  1405→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+  1406→              <div className="flex items-center justify-between mb-3">
+  1407→                <span className="text-sm font-semibold text-gray-600">{t.cropHealthScore}</span>
+  1408→                <span className="text-2xl font-bold text-green-600">82%</span>
+  1409→              </div>
+  1410→              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+  1411→                <motion.div
+  1412→                  initial={{ width: 0 }}
+  1413→                  animate={{ width: '82%' }}
+  1414→                  transition={{ duration: 1, ease: 'easeOut' }}
+  1415→                  className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+  1416→                />
+  1417→              </div>
+  1418→            </div>
+  1419→
+  1420→            {/* Observation */}
+  1421→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+  1422→              <h4 className="text-sm font-semibold text-gray-600 mb-2">{t.possibleObservation}</h4>
+  1423→              <p className="text-gray-800">{t.mildNutrientStress}</p>
+  1424→            </div>
+  1425→
+  1426→            {/* Recommendations */}
+  1427→            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+  1428→              <h4 className="text-sm font-semibold text-gray-600 mb-3">{t.recommendations}</h4>
+  1429→              <ul className="space-y-2">
+  1430→                {[
+  1431→                  { icon: '🧪', text: t.rec1 },
+  1432→                  { icon: '👁', text: t.rec2 },
+  1433→                  { icon: '💧', text: t.rec3 },
+  1434→                  { icon: '👨‍🔬', text: t.rec4 },
+  1435→                ].map((r, i) => (
+  1436→                  <motion.li
+  1437→                    key={i}
+  1438→                    initial={{ opacity: 0, x: -10 }}
+  1439→                    animate={{ opacity: 1, x: 0 }}
+  1440→                    transition={{ delay: i * 0.15 }}
+  1441→                    className="flex items-start gap-3 text-sm text-gray-700"
+  1442→                  >
+  1443→                    <span className="text-lg">{r.icon}</span>
+  1444→                    <span>{r.text}</span>
+  1445→                  </motion.li>
+  1446→                ))}
+  1447→              </ul>
+  1448→            </div>
+  1449→
+  1450→            {/* Expert Consultation */}
+  1451→            <motion.div
+  1452→              initial={{ opacity: 0, y: 20 }}
+  1453→              animate={{ opacity: 1, y: 0 }}
+  1454→              transition={{ delay: 0.7 }}
+  1455→              className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5 space-y-4"
+  1456→            >
+  1457→              <div className="flex items-center gap-2">
+  1458→                <span className="text-xl">👨‍🔬</span>
+  1459→                <h3 className="text-sm font-bold text-amber-800">{t.expertConsultation}</h3>
+  1460→              </div>
+  1461→              <p className="text-xs text-amber-700">{t.expertConsultationDesc}</p>
+  1462→
+  1463→              <div className="space-y-3">
+  1464→                {[
+  1465→                  { name: 'Dr. Ramesh Patil', specialty: 'Crop Pathology & Disease', phone: '+91 98765 43210', available: true },
+  1466→                  { name: 'Shri. Sunil Deshmukh', specialty: 'Soil Science & Fertilizers', phone: '+91 87654 32109', available: true },
+  1467→                  { name: 'Dr. Meena Kulkarni', specialty: 'Pest Management & Organic Farming', phone: '+91 76543 21098', available: false },
+  1468→                ].map((expert, i) => (
+  1469→                  <motion.div
+  1470→                    key={i}
+  1471→                    initial={{ opacity: 0, x: -10 }}
+  1472→                    animate={{ opacity: 1, x: 0 }}
+  1473→                    transition={{ delay: 0.8 + i * 0.1 }}
+  1474→                    className="bg-white rounded-xl p-3 flex items-center gap-3"
+  1475→                  >
+  1476→                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+  1477→                      {expert.name.charAt(0)}
+  1478→                    </div>
+  1479→                    <div className="flex-1 min-w-0">
+  1480→                      <p className="text-sm font-semibold text-gray-800">{expert.name}</p>
+  1481→                      <p className="text-xs text-gray-500">{expert.specialty}</p>
+  1482→                    </div>
+  1483→                    <div className="text-right flex-shrink-0">
+  1484→                      {expert.available ? (
+  1485→                        <span className="inline-block px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-medium mb-1">{t.expertAvailable}</span>
+  1486→                      ) : (
+  1487→                        <span className="inline-block px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs font-medium mb-1">Busy</span>
+  1488→                      )}
+  1489→                      <a href={`tel:${expert.phone.replace(/\s/g, '')}`} className="block text-xs text-green-600 font-semibold hover:text-green-800">{t.callExpert}</a>
+  1490→                    </div>
+  1491→                  </motion.div>
+  1492→                ))}
+  1493→              </div>
+  1494→              <p className="text-xs text-amber-600 italic">💡 {t.expertNote}</p>
+  1495→            </motion.div>
+  1496→
+  1497→            {/* Nearby Krushi Kendra */}
+  1498→            <motion.div
+  1499→              initial={{ opacity: 0, y: 20 }}
+  1500→              animate={{ opacity: 1, y: 0 }}
+  1501→              transition={{ delay: 0.9 }}
+  1502→              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4"
+  1503→            >
+  1504→              <div className="flex items-center gap-2">
+  1505→                <span className="text-xl">🏪</span>
+  1506→                <h3 className="text-sm font-bold text-gray-800">{t.nearbyKrushiKendra}</h3>
+  1507→              </div>
+  1508→              <p className="text-xs text-gray-500">{t.krushiKendraDesc}</p>
+  1509→
+  1510→              <div className="space-y-3">
+  1511→                {[
+  1512→                  { name: 'Krushi Kendra - Main Branch', address: 'Near Bus Stand, Taluka Road', phone: '+91 95553 44332', hours: '8:00 AM - 7:00 PM', services: 'Seeds, Fertilizers, Pesticides, Tools' },
+  1513→                  { name: 'Agri Service Center - West', address: 'NH-6 Highway, Village Entry Point', phone: '+91 84432 22119', hours: '7:00 AM - 6:30 PM', services: 'Seeds, Soil Testing, Spray Equipment' },
+  1514→                  { name: 'Gram Seva Kendra', address: 'Village Panchayat Office, Main Road', phone: '+91 73321 11008', hours: '9:00 AM - 5:00 PM', services: 'Subsidy Forms, Insurance, Seeds' },
+  1515→                ].map((center, i) => (
+  1516→                  <motion.div
+  1517→                    key={i}
+  1518→                    initial={{ opacity: 0, x: -10 }}
+  1519→                    animate={{ opacity: 1, x: 0 }}
+  1520→                    transition={{ delay: 1.0 + i * 0.1 }}
+  1521→                    className="border border-gray-100 rounded-xl p-3 space-y-2"
+  1522→                  >
+  1523→                    <div className="flex items-start gap-2">
+  1524→                      <span className="text-lg">📍</span>
+  1525→                      <div className="flex-1">
+  1526→                        <p className="text-sm font-semibold text-gray-800">{center.name}</p>
+  1527→                        <p className="text-xs text-gray-500">{center.address}</p>
+  1528→                      </div>
+  1529→                    </div>
+  1530→                    <div className="flex items-center gap-4 text-xs text-gray-600 ml-7">
+  1531→                      <span className="flex items-center gap-1">📞 {center.phone}</span>
+  1532→                    </div>
+  1533→                    <div className="flex items-center gap-4 text-xs text-gray-500 ml-7">
+  1534→                      <span className="flex items-center gap-1">🕐 {center.hours}</span>
+  1535→                    </div>
+  1536→                    <div className="ml-7">
+  1537→                      <span className="inline-block px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-xs">
+  1538→                        {center.services}
+  1539→                      </span>
+  1540→                    </div>
+  1541→                    <div className="ml-7 flex gap-2">
+  1542→                      <a href={`tel:${center.phone.replace(/\s/g, '')}`} className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition-colors">
+  1543→                        📞 {t.callExpert}
+  1544→                      </a>
+  1545→                      <a href={`https://maps.google.com/?q=${encodeURIComponent(center.address)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 transition-colors">
+  1546→                        🗺️ {t.directions}
+  1547→                      </a>
+  1548→                    </div>
+  1549→                  </motion.div>
+  1550→                ))}
+  1551→              </div>
+  1552→            </motion.div>
+  1553→
+  1554→            <button
+  1555→              onClick={handleAnalyzeAnother}
+  1556→              className="w-full py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+  1557→            >
+  1558→              {t.analyzeAnother}
+  1559→            </button>
+  1560→            <BackButton target="dashboard" label={t.backToDashboard} />
+  1561→          </div>
+  1562→        )}
+  1563→      </main>
+  1564→    </PageWrapper>
+  1565→  );
+  1566→}
+  1567→
+  1568→// ============================================================
+  1569→// WEATHER SCREEN
+  1570→// ============================================================
+  1571→function WeatherScreen() {
+  1572→  const { t } = useApp();
+  1573→
+  1574→  const forecast = [
+  1575→    { day: t.monday, icon: '☀️', temp: '30°C' },
+  1576→    { day: t.tuesday, icon: '🌤', temp: '29°C' },
+  1577→    { day: t.wednesday, icon: '🌧', temp: '26°C' },
+  1578→    { day: t.thursday, icon: '⛅', temp: '28°C' },
+  1579→    { day: t.friday, icon: '☀️', temp: '31°C' },
+  1580→  ];
+  1581→
+  1582→  return (
+  1583→    <PageWrapper className="flex flex-col">
+  1584→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1585→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1586→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1587→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1588→            <span className="text-xl">🌦</span>
+  1589→            <h1 className="text-lg font-bold text-green-800">{t.weatherTitle}</h1>
+  1590→          </div>
+  1591→        </div>
+  1592→      </header>
+  1593→
+  1594→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1595→        {/* Weather Hero Image */}
+  1596→        <div className="relative rounded-3xl overflow-hidden mb-6 shadow-lg">
+  1597→          <img src="/images/weather-farm.png" alt="Farm weather" className="w-full h-48 object-cover" />
+  1598→          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+  1599→          <div className="absolute bottom-4 left-4">
+  1600→            <span className="text-4xl font-bold text-white">28°C</span>
+  1601→            <span className="text-white/80 text-sm ml-2">{t.partlyCloudy}</span>
+  1602→          </div>
+  1603→        </div>
+  1604→
+  1605→        {/* Current Conditions */}
+  1606→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1607→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.currentWeather}</h3>
+  1608→          <div className="grid grid-cols-2 gap-4">
+  1609→            {[
+  1610→              { label: t.temperature, value: '28°C', icon: '🌡' },
+  1611→              { label: t.condition, value: t.partlyCloudy, icon: '⛅' },
+  1612→              { label: t.humidity, value: '65%', icon: '💧' },
+  1613→              { label: t.wind, value: '12 km/h', icon: '💨' },
+  1614→              { label: t.rainChance, value: '30%', icon: '🌧' },
+  1615→            ].map((item) => (
+  1616→              <div key={item.label} className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
+  1617→                <span className="text-2xl">{item.icon}</span>
+  1618→                <div>
+  1619→                  <p className="text-xs text-gray-500">{item.label}</p>
+  1620→                  <p className="text-sm font-bold text-gray-800">{item.value}</p>
+  1621→                </div>
+  1622→              </div>
+  1623→            ))}
+  1624→          </div>
+  1625→        </div>
+  1626→
+  1627→        {/* 5-Day Forecast */}
+  1628→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1629→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.fiveDayForecast}</h3>
+  1630→          <div className="space-y-3">
+  1631→            {forecast.map((day, i) => (
+  1632→              <motion.div
+  1633→                key={day.day}
+  1634→                initial={{ opacity: 0, x: -20 }}
+  1635→                animate={{ opacity: 1, x: 0 }}
+  1636→                transition={{ delay: i * 0.08 }}
+  1637→                className="flex items-center justify-between py-2 px-3 rounded-xl hover:bg-gray-50 transition-colors"
+  1638→              >
+  1639→                <span className="text-sm font-medium text-gray-700 w-24">{day.day}</span>
+  1640→                <span className="text-2xl">{day.icon}</span>
+  1641→                <span className="text-sm font-bold text-gray-800">{day.temp}</span>
+  1642→              </motion.div>
+  1643→            ))}
+  1644→          </div>
+  1645→        </div>
+  1646→
+  1647→        {/* Farming Advice */}
+  1648→        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 shadow-md text-white">
+  1649→          <div className="flex items-start gap-3">
+  1650→            <span className="text-2xl">💡</span>
+  1651→            <div>
+  1652→              <h3 className="font-bold mb-1">{t.farmingAdvice}</h3>
+  1653→              <p className="text-green-100 text-sm leading-relaxed">{t.rainAdvice}</p>
+  1654→            </div>
+  1655→          </div>
+  1656→        </div>
+  1657→      </main>
+  1658→    </PageWrapper>
+  1659→  );
+  1660→}
+  1661→
+  1662→// ============================================================
+  1663→// MY FARM SCREEN
+  1664→// ============================================================
+  1665→function MyFarmScreen() {
+  1666→  const { t, profile, setProfile } = useApp();
+  1667→  const [editing, setEditing] = useState(false);
+  1668→  const [name, setName] = useState(profile?.name || '');
+  1669→  const [village, setVillage] = useState(profile?.village || '');
+  1670→  const [farmSize, setFarmSize] = useState(profile?.farmSize || '');
+  1671→  const [mainCrop, setMainCrop] = useState(profile?.mainCrop || '');
+  1672→
+  1673→  const handleSave = () => {
+  1674→    setProfile({ name, village, farmSize, mainCrop });
+  1675→    setEditing(false);
+  1676→  };
+  1677→
+  1678→  const handleCancel = () => {
+  1679→    if (profile) {
+  1680→      setName(profile.name);
+  1681→      setVillage(profile.village);
+  1682→      setFarmSize(profile.farmSize);
+  1683→      setMainCrop(profile.mainCrop);
+  1684→    }
+  1685→    setEditing(false);
+  1686→  };
+  1687→
+  1688→  if (!profile) return null;
+  1689→
+  1690→  return (
+  1691→    <PageWrapper className="flex flex-col">
+  1692→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1693→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1694→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1695→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1696→            <span className="text-xl">🌾</span>
+  1697→            <h1 className="text-lg font-bold text-green-800">{t.myFarmTitle}</h1>
+  1698→          </div>
+  1699→        </div>
+  1700→      </header>
+  1701→
+  1702→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1703→        {/* Farm Details */}
+  1704→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1705→          <div className="flex items-center justify-between mb-4">
+  1706→            <h3 className="text-sm font-semibold text-gray-600">{t.farmDetails}</h3>
+  1707→            {!editing && (
+  1708→              <button
+  1709→                onClick={() => setEditing(true)}
+  1710→                className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-sm font-semibold hover:bg-green-200 transition-colors"
+  1711→              >
+  1712→                {t.editProfile}
+  1713→              </button>
+  1714→            )}
+  1715→          </div>
+  1716→
+  1717→          {editing ? (
+  1718→            <div className="space-y-4">
+  1719→              <div>
+  1720→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.farmerName}</label>
+  1721→                <input
+  1722→                  type="text"
+  1723→                  value={name}
+  1724→                  onChange={(e) => setName(e.target.value)}
+  1725→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1726→                />
+  1727→              </div>
+  1728→              <div>
+  1729→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.villageName}</label>
+  1730→                <input
+  1731→                  type="text"
+  1732→                  value={village}
+  1733→                  onChange={(e) => setVillage(e.target.value)}
+  1734→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1735→                />
+  1736→              </div>
+  1737→              <div>
+  1738→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.farmSize}</label>
+  1739→                <input
+  1740→                  type="text"
+  1741→                  value={farmSize}
+  1742→                  onChange={(e) => setFarmSize(e.target.value)}
+  1743→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1744→                />
+  1745→              </div>
+  1746→              <div>
+  1747→                <label className="block text-xs font-semibold text-gray-500 mb-1">{t.mainCrop}</label>
+  1748→                <input
+  1749→                  type="text"
+  1750→                  value={mainCrop}
+  1751→                  onChange={(e) => setMainCrop(e.target.value)}
+  1752→                  className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none transition-all text-sm text-gray-800"
+  1753→                />
+  1754→              </div>
+  1755→              <div className="flex gap-3">
+  1756→                <button
+  1757→                  onClick={handleCancel}
+  1758→                  className="flex-1 py-2.5 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all"
+  1759→                >
+  1760→                  {t.cancel}
+  1761→                </button>
+  1762→                <button
+  1763→                  onClick={handleSave}
+  1764→                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all"
+  1765→                >
+  1766→                  {t.saveChanges}
+  1767→                </button>
+  1768→              </div>
+  1769→            </div>
+  1770→          ) : (
+  1771→            <div className="space-y-3">
+  1772→              {[
+  1773→                { icon: '👨‍🌾', label: t.farmerName, value: profile.name },
+  1774→                { icon: '📍', label: t.villageName, value: profile.village },
+  1775→                { icon: '📏', label: t.farmSizeLabel, value: profile.farmSize },
+  1776→                { icon: '🌾', label: t.mainCrop, value: profile.mainCrop },
+  1777→              ].map((item) => (
+  1778→                <div key={item.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+  1779→                  <div className="flex items-center gap-3">
+  1780→                    <span className="text-lg">{item.icon}</span>
+  1781→                    <span className="text-sm text-gray-500">{item.label}</span>
+  1782→                  </div>
+  1783→                  <span className="text-sm font-bold text-gray-800">{item.value}</span>
+  1784→                </div>
+  1785→              ))}
+  1786→            </div>
+  1787→          )}
+  1788→        </div>
+  1789→
+  1790→        {/* Farm Status */}
+  1791→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+  1792→          <h3 className="text-sm font-semibold text-gray-600 mb-4">{t.farmStatusSection}</h3>
+  1793→          <div className="space-y-4">
+  1794→            {[
+  1795→              { icon: '🌱', label: t.cropHealth, value: t.good, color: 'green' },
+  1796→              { icon: '💧', label: t.soilMoisture, value: t.moderate, color: 'yellow' },
+  1797→              { icon: '🚰', label: t.irrigationStatus, value: t.onTrack, color: 'blue' },
+  1798→            ].map((status) => (
+  1799→              <div key={status.label} className="flex items-center justify-between">
+  1800→                <div className="flex items-center gap-3">
+  1801→                  <span className="text-xl">{status.icon}</span>
+  1802→                  <span className="text-sm text-gray-700">{status.label}</span>
+  1803→                </div>
+  1804→                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+  1805→                  status.color === 'green' ? 'bg-green-100 text-green-700' :
+  1806→                  status.color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
+  1807→                  'bg-blue-100 text-blue-700'
+  1808→                }`}>
+  1809→                  {status.value}
+  1810→                </span>
+  1811→              </div>
+  1812→            ))}
+  1813→          </div>
+  1814→        </div>
+  1815→      </main>
+  1816→    </PageWrapper>
+  1817→  );
+  1818→}
+  1819→
+  1820→// ============================================================
+  1821→// FARM INSIGHTS SCREEN
+  1822→// ============================================================
+  1823→function InsightsScreen() {
+  1824→  const { t } = useApp();
+  1825→  const [insightIndex, setInsightIndex] = useState(0);
+  1826→  const [animatedValues, setAnimatedValues] = useState({ health: 0, moisture: 0, irrigation: 0 });
+  1827→
+  1828→  useEffect(() => {
+  1829→    const timer = setTimeout(() => {
+  1830→      setAnimatedValues({ health: 82, moisture: 68, irrigation: 75 });
+  1831→    }, 300);
+  1832→    return () => clearTimeout(timer);
+  1833→  }, []);
+  1834→
+  1835→  const insights = [t.insight1, t.insight2, t.insight3, t.insight4, t.insight5, t.insight6];
+  1836→
+  1837→  const handleGenerate = () => {
+  1838→    setAnimatedValues({ health: 0, moisture: 0, irrigation: 0 });
+  1839→    setInsightIndex(prev => (prev + 1) % insights.length);
+  1840→    setTimeout(() => {
+  1841→      setAnimatedValues({ health: 82, moisture: 68, irrigation: 75 });
+  1842→    }, 300);
+  1843→  };
+  1844→
+  1845→  const bars = [
+  1846→    { label: t.cropHealthScore2, value: animatedValues.health, color: 'from-green-500 to-emerald-500', bgColor: 'bg-green-100' },
+  1847→    { label: t.soilMoisture2, value: animatedValues.moisture, color: 'from-sky-500 to-blue-500', bgColor: 'bg-sky-100' },
+  1848→    { label: t.irrigationEfficiency, value: animatedValues.irrigation, color: 'from-amber-500 to-orange-500', bgColor: 'bg-amber-100' },
+  1849→  ];
+  1850→
+  1851→  return (
+  1852→    <PageWrapper className="flex flex-col">
+  1853→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1854→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1855→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1856→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1857→            <span className="text-xl">📊</span>
+  1858→            <h1 className="text-lg font-bold text-green-800">{t.insightsTitle}</h1>
+  1859→          </div>
+  1860→        </div>
+  1861→      </header>
+  1862→
+  1863→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1864→        {/* Progress Bars */}
+  1865→        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+  1866→          <h3 className="text-sm font-semibold text-gray-600 mb-5">Farm Analytics</h3>
+  1867→          <div className="space-y-5">
+  1868→            {bars.map((bar) => (
+  1869→              <div key={bar.label}>
+  1870→                <div className="flex items-center justify-between mb-2">
+  1871→                  <span className="text-sm text-gray-700 font-medium">{bar.label}</span>
+  1872→                  <span className="text-sm font-bold text-gray-800">{bar.value}%</span>
+  1873→                </div>
+  1874→                <div className={`w-full h-3 ${bar.bgColor} rounded-full overflow-hidden`}>
+  1875→                  <motion.div
+  1876→                    className={`h-full bg-gradient-to-r ${bar.color} rounded-full`}
+  1877→                    initial={{ width: 0 }}
+  1878→                    animate={{ width: `${bar.value}%` }}
+  1879→                    transition={{ duration: 1, ease: 'easeOut' }}
+  1880→                  />
+  1881→                </div>
+  1882→              </div>
+  1883→            ))}
+  1884→          </div>
+  1885→        </div>
+  1886→
+  1887→        {/* AI Insight */}
+  1888→        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-5 mb-6 shadow-md text-white">
+  1889→          <div className="flex items-start gap-3">
+  1890→            <span className="text-2xl">🧠</span>
+  1891→            <div>
+  1892→              <h3 className="font-bold mb-1">{t.aiInsights}</h3>
+  1893→              <motion.p
+  1894→                key={insightIndex}
+  1895→                initial={{ opacity: 0, y: 10 }}
+  1896→                animate={{ opacity: 1, y: 0 }}
+  1897→                className="text-green-100 text-sm leading-relaxed"
+  1898→              >
+  1899→                {insights[insightIndex]}
+  1900→              </motion.p>
+  1901→            </div>
+  1902→          </div>
+  1903→        </div>
+  1904→
+  1905→        <button
+  1906→          onClick={handleGenerate}
+  1907→          className="w-full py-3.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all"
+  1908→        >
+  1909→          ✨ {t.generateInsight}
+  1910→        </button>
+  1911→      </main>
+  1912→    </PageWrapper>
+  1913→  );
+  1914→}
+  1915→
+  1916→// ============================================================
+  1917→// SMART ALERTS SCREEN
+  1918→// ============================================================
+  1919→function AlertsScreen() {
+  1920→  const { t, alerts, setAlerts } = useApp();
+  1921→
+  1922→  const markAsRead = (id: number) => {
+  1923→    setAlerts(alerts.map(a => a.id === id ? { ...a, read: true } : a));
+  1924→  };
+  1925→
+  1926→  const markAllAsRead = () => {
+  1927→    setAlerts(alerts.map(a => ({ ...a, read: true })));
+  1928→  };
+  1929→
+  1930→  const unreadCount = alerts.filter(a => !a.read).length;
+  1931→
+  1932→  return (
+  1933→    <PageWrapper className="flex flex-col">
+  1934→      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+  1935→        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+  1936→          <BackButton target="dashboard" label={t.backToDashboard} />
+  1937→          <div className="flex-1 flex items-center gap-2 justify-center">
+  1938→            <span className="text-xl">🔔</span>
+  1939→            <h1 className="text-lg font-bold text-green-800">{t.alertsTitle}</h1>
+  1940→            {unreadCount > 0 && (
+  1941→              <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+  1942→                {unreadCount}
+  1943→              </span>
+  1944→            )}
+  1945→          </div>
+  1946→        </div>
+  1947→      </header>
+  1948→
+  1949→      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+  1950→        {unreadCount > 0 && (
+  1951→          <button
+  1952→            onClick={markAllAsRead}
+  1953→            className="w-full py-3 rounded-xl bg-green-100 text-green-700 font-semibold text-sm hover:bg-green-200 transition-colors mb-5"
+  1954→          >
+  1955→            ✅ {t.markAllAsRead}
+  1956→          </button>
+  1957→        )}
+  1958→
+  1959→        {unreadCount === 0 && (
+  1960→          <div className="text-center py-10 mb-5">
+  1961→            <div className="text-4xl mb-2">✅</div>
+  1962→            <p className="text-gray-500">{t.noUnreadAlerts}</p>
+  1963→          </div>
+  1964→        )}
+  1965→
+  1966→        <div className="space-y-3">
+  1967→          {alerts.map((alert) => (
+  1968→            <motion.div
+  1969→              key={alert.id}
+  1970→              initial={{ opacity: 0, y: 10 }}
+  1971→              animate={{ opacity: 1, y: 0 }}
+  1972→              className={`flex items-start gap-4 p-4 rounded-2xl border transition-all ${
+  1973→                alert.read
+  1974→                  ? 'bg-gray-50 border-gray-100 opacity-60'
+  1975→                  : 'bg-white border-green-200 shadow-sm'
+  1976→              }`}
+  1977→            >
+  1978→              <div className="text-2xl">{alert.icon}</div>
+  1979→              <div className="flex-1">
+  1980→                <p className={`text-sm ${alert.read ? 'text-gray-500' : 'text-gray-800 font-medium'}`}>
+  1981→                  {t[alert.text as keyof Translations] || alert.text}
+  1982→                </p>
+  1983→              </div>
+  1984→              {!alert.read && (
+  1985→                <button
+  1986→                  onClick={() => markAsRead(alert.id)}
+  1987→                  className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 transition-colors whitespace-nowrap"
+  1988→                >
+  1989→                  {t.markAsRead}
+  1990→                </button>
+  1991→              )}
+  1992→              {alert.read && (
+  1993→                <span className="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-500 text-xs font-medium">
+  1994→                  ✓
+  1995→                </span>
+  1996→              )}
+  1997→            </motion.div>
+  1998→          ))}
+  1999→        </div>
+  2000→      </main>
+
+[showing lines 1-2000 of 2126; use offset=2001 with limit to continue reading]

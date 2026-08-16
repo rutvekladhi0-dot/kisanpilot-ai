@@ -284,6 +284,76 @@ function ProfileScreen() {
   const [errors, setErrors] = useState<{ name?: string; village?: string }>({});
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+  // Family Members state
+  const [familyMembers, setFamilyMembers] = useState<Array<{ id: number; name: string; relation: string; phone: string }>>([]);
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [memberName, setMemberName] = useState('');
+  const [memberRelation, setMemberRelation] = useState('');
+  const [memberPhone, setMemberPhone] = useState('');
+  const [memberFormErrors, setMemberFormErrors] = useState<{ name?: string; phone?: string }>({});
+  const [memberToast, setMemberToast] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kp_family_members');
+      if (saved) {
+        try { setFamilyMembers(JSON.parse(saved)); } catch { /* ignore */ }
+      }
+    }
+  }, []);
+
+  const saveFamilyMembers = (members: Array<{ id: number; name: string; relation: string; phone: string }>) => {
+    setFamilyMembers(members);
+    localStorage.setItem('kp_family_members', JSON.stringify(members));
+  };
+
+  const handleAddMember = () => {
+    const newErrors: { name?: string; phone?: string } = {};
+    if (!memberName.trim()) newErrors.name = t.memberName + ' ' + t.nameRequired;
+    if (!memberPhone.trim()) newErrors.phone = t.memberPhone + ' ' + t.nameRequired;
+    if (Object.keys(newErrors).length > 0) {
+      setMemberFormErrors(newErrors);
+      return;
+    }
+    const newMember = {
+      id: Date.now(),
+      name: memberName.trim(),
+      relation: memberRelation || t.relationOther,
+      phone: memberPhone.trim(),
+    };
+    const updated = [...familyMembers, newMember];
+    saveFamilyMembers(updated);
+    setMemberName('');
+    setMemberRelation('');
+    setMemberPhone('');
+    setMemberFormErrors({});
+    setShowAddMember(false);
+    setMemberToast(t.memberAdded);
+    setTimeout(() => setMemberToast(null), 2000);
+  };
+
+  const handleRemoveMember = (id: number) => {
+    const updated = familyMembers.filter(m => m.id !== id);
+    saveFamilyMembers(updated);
+    setMemberToast(t.memberRemoved);
+    setTimeout(() => setMemberToast(null), 2000);
+  };
+
+  const maskPhone = (phone: string) => {
+    if (phone.length <= 4) return '****' + phone.slice(-4);
+    return '****' + phone.slice(-4);
+  };
+
+  const relations = [
+    { value: 'Wife', label: t.relationWife },
+    { value: 'Son', label: t.relationSon },
+    { value: 'Daughter', label: t.relationDaughter },
+    { value: 'Father', label: t.relationFather },
+    { value: 'Mother', label: t.relationMother },
+    { value: 'Brother', label: t.relationBrother },
+    { value: 'Other', label: t.relationOther },
+  ];
+
   const farmSizes = [
     { value: '<1', label: t.lessThanOneAcre },
     { value: '1-5', label: t.oneToFiveAcres },
@@ -436,6 +506,132 @@ function ProfileScreen() {
             </select>
           </div>
 
+          {/* Family Members Section */}
+          <div className="border-t border-gray-100 pt-5">
+            <div className="flex items-center justify-between mb-1">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700">{t.familyMembers}</h3>
+                <p className="text-xs text-gray-400 mt-0.5">{t.familyMembersDesc}</p>
+              </div>
+              {familyMembers.length < 4 && (
+                <button
+                  onClick={() => setShowAddMember(!showAddMember)}
+                  className="text-xs font-semibold text-green-600 border-2 border-green-500 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all"
+                >
+                  {t.addMember}
+                </button>
+              )}
+            </div>
+
+            {familyMembers.length >= 4 && (
+              <p className="text-xs text-amber-500 font-medium mb-2">⚠️ {t.maxMembersReached}</p>
+            )}
+
+            {/* Toast */}
+            {memberToast && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2 mb-2 text-center"
+              >
+                ✅ {memberToast}
+              </motion.div>
+            )}
+
+            {/* Add Member Form */}
+            {showAddMember && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="bg-green-50 rounded-xl p-4 mb-3 space-y-3 border border-green-100"
+              >
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">{t.memberName}</label>
+                  <input
+                    type="text"
+                    value={memberName}
+                    onChange={(e) => { setMemberName(e.target.value); setMemberFormErrors(p => ({ ...p, name: undefined })); }}
+                    placeholder={t.memberNamePlaceholder}
+                    className={`w-full px-3 py-2 rounded-lg border-2 text-sm ${memberFormErrors.name ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+                  />
+                  {memberFormErrors.name && <p className="text-red-500 text-xs mt-0.5">{memberFormErrors.name}</p>}
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">{t.memberRelation}</label>
+                  <select
+                    value={memberRelation}
+                    onChange={(e) => setMemberRelation(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border-2 border-gray-200 bg-white text-sm focus:border-green-500 focus:outline-none transition-all text-gray-800"
+                  >
+                    <option value="">{t.selectRelation}</option>
+                    {relations.map((r) => (
+                      <option key={r.value} value={r.value}>{r.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">{t.memberPhone}</label>
+                  <input
+                    type="tel"
+                    value={memberPhone}
+                    onChange={(e) => { setMemberPhone(e.target.value); setMemberFormErrors(p => ({ ...p, phone: undefined })); }}
+                    placeholder={t.memberPhonePlaceholder}
+                    className={`w-full px-3 py-2 rounded-lg border-2 text-sm ${memberFormErrors.phone ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'} focus:border-green-500 focus:bg-white focus:outline-none transition-all text-gray-800`}
+                  />
+                  {memberFormErrors.phone && <p className="text-red-500 text-xs mt-0.5">{memberFormErrors.phone}</p>}
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={handleAddMember}
+                    className="flex-1 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-all"
+                  >
+                    {t.saveMember}
+                  </button>
+                  <button
+                    onClick={() => { setShowAddMember(false); setMemberName(''); setMemberRelation(''); setMemberPhone(''); setMemberFormErrors({}); }}
+                    className="flex-1 py-2 rounded-lg border-2 border-gray-300 text-gray-600 text-sm font-semibold hover:bg-gray-50 transition-all"
+                  >
+                    {t.cancelMember}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Member List */}
+            <div className="space-y-2">
+              {familyMembers.map((member, idx) => (
+                <motion.div
+                  key={member.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2.5 border border-gray-100"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-sm flex-shrink-0">
+                      {member.relation === 'Wife' ? '👩' : member.relation === 'Son' ? '👦' : member.relation === 'Daughter' ? '👧' : member.relation === 'Father' ? '👴' : member.relation === 'Mother' ? '👵' : member.relation === 'Brother' ? '👦' : '👤'}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 truncate">{member.name}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">{member.relation}</span>
+                        <span className="text-xs text-gray-400">{maskPhone(member.phone)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveMember(member.id)}
+                    className="text-xs text-red-400 hover:text-red-600 font-medium flex-shrink-0 ml-2 transition-colors"
+                  >
+                    ✕ {t.removeMember}
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
           {/* Buttons */}
           <div className="flex gap-3 pt-2">
             <button
@@ -463,11 +659,16 @@ function ProfileScreen() {
 function DashboardScreen() {
   const { t, profile, navigate, lang } = useApp();
   const [farmerPhoto, setFarmerPhoto] = useState<string | null>(null);
+  const [familyCount, setFamilyCount] = useState(0);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('kp_farmer_photo');
       if (saved) setFarmerPhoto(saved);
+      const members = localStorage.getItem('kp_family_members');
+      if (members) {
+        try { setFamilyCount(JSON.parse(members).length); } catch { /* ignore */ }
+      }
     }
   }, []);
 
@@ -535,6 +736,11 @@ function DashboardScreen() {
             <span>{t.welcomeBack}, {profile.name} 👋</span>
           </h2>
           <p className="text-gray-500 mt-1">{t.smarterDecisions}</p>
+          {familyCount > 0 && (
+            <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+              👨‍👩‍👧‍👦 {t.sharedWith.replace('{count}', String(familyCount))}
+            </p>
+          )}
         </div>
 
         {/* Farm Summary Cards */}
@@ -681,21 +887,46 @@ function ChatbotScreen() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  const getTransactionSummary = (): string => {
+  const getTransactionSummary = (period?: string): string => {
     try {
-      const stored = localStorage.getItem('kp_voicekhata');
+      const stored = localStorage.getItem('kp_ledger');
       if (!stored) return 'NO_DATA';
       const entries: any[] = JSON.parse(stored);
       const now = new Date();
-      const thirtyDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30);
-      const recent = entries.filter((e: any) => e.date && new Date(e.date) >= thirtyDaysAgo);
-      if (recent.length === 0) return 'NO_DATA';
-      const income = recent.filter((e: any) => e.type === 'income').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
-      const expense = recent.filter((e: any) => e.type === 'expense').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
+      let startDate: Date;
+
+      if (period === 'current') {
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      } else if (period === 'past') {
+        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const endDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        const filtered = entries.filter((e: any) => {
+          if (!e.date) return false;
+          const d = new Date(e.date);
+          return d >= startDate && d < endDate;
+        });
+        if (filtered.length === 0) return 'NO_DATA';
+        const income = filtered.filter((e: any) => e.type === 'income').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
+        const expense = filtered.filter((e: any) => e.type === 'expense').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
+        const net = income - expense;
+        const incCount = filtered.filter((e: any) => e.type === 'income').length;
+        const expCount = filtered.filter((e: any) => e.type === 'expense').length;
+        return JSON.stringify({ income, expense, net, incCount, expCount, total: filtered.length });
+      } else {
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30);
+      }
+
+      const filtered = entries.filter((e: any) => {
+        if (!e.date) return false;
+        return new Date(e.date) >= startDate;
+      });
+      if (filtered.length === 0) return 'NO_DATA';
+      const income = filtered.filter((e: any) => e.type === 'income').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
+      const expense = filtered.filter((e: any) => e.type === 'expense').reduce((s: number, e: any) => s + (Number(e.amount) || 0), 0);
       const net = income - expense;
-      const incCount = recent.filter((e: any) => e.type === 'income').length;
-      const expCount = recent.filter((e: any) => e.type === 'expense').length;
-      return JSON.stringify({ income, expense, net, incCount, expCount, total: recent.length });
+      const incCount = filtered.filter((e: any) => e.type === 'income').length;
+      const expCount = filtered.filter((e: any) => e.type === 'expense').length;
+      return JSON.stringify({ income, expense, net, incCount, expCount, total: filtered.length });
     } catch { return 'NO_DATA'; }
   };
 
@@ -709,6 +940,97 @@ function ChatbotScreen() {
 
   const formatCurrency = (amount: number): string => {
     return '₹' + amount.toLocaleString('en-IN');
+  };
+
+  const getFamilyMembers = (): string => {
+    try {
+      const stored = localStorage.getItem('kp_family_members');
+      if (!stored) return 'NO_DATA';
+      return stored;
+    } catch { return 'NO_DATA'; }
+  };
+
+  const getRiskRadarData = (): any => {
+    try {
+      const stored = localStorage.getItem('kp_risk_radar');
+      if (!stored) return null;
+      return JSON.parse(stored);
+    } catch { return null; }
+  };
+
+  const getSeasonScorecardData = (): any => {
+    try {
+      const stored = localStorage.getItem('kp_season_scorecard');
+      if (!stored) return null;
+      return JSON.parse(stored);
+    } catch { return null; }
+  };
+
+  const getAlertsData = (): any[] => {
+    try {
+      const stored = localStorage.getItem('kp_alerts');
+      if (!stored) return [];
+      return JSON.parse(stored);
+    } catch { return []; }
+  };
+
+  const buildComprehensiveFarmReport = (): string => {
+    const parts: string[] = [];
+
+    // Profile info
+    const profileStr = localStorage.getItem('kp_profile');
+    if (profileStr) {
+      const p: any = JSON.parse(profileStr);
+      parts.push(`👤 **Farmer:** ${p.name || 'N/A'}`);
+      parts.push(`🏘 **Village:** ${p.village || 'N/A'}`);
+      parts.push(`🌾 **Main Crop:** ${p.mainCrop || 'N/A'}`);
+      parts.push(`📐 **Farm Size:** ${p.farmSize || 'N/A'}`);
+    }
+
+    // Farm Memory
+    const mem = getFarmMemorySummary();
+    if (mem !== 'NO_DATA') {
+      const fm: any = JSON.parse(mem);
+      if (fm.soilType) parts.push(`🧪 **Soil Type:** ${fm.soilType}`);
+      if (fm.irrigationSource) parts.push(`💧 **Irrigation:** ${fm.irrigationSource}`);
+      if (fm.farmingExperience) parts.push(`📅 **Experience:** ${fm.farmingExperience} years`);
+      if (fm.lastSeasonCrop) parts.push(`🌾 **Last Season Crop:** ${fm.lastSeasonCrop}`);
+      if (fm.lastSeasonYield) parts.push(`📊 **Last Yield:** ${fm.lastSeasonYield}`);
+      if (fm.lastSeasonIncome) parts.push(`💰 **Last Income:** ₹${fm.lastSeasonIncome}`);
+      if (fm.lastSeasonExpense) parts.push(`💸 **Last Expense:** ₹${fm.lastSeasonExpense}`);
+      if (fm.lastSeasonSatisfaction) parts.push(`😊 **Satisfaction:** ${fm.lastSeasonSatisfaction}`);
+      if (fm.lastSeasonMajorProblem) parts.push(`⚠️ **Major Problem:** ${fm.lastSeasonMajorProblem}`);
+      if (fm.lastSeasonLesson) parts.push(`💡 **Key Lesson:** ${fm.lastSeasonLesson}`);
+    }
+
+    // Transactions (current month)
+    const txSummary = getTransactionSummary('current');
+    if (txSummary !== 'NO_DATA') {
+      const tx: any = JSON.parse(txSummary);
+      parts.push(`\n📊 **This Month Transactions:**`);
+      parts.push(`💵 Income: ${formatCurrency(tx.income)} (${tx.incCount} entries)`);
+      parts.push(`💸 Expense: ${formatCurrency(tx.expense)} (${tx.expCount} entries)`);
+      parts.push(`📈 Net: ${formatCurrency(tx.net)}`);
+    }
+
+    // Family members
+    const family = getFamilyMembers();
+    if (family !== 'NO_DATA') {
+      const members: any[] = JSON.parse(family);
+      if (members.length > 0) {
+        parts.push(`👨‍👩‍👧‍👦 **Shared with:** ${members.map((m: any) => m.name).join(', ')}`);
+      }
+    }
+
+    // Alerts
+    const alerts = getAlertsData();
+    const unread = alerts.filter((a: any) => !a.read);
+    if (unread.length > 0) {
+      parts.push(`🔔 **${unread.length} unread alert(s)** — check your alerts section`);
+    }
+
+    if (parts.length <= 1) return 'NO_DATA';
+    return parts.join('\n');
   };
 
   const generateResponse = (userMsg: string): string => {
@@ -737,22 +1059,48 @@ function ChatbotScreen() {
       }
       return t.chatFarmStatusDefault;
     }
-    // Transaction / Last Month / Expense / Income Summary
-    if (lower.includes('transaction') || lower.includes('last month') || lower.includes('expense') || lower.includes('income') || lower.includes('my spend') || lower.includes('my earning') || lower.includes('khata') || lower.includes('राशि') || lower.includes('खर्च') || lower.includes('आय') || lower.includes('लेनदेन') || lower.includes('बाजार') || lower.includes('profit') || lower.includes('loss')) {
-      const summary = getTransactionSummary();
+    // Transaction queries with period detection
+    if (lower.includes('transaction') || lower.includes('expense') || lower.includes('income') || lower.includes('my spend') || lower.includes('my earning') || lower.includes('khata') || lower.includes('राशि') || lower.includes('खर्च') || lower.includes('आय') || lower.includes('लेनदेन') || lower.includes('profit') || lower.includes('loss')) {
+      let period: string | undefined;
+      let periodLabel = t.currentMonth;
+      if (lower.includes('current month') || lower.includes('this month') || lower.includes('current महीना') || lower.includes('is mahine') || lower.includes('सध्याचा महिना') || lower.includes('इस महीने') || lower.includes('aaj ka mahina')) {
+        period = 'current';
+        periodLabel = t.currentMonth;
+      } else if (lower.includes('past month') || lower.includes('last month') || lower.includes('previous month') || lower.includes('पिछला महीना') || lower.includes('पिछले महीने') || lower.includes('मागील महिना') || lower.includes('pehle mahine')) {
+        period = 'past';
+        periodLabel = t.pastMonth;
+      }
+      const summary = getTransactionSummary(period);
       if (summary !== 'NO_DATA') {
         const data: any = JSON.parse(summary);
-        const netLabel = data.net >= 0 ? t.netProfit : (t.totalExpense);
-        return t.chatTransactionResponse
-          .replace('{income}', formatCurrency(data.income))
-          .replace('{expense}', formatCurrency(data.expense))
-          .replace('{net}', formatCurrency(Math.abs(data.net)))
-          .replace('{netLabel}', data.net >= 0 ? t.netProfit : 'Loss')
-          .replace('{total}', String(data.total))
-          .replace('{incCount}', String(data.incCount))
-          .replace('{expCount}', String(data.expCount));
+        const netLabel = data.net >= 0 ? t.netProfit : 'Loss';
+        return `💰 **${periodLabel} Transaction Summary:**\n\n💵 **Total Income:** ${formatCurrency(data.income)} (${data.incCount} entries)\n💸 **Total Expense:** ${formatCurrency(data.expense)} (${data.expCount} entries)\n📊 **${netLabel}:** ${formatCurrency(Math.abs(data.net))}\n📝 **Total Transactions:** ${data.total}\n\n💡 Tip: Check the Voice Khata feature for detailed records.`;
       }
       return t.chatTransactionNoData;
+    }
+    // Family members
+    if (lower.includes('family') || lower.includes('member') || lower.includes('shared with') || lower.includes('परिवार') || lower.includes('सदस्य') || lower.includes('कुटुंब')) {
+      const family = getFamilyMembers();
+      if (family !== 'NO_DATA') {
+        const members: any[] = JSON.parse(family);
+        if (members.length > 0) {
+          const list = members.map((m: any) => `• ${m.name} (${m.relation}) - ${m.phone.slice(0, 4)}****`).join('\n');
+          return `👨‍👩‍👧‍👦 **Family Members (${members.length}):**\n\n${list}\n\n✅ All members can view farm details on their phones!`;
+        }
+      }
+      return '👨‍👩‍👧‍👦 No family members added yet. Go to Profile settings to invite family members (up to 4) to share your farm details!';
+    }
+    // Farm Goals
+    if (lower.includes('farm goal') || lower.includes('income target') || lower.includes('my target') || lower.includes('seasonal goal') || lower.includes('खेत लक्ष्य') || lower.includes('आय लक्ष्य') || lower.includes('हंगाम लक्ष्य') || lower.includes('शेत लक्ष्य')) {
+      const report = buildComprehensiveFarmReport();
+      if (report !== 'NO_DATA') {
+        const txSummary = getTransactionSummary();
+        if (txSummary !== 'NO_DATA') {
+          const tx: any = JSON.parse(txSummary);
+          return `🎯 **Farm Goals Update:**\n\n💰 **This period's Income:** ${formatCurrency(tx.income)}\n📈 **This period's Expense:** ${formatCurrency(tx.expense)}\n📊 **Net Return:** ${formatCurrency(tx.net)}\n\n💡 Set your seasonal income target in the **Farm Goals** section to track your progress!`;
+        }
+      }
+      return '🎯 Set up your Farm Goals from the dashboard to track your seasonal income target!';
     }
     // Water / Irrigation
     if (lower.includes('water') || lower.includes('irrigat') || lower.includes('watering') || lower.includes('पानी') || lower.includes('सिंचाई')) {
@@ -806,17 +1154,56 @@ function ChatbotScreen() {
     if (lower.includes('disease') || lower.includes('rot') || lower.includes('fungus') || lower.includes('blight') || lower.includes('रोग') || lower.includes('बुरसी') || lower.includes('सड़न')) {
       return t.chatDiseaseResponse;
     }
-    // Market Price / Mandi / Bajar Bhav
-    if (lower.includes('market price') || lower.includes('mandi') || lower.includes('bajar') || lower.includes('bhav') || lower.includes('मंडी') || lower.includes('बाजार') || lower.includes('भाव')) {
+    // Market prices with data
+    if (lower.includes('market price') || lower.includes('mandi') || lower.includes('bajar') || lower.includes('bhav') || lower.includes('price of') || lower.includes('भाव') || lower.includes('मंडी') || lower.includes('बाजार') || lower.includes('किंमत')) {
+      const report = buildComprehensiveFarmReport();
+      if (report !== 'NO_DATA') {
+        const txSummary = getTransactionSummary();
+        let priceInfo = '';
+        if (txSummary !== 'NO_DATA') {
+          const tx: any = JSON.parse(txSummary);
+          priceInfo += `\n💰 **Recent Sales Income:** ${formatCurrency(tx.income)}`;
+        }
+        return `🏪 **Market Update:**\n\n${priceInfo}\n\n📊 Check the **Market Prices (Bajar Bhav)** feature for live mandi rates of Wheat, Cotton, Soybean, Rice, Onion & Sugarcane!\n\n**Selling Tips:**\n• Compare prices across multiple mandis\n• Use e-NAM portal for online selling\n• Grade your produce for better rates\n• Time your sale — avoid harvest-season glut`;
+      }
       return t.chatMarketResponse;
     }
     // What should I do today / Next Action
     if (lower.includes('what should i do') || lower.includes('next action') || lower.includes('today') || lower.includes('आज') || lower.includes('करा') || lower.includes('करू') || lower.includes('करना चाहिए')) {
       return t.chatNextActionResponse;
     }
-    // Scorecard / Season Performance
-    if (lower.includes('scorecard') || lower.includes('score card') || lower.includes('season performance') || lower.includes('स्कोर') || lower.includes('प्रदर्शन')) {
+    // Scorecard with actual data
+    if (lower.includes('scorecard') || lower.includes('score card') || lower.includes('season performance') || lower.includes('my score') || lower.includes('स्कोर') || lower.includes('प्रदर्शन') || lower.includes('माझे गुण')) {
+      const report = buildComprehensiveFarmReport();
+      if (report !== 'NO_DATA') {
+        return `🏆 **Season Performance Report:**
+
+${report}
+
+📊 Visit the **Season Score Card** feature for detailed scores and download a PDF report!`;
+      }
       return t.chatScorecardResponse;
+    }
+    // Risk / Risk Radar
+    if (lower.includes('risk') || lower.includes('danger') || lower.includes('warning') || lower.includes('जोखीम') || lower.includes('खतरा') || lower.includes('चेतावणी') || lower.includes('धोका')) {
+      const report = buildComprehensiveFarmReport();
+      if (report !== 'NO_DATA') {
+        const mem = getFarmMemorySummary();
+        let riskInfo = '';
+        if (mem !== 'NO_DATA') {
+          const fm: any = JSON.parse(mem);
+          if (fm.lastSeasonMajorProblem && fm.lastSeasonMajorProblem !== 'None') {
+            riskInfo += `\n⚠️ **Last Season Issue:** ${fm.lastSeasonMajorProblem}`;
+          }
+          if (fm.lastSeasonCropDamage) {
+            riskInfo += `\n📉 **Last Season Damage:** ${fm.lastSeasonCropDamage}%`;
+          }
+        }
+        return `🎯 **Risk Assessment:**
+
+${riskInfo || 'No major risks identified from your farm data.'}\n\n🔍 Check the **Risk Radar** feature on the dashboard for detailed risk monitoring across 6 indicators!`;
+      }
+      return '🎯 Check the **Risk Radar** feature on your dashboard for real-time risk monitoring!';
     }
     // Weed / Weed Control
     if (lower.includes('weed') || lower.includes('grass') || lower.includes('खरपतवार') || lower.includes('गवत')) {
@@ -829,6 +1216,14 @@ function ChatbotScreen() {
     // Crop rotation / Crop selection
     if (lower.includes('rotation') || lower.includes('which crop') || lower.includes('best crop') || lower.includes('फसल चुन') || lower.includes('फसल बदल') || lower.includes('फसल निवड')) {
       return t.chatCropRotationResponse;
+    }
+    // Comprehensive farm report / Show everything / All details
+    if (lower.includes('show me everything') || lower.includes('all details') || lower.includes('full report') || lower.includes('complete details') || lower.includes('farm report') || lower.includes('my farm details') || lower.includes('सब कुछ') || lower.includes('पूरी जानकारी') || lower.includes('सर्व माहिती') || lower.includes('संपूर्ण अहवाल')) {
+      const report = buildComprehensiveFarmReport();
+      if (report !== 'NO_DATA') {
+        return `📋 **Complete Farm Report:**\n\n${report}\n\n📊 For more details, check each feature section on the dashboard!`;
+      }
+      return '📋 No farm data found yet. Please set up your profile and fill in farm details first!';
     }
     // Help / What can you do
     if (lower.includes('help') || lower.includes('what can you') || lower.includes('मदद') || lower.includes('क्या कर') || lower.includes('मदत')) {

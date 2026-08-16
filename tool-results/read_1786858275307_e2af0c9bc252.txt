@@ -1,0 +1,2002 @@
+     1→export type Language = 'en' | 'hi' | 'mr';
+     2→
+     3→export interface Translations {
+     4→  // Language Selection
+     5→  chooseYourLanguage: string;
+     6→  languageSubtitle: string[];
+     7→  marathi: string;
+     8→  hindi: string;
+     9→  english: string;
+    10→
+    11→  // Profile Setup
+    12→  setupProfile: string;
+    13→  setupProfileSubtitle: string;
+    14→  farmerName: string;
+    15→  farmerNamePlaceholder: string;
+    16→  villageName: string;
+    17→  villageNamePlaceholder: string;
+    18→  farmSize: string;
+    19→  lessThanOneAcre: string;
+    20→  oneToFiveAcres: string;
+    21→  fiveToTenAcres: string;
+    22→  moreThanTenAcres: string;
+    23→  mainCrop: string;
+    24→  selectCrop: string;
+    25→  cropWheat: string;
+    26→  cropRice: string;
+    27→  cropCotton: string;
+    28→  cropSoybean: string;
+    29→  cropSugarcane: string;
+    30→  cropTomato: string;
+    31→  cropOnion: string;
+    32→  cropOther: string;
+    33→  saveAndContinue: string;
+    34→  back: string;
+    35→  nameRequired: string;
+    36→  villageRequired: string;
+    37→
+    38→  // Dashboard
+    39→  welcomeBack: string;
+    40→  exploreFeatures: string;
+    41→  village: string;
+    42→  mainCrop: string;
+    43→  farmSizeLabel: string;
+    44→  farmStatus: string;
+    45→  good: string;
+    46→  aiChatbot: string;
+    47→  aiChatbotDesc: string;
+    48→  myFarm: string;
+    49→  myFarmDesc: string;
+    50→  cropDoctor: string;
+    51→  cropDoctorDesc: string;
+    52→  weather: string;
+    53→  weatherDesc: string;
+    54→  farmInsights: string;
+    55→  farmInsightsDesc: string;
+    56→  smartAlerts: string;
+    57→  smartAlertsDesc: string;
+    58→  changeLanguage: string;
+    59→  settings: string;
+    60→  dashboard: string;
+    61→  yourPersonalAi: string;
+    62→  smarterDecisions: string;
+    63→  tagline: string;
+    64→
+    65→  // Chatbot
+    66→  aiAssistant: string;
+    67→  typeMessage: string;
+    68→  send: string;
+    69→  backToDashboard: string;
+    70→  quickSuggestions: string;
+    71→  suggestion1: string;
+    72→  suggestion2: string;
+    73→  suggestion3: string;
+    74→  suggestion4: string;
+    75→
+    76→  // Chatbot responses
+    77→  waterResponse: string;
+    78→  yellowLeavesResponse: string;
+    79→  pestResponse: string;
+    80→  fertilizerResponse: string;
+    81→  weatherResponse: string;
+    82→  defaultResponse: string;
+    83→
+    84→  // Crop Doctor
+    85→  cropDoctorTitle: string;
+    86→  cropDoctorSubtitle: string;
+    87→  uploadPhoto: string;
+    88→  uploadPhotoDesc: string;
+    89→  analyzeCrop: string;
+    90→  analyzing: string;
+    91→  cropHealthScore: string;
+    92→  possibleObservation: string;
+    93→  recommendations: string;
+    94→  rec1: string;
+    95→  rec2: string;
+    96→  rec3: string;
+    97→  rec4: string;
+    98→  analyzeAnother: string;
+    99→  mildNutrientStress: string;
+   100→
+   101→  // Weather
+   102→  weatherTitle: string;
+   103→  currentWeather: string;
+   104→  temperature: string;
+   105→  condition: string;
+   106→  partlyCloudy: string;
+   107→  humidity: string;
+   108→  wind: string;
+   109→  rainChance: string;
+   110→  fiveDayForecast: string;
+   111→  farmingAdvice: string;
+   112→  rainAdvice: string;
+   113→  monday: string;
+   114→  tuesday: string;
+   115→  wednesday: string;
+   116→  thursday: string;
+   117→  friday: string;
+   118→
+   119→  // My Farm
+   120→  myFarmTitle: string;
+   121→  farmDetails: string;
+   122→  editProfile: string;
+   123→  saveChanges: string;
+   124→  cancel: string;
+   125→  cropHealth: string;
+   126→  soilMoisture: string;
+   127→  irrigationStatus: string;
+   128→  moderate: string;
+   129→  onTrack: string;
+   130→  farmStatusSection: string;
+   131→
+   132→  // Insights
+   133→  insightsTitle: string;
+   134→  cropHealthScore2: string;
+   135→  soilMoisture2: string;
+   136→  irrigationEfficiency: string;
+   137→  aiInsights: string;
+   138→  insight1: string;
+   139→  insight2: string;
+   140→  insight3: string;
+   141→  insight4: string;
+   142→  insight5: string;
+   143→  insight6: string;
+   144→  generateInsight: string;
+   145→
+   146→  // Alerts
+   147→  alertsTitle: string;
+   148→  rainExpected: string;
+   149→  monitorSoil: string;
+   150→  checkPestSigns: string;
+   151→  fertilizerReminder: string;
+   152→  markAsRead: string;
+   153→  markAllAsRead: string;
+   154→  noUnreadAlerts: string;
+   155→
+   156→  // Settings
+   157→  settingsTitle: string;
+   158→  changeLanguageOption: string;
+   159→  editProfileOption: string;
+   160→  resetData: string;
+   161→  resetConfirm: string;
+   162→  confirmReset: string;
+   163→  cancelReset: string;
+   164→
+   165→  // Voice Khata
+   166→  voiceKhata: string;
+   167→  voiceKhataDesc: string;
+   168→  addEntry: string;
+   169→  entryType: string;
+   170→  incomeLabel: string;
+   171→  expenseLabel: string;
+   172→  category: string;
+   173→  amount: string;
+   174→  description: string;
+   175→  date: string;
+   176→  totalIncome: string;
+   177→  totalExpense: string;
+   178→  netProfit: string;
+   179→  recentEntries: string;
+   180→  noEntries: string;
+   181→  catLabour: string;
+   182→  catFertilizer: string;
+   183→  catSeeds: string;
+   184→  catPesticides: string;
+   185→  catIrrigation: string;
+   186→  catTransport: string;
+   187→  catCropSale: string;
+   188→  catOther: string;
+   189→  deleteEntry: string;
+   190→  saveEntry: string;
+   191→
+   192→  // Farm Economics
+   193→  farmEconomics: string;
+   194→  farmEconomicsDesc: string;
+   195→  seasonEconomics: string;
+   196→  incomeVsExpense: string;
+   197→  categoryBreakdown: string;
+   198→  totalSpend: string;
+   199→  totalEarned: string;
+   200→  netReturn: string;
+   201→
+   202→  // Bajar Bhav (Market Prices)
+   203→  bajarBhav: string;
+   204→  bajarBhavDesc: string;
+   205→  commodity: string;
+   206→  minPrice: string;
+   207→  maxPrice: string;
+   208→  modalPrice: string;
+   209→  priceSource: string;
+   210→  lastUpdated: string;
+   211→  priceTrend: string;
+   212→  trendingUp: string;
+   213→  trendingDown: string;
+   214→  stable: string;
+   215→  transportCost: string;
+   216→  estNetReturn: string;
+   217→  calculateReturn: string;
+   218→  marketAdvice: string;
+   219→
+   220→  // Risk Radar
+   221→  riskRadar: string;
+   222→  riskRadarDesc: string;
+   223→  rainRisk: string;
+   224→  waterStressRisk: string;
+   225→  diseaseRisk: string;
+   226→  heatRisk: string;
+   227→  costRisk: string;
+   228→  insuranceReady: string;
+   229→  low: string;
+   230→  medium: string;
+   231→  high: string;
+   232→  riskAdvice: string;
+   233→
+   234→  // What-If Simulator
+   235→  whatIfSimulator: string;
+   236→  whatIfDesc: string;
+   237→  compareCrops: string;
+   238→  estimatedProfit: string;
+   239→  estimatedCost: string;
+   240→  recommendation: string;
+   241→  simulate: string;
+   242→  cropA: string;
+   243→  cropB: string;
+   244→  selectCropA: string;
+   245→  selectCropB: string;
+   246→  investmentPerAcre: string;
+   247→  expectedYield: string;
+   248→  marketPricePer: string;
+   249→  cropAProfit: string;
+   250→  cropBProfit: string;
+   251→  betterChoice: string;
+   252→
+   253→  // PMFBY Schemes
+   254→  pmfbySchemes: string;
+   255→  pmfbyDesc: string;
+   256→  schemeInfo: string;
+   257→  eligibility: string;
+   258→  requiredDocs: string;
+   259→  deadlines: string;
+   260→  officialPortal: string;
+   261→  pmfbyTitle: string;
+   262→  pmfbyDesc2: string;
+   263→  cropInsurance: string;
+   264→  kisanCreditCard: string;
+   265→  subsidySchemes: string;
+   266→  applyOnline: string;
+   267→  viewDetails: string;
+   268→  pmfbyNote: string;
+   269→
+   270→  // Farm Goals
+   271→  farmGoals: string;
+   272→  farmGoalsDesc: string;
+   273→  seasonalTarget: string;
+   274→  currentProgress: string;
+   275→  remainingAmount: string;
+   276→  setGoal: string;
+   277→  editGoal: string;
+   278→  goalAmount: string;
+   279→  onTrackMsg: string;
+   280→  behindMsg: string;
+   281→
+   282→  // Next Best Action
+   283→  nextBestAction: string;
+   284→  nextBestActionDesc: string;
+   285→  priorityAction: string;
+   286→  reason: string;
+   287→  weatherContext: string;
+   288→  action1: string;
+   289→  action1Reason: string;
+   290→  action2: string;
+   291→  action2Reason: string;
+   292→  action3: string;
+   293→  action3Reason: string;
+   294→
+   295→  // Enhanced Dashboard
+   296→  farmBriefing: string;
+   297→  riskSummary: string;
+   298→  quickActions: string;
+   299→
+   300→  // Voice Khata Mic
+   301→  tapToSpeak: string;
+   302→  listening: string;
+   303→  voiceError: string;
+   304→  couldNotHear: string;
+   305→  recordingStopped: string;
+   306→  voiceDetected: string;
+   307→  speakNow: string;
+   308→
+   309→  // Monthly Photo Tracker
+   310→  monthlyPhotoTracker: string;
+   311→  monthlyPhotoTrackerDesc: string;
+   312→  week1: string;
+   313→  week2: string;
+   314→  week3: string;
+   315→  week4: string;
+   316→  takePhoto: string;
+   317→  photoTaken: string;
+   318→  noPhotoYet: string;
+   319→  scheduledDate: string;
+   320→  capturePhoto: string;
+   321→  photoHistory: string;
+   322→  photosThisMonth: string;
+   323→  monthlyProgress: string;
+   324→  allPhotosDone: string;
+   325→  photosRemaining: string;
+   326→  viewPhotoTracker: string;
+   327→  cropGrowthTimeline: string;
+   328→
+   329→  // AI Decision Explainer (Simulator)
+   330→  aiDecisionExplainer: string;
+   331→  aiDecisionDesc: string;
+   332→  yourCrop: string;
+   333→  whyThisDecision: string;
+   334→  aiConfidence: string;
+   335→  marketAnalysis: string;
+   336→  riskFactors: string;
+   337→  seasonContext: string;
+   338→  getAiAnalysis: string;
+   339→  aiReasonTitle: string;
+   340→  aiReasonDetail: string;
+   341→  investmentDetails: string;
+   342→  expectedYieldDetails: string;
+   343→  marketPriceDetails: string;
+   344→  waterRequirement: string;
+   345→  soilSuitability: string;
+   346→  bestPractice: string;
+   347→  disclaimer: string;
+   348→
+   349→  // Expert Consultation
+   350→  expertConsultation: string;
+   351→  expertConsultationDesc: string;
+   352→  consultExpert: string;
+   353→  expertSpecialty: string;
+   354→  expertAvailable: string;
+   355→  callExpert: string;
+   356→  expertNote: string;
+   357→  bookConsultation: string;
+   358→
+   359→  // Krushi Kendra
+   360→  nearbyKrushiKendra: string;
+   361→  krushiKendraDesc: string;
+   362→  krushiKendraAddress: string;
+   363→  krushiKendraPhone: string;
+   364→  krushiKendraHours: string;
+   365→  krushiKendraServices: string;
+   366→  krushiKendraList: string;
+   367→  findNearest: string;
+   368→  directions: string;
+   369→
+   370→  // Farm Memory
+   371→  farmMemory: string;
+   372→  farmMemoryDesc: string;
+   373→  tellUsAboutFarm: string;
+   374→  soilType: string;
+   375→  soilTypePlaceholder: string;
+   376→  irrigationSource: string;
+   377→  irrigationSourcePlaceholder: string;
+   378→  farmingExperience: string;
+   379→  farmingExperiencePlaceholder: string;
+   380→  ownOrLeased: string;
+   381→  ownLand: string;
+   382→  leasedLand: string;
+   383→  lastCrop: string;
+   384→  lastCropPlaceholder: string;
+   385→  expectedHarvestMonth: string;
+   386→  expectedHarvestPlaceholder: string;
+   387→  livestockCount: string;
+   388→  livestockCountPlaceholder: string;
+   389→  fertilizerBrand: string;
+   390→  fertilizerBrandPlaceholder: string;
+   391→  seedSource: string;
+   392→  seedSourcePlaceholder: string;
+   393→  saveFarmMemory: string;
+   394→  farmMemorySaved: string;
+   395→  editFarmMemory: string;
+   396→  soilLoamy: string;
+   397→  soilClay: string;
+   398→  soilSandy: string;
+   399→  soilBlack: string;
+   400→  soilRed: string;
+   401→  irrigationWell: string;
+   402→  irrigationCanal: string;
+   403→  irrigationRain: string;
+   404→  irrigationDrip: string;
+   405→  seedSourceLocal: string;
+   406→  seedSourceGovt: string;
+   407→  seedSourcePrivate: string;
+   408→  seedSourceOwn: string;
+   409→  farmMemoryComplete: string;
+   410→  farmMemorySection: string;
+   411→  yearOfFarming: string;
+   412→
+   413→  // Farmer Photo
+   414→  changePhoto: string;
+   415→  uploadPhotoLabel: string;
+   416→  removePhoto: string;
+   417→  takeSelfie: string;
+   418→  profilePhoto: string;
+   419→
+   420→  // Chatbot Voice
+   421→  voiceChat: string;
+   422→  voiceChatDesc: string;
+   423→  tapMicToTalk: string;
+   424→  listeningChat: string;
+   425→  voiceMessageSent: string;
+   426→  startVoiceChat: string;
+   427→  stopVoiceChat: string;
+   428→
+   429→  // Season Score Card
+   430→  seasonScoreCard: string;
+   431→  seasonScoreCardDesc: string;
+   432→  currentSeason: string;
+   433→  seasonPerformance: string;
+   434→  overallScore: string;
+   435→  cropHealthScore: string;
+   436→  irrigationScore: string;
+   437→  pestManagementScore: string;
+   438→  soilHealthScore: string;
+   439→  profitScore: string;
+   440→  timelyActionsScore: string;
+   441→  excellent: string;
+   442→  good: string;
+   443→  average: string;
+   444→  needsImprovement: string;
+   445→  seasonHighlights: string;
+   446→  seasonAlerts: string;
+   447→  rabiSeason: string;
+   448→  kharifSeason: string;
+   449→  seasonTip: string;
+   450→  seasonBreakdown: string;
+   451→  scoreOutOf: string;
+   452→  viewSeasonCard: string;
+   453→  downloadScorecardPdf: string;
+   454→  downloadScorecardDesc: string;
+   455→  shareScorecard: string;
+   456→  pdfGenerating: string;
+   457→  copiedToClipboard: string;
+   458→  shareNotSupported: string;
+   459→  scorecardGeneratedDate: string;
+   460→  poweredBy: string;
+   461→
+   462→  // Last Season Review
+   463→  lastSeasonReview: string;
+   464→  lastSeasonReviewDesc: string;
+   465→  lastSeasonCrop: string;
+   466→  lastSeasonCropPlaceholder: string;
+   467→  lastSeasonCropWheat: string;
+   468→  lastSeasonCropCotton: string;
+   469→  lastSeasonCropSoybean: string;
+   470→  lastSeasonCropRice: string;
+   471→  lastSeasonCropSugarcane: string;
+   472→  lastSeasonCropOnion: string;
+   473→  lastSeasonCropOther: string;
+   474→  lastSeasonYield: string;
+   475→  lastSeasonYieldPlaceholder: string;
+   476→  lastSeasonIncome: string;
+   477→  lastSeasonIncomePlaceholder: string;
+   478→  lastSeasonExpense: string;
+   479→  lastSeasonExpensePlaceholder: string;
+   480→  lastSeasonMajorProblem: string;
+   481→  lastSeasonMajorProblemPlaceholder: string;
+   482→  problemPest: string;
+   483→  problemWater: string;
+   484→  problemMarket: string;
+   485→  problemDisease: string;
+   486→  problemWeather: string;
+   487→  problemLabor: string;
+   488→  problemNone: string;
+   489→  lastSeasonPestIssue: string;
+   490→  lastSeasonPestIssuePlaceholder: string;
+   491→  lastSeasonSatisfaction: string;
+   492→  lastSeasonSatisfactionPlaceholder: string;
+   493→  satisfactionVerySatisfied: string;
+   494→  satisfactionSatisfied: string;
+   495→  satisfactionNeutral: string;
+   496→  satisfactionDissatisfied: string;
+   497→  satisfactionVeryDissatisfied: string;
+   498→  lastSeasonLesson: string;
+   499→  lastSeasonLessonPlaceholder: string;
+   500→  lastSeasonCropDamage: string;
+   501→  lastSeasonCropDamagePlaceholder: string;
+   502→
+   503→  // Voice Chat in Chatbot
+   504→  micButton: string;
+   505→  stopTalking: string;
+   506→
+   507→  // Enhanced Chatbot Responses
+   508→  suggestion5: string;
+   509→  suggestion6: string;
+   510→  suggestion7: string;
+   511→  suggestion8: string;
+   512→  chatGreeting: string;
+   513→  chatThankYou: string;
+   514→  chatFarmStatusResponse: string;
+   515→  chatFarmStatusDefault: string;
+   516→  chatTransactionResponse: string;
+   517→  chatTransactionNoData: string;
+   518→  chatSoilResponse: string;
+   519→  chatSeedResponse: string;
+   520→  chatHarvestResponse: string;
+   521→  chatInsuranceResponse: string;
+   522→  chatLoanResponse: string;
+   523→  chatSubsidyResponse: string;
+   524→  chatOrganicResponse: string;
+   525→  chatDiseaseResponse: string;
+   526→  chatMarketResponse: string;
+   527→  chatNextActionResponse: string;
+   528→  chatScorecardResponse: string;
+   529→  chatWeedResponse: string;
+   530→  chatTechResponse: string;
+   531→  chatCropRotationResponse: string;
+   532→  chatHelpResponse: string;
+   533→}
+   534→
+   535→const en: Translations = {
+   536→  chooseYourLanguage: 'Choose Your Language',
+   537→  languageSubtitle: [
+   538→    'Smarter farming decisions, at the right time.',
+   539→  ],
+   540→  marathi: 'Marathi – मराठी',
+   541→  hindi: 'Hindi – हिंदी',
+   542→  english: 'English – English',
+   543→
+   544→  setupProfile: 'Setup Your Farm Profile',
+   545→  setupProfileSubtitle: 'Tell us about your farm so we can help you better.',
+   546→  farmerName: 'Farmer Name',
+   547→  farmerNamePlaceholder: 'Enter your name',
+   548→  villageName: 'Village Name',
+   549→  villageNamePlaceholder: 'Enter village name',
+   550→  farmSize: 'Farm Size',
+   551→  lessThanOneAcre: 'Less than 1 acre',
+   552→  oneToFiveAcres: '1–5 acres',
+   553→  fiveToTenAcres: '5–10 acres',
+   554→  moreThanTenAcres: 'More than 10 acres',
+   555→  mainCrop: 'Main Crop',
+   556→  selectCrop: 'Select crop',
+   557→  cropWheat: 'Wheat',
+   558→  cropRice: 'Rice',
+   559→  cropCotton: 'Cotton',
+   560→  cropSoybean: 'Soybean',
+   561→  cropSugarcane: 'Sugarcane',
+   562→  cropTomato: 'Tomato',
+   563→  cropOnion: 'Onion',
+   564→  cropOther: 'Other',
+   565→  saveAndContinue: 'Save & Continue',
+   566→  back: 'Back',
+   567→  nameRequired: 'Farmer name is required',
+   568→  villageRequired: 'Village name is required',
+   569→
+   570→  welcomeBack: 'Welcome back',
+   571→  exploreFeatures: 'Explore KisanPilot Features',
+   572→  village: 'Village',
+   573→  mainCrop: 'Main Crop',
+   574→  farmSizeLabel: 'Farm Size',
+   575→  farmStatus: 'Farm Status',
+   576→  good: 'Good',
+   577→  aiChatbot: 'AI Chatbot',
+   578→  aiChatbotDesc: 'Ask your farming questions',
+   579→  myFarm: 'My Farm',
+   580→  myFarmDesc: 'View & edit farm details',
+   581→  cropDoctor: 'Crop Doctor',
+   582→  cropDoctorDesc: 'Diagnose crop health',
+   583→  weather: 'Weather',
+   584→  weatherDesc: 'Local weather updates',
+   585→  farmInsights: 'Farm Insights',
+   586→  farmInsightsDesc: 'AI-powered analytics',
+   587→  smartAlerts: 'Smart Alerts',
+   588→  smartAlertsDesc: 'Important notifications',
+   589→  changeLanguage: 'Change Language',
+   590→  settings: 'Settings',
+   591→  dashboard: 'Dashboard',
+   592→  yourPersonalAi: 'Your Personal AI Co-Pilot for Farming',
+   593→  smarterDecisions: 'Smarter farming decisions, at the right time.',
+   594→  tagline: 'Your Personal AI Co-Pilot for Farming',
+   595→
+   596→  aiAssistant: 'KisanPilot AI Assistant',
+   597→  typeMessage: 'Type your farming question...',
+   598→  send: 'Send',
+   599→  backToDashboard: 'Back to Dashboard',
+   600→  quickSuggestions: 'Quick Suggestions',
+   601→  suggestion1: 'When should I water my crop?',
+   602→  suggestion2: 'How can I improve soil health?',
+   603→  suggestion3: 'What should I do if leaves turn yellow?',
+   604→  suggestion4: 'How can I protect my crop from pests?',
+   605→  waterResponse: '💧 **Irrigation Guidance:** Water your crops early in the morning or late evening to reduce evaporation. Check soil moisture by inserting your finger 2-3 inches into the soil — if it feels dry, it\'s time to water. Generally, most crops need 1-2 inches of water per week. During flowering and fruiting stages, increase watering frequency. Use drip irrigation for better water efficiency.',
+   606→  yellowLeavesResponse: '🍂 **Yellow Leaves — Possible Causes:**\n\n1. **Nutrient Deficiency:** Lack of nitrogen, iron, or magnesium can cause yellowing. Check if older leaves or newer leaves are affected.\n2. **Overwatering:** Roots may be suffocating. Check for waterlogged soil.\n3. **Pest or Disease:** Look for spots, webs, or insects on the leaves.\n4. **Natural Aging:** Bottom leaves naturally yellow as the plant grows.\n\n**Suggestion:** Check the soil drainage, inspect leaves closely for pests, and consider a soil test.',
+   607→  pestResponse: '🐛 **Pest Management:**\n\n1. **Identify the pest:** Look closely at leaves, stems, and soil for insects or damage signs.\n2. **Monitor regularly:** Check your crops every 2-3 days for early signs.\n3. **Natural methods:** Use neem oil spray, introduce beneficial insects like ladybugs.\n4. **Integrated Pest Management (IPM):** Combine cultural, biological, and chemical methods.\n5. **Consult local expert:** If the infestation is severe, consult an agricultural expert for targeted treatment.',
+   608→  fertilizerResponse: '🧪 **Fertilizer & Nutrient Guidance:**\n\n1. **Soil Testing:** Get your soil tested at a local lab to know exact nutrient levels.\n2. **Balanced NPK:** Use fertilizers with balanced Nitrogen, Phosphorus, and Potassium ratios.\n3. **Organic Options:** Consider compost, vermicompost, or farmyard manure for long-term soil health.\n4. **Micronutrients:** Don\'t forget zinc, iron, and boron — deficiency shows in leaf color.\n5. **Application Timing:** Apply fertilizers during active growth phases for best absorption.',
+   609→  weatherResponse: '🌦 **Weather & Farming:**\n\nBased on the current forecast, plan your farming activities accordingly:\n\n- If rain is expected (30%+ chance), delay irrigation.\n- High humidity increases fungal disease risk — ensure proper spacing.\n- Wind above 20 km/h may damage tall crops — consider windbreaks.\n- Plan spraying on calm, dry days for best results.\n- Monitor soil temperature — most crops germinate best above 15°C.',
+   610→  defaultResponse: '🌱 I\'m your KisanPilot AI assistant. I can help you with crop care, irrigation, pests, soil health, and farming decisions. Ask me anything about your farm!',
+   611→
+   612→  cropDoctorTitle: 'Crop Doctor',
+   613→  cropDoctorSubtitle: 'Upload a photo of your crop for AI-powered health analysis',
+   614→  uploadPhoto: 'Upload Crop Photo',
+   615→  uploadPhotoDesc: 'Take a photo or select from gallery',
+   616→  analyzeCrop: 'Analyze Crop',
+   617→  analyzing: 'Analyzing your crop with AI…',
+   618→  cropHealthScore: 'Crop Health Score',
+   619→  possibleObservation: 'Possible Observation',
+   620→  recommendations: 'Recommendations',
+   621→  rec1: 'Check soil nutrient levels',
+   622→  rec2: 'Monitor leaf discoloration',
+   623→  rec3: 'Ensure proper irrigation',
+   624→  rec4: 'Consult a local agricultural expert for confirmation',
+   625→  analyzeAnother: 'Analyze Another Image',
+   626→  mildNutrientStress: 'Mild signs of nutrient stress detected.',
+   627→
+   628→  weatherTitle: 'Weather & Farm Forecast',
+   629→  currentWeather: 'Current Weather',
+   630→  temperature: 'Temperature',
+   631→  condition: 'Condition',
+   632→  partlyCloudy: 'Partly Cloudy',
+   633→  humidity: 'Humidity',
+   634→  wind: 'Wind',
+   635→  rainChance: 'Rain Chance',
+   636→  fiveDayForecast: '5-Day Forecast',
+   637→  farmingAdvice: 'Farming Advice',
+   638→  rainAdvice: 'Rain is possible this week. Avoid unnecessary irrigation before rainfall.',
+   639→  monday: 'Monday',
+   640→  tuesday: 'Tuesday',
+   641→  wednesday: 'Wednesday',
+   642→  thursday: 'Thursday',
+   643→  friday: 'Friday',
+   644→
+   645→  myFarmTitle: 'My Farm',
+   646→  farmDetails: 'Farm Details',
+   647→  editProfile: 'Edit Profile',
+   648→  saveChanges: 'Save Changes',
+   649→  cancel: 'Cancel',
+   650→  cropHealth: 'Crop Health',
+   651→  soilMoisture: 'Soil Moisture',
+   652→  irrigationStatus: 'Irrigation Status',
+   653→  moderate: 'Moderate',
+   654→  onTrack: 'On Track',
+   655→  farmStatusSection: 'Farm Status',
+   656→
+   657→  insightsTitle: 'Farm Insights',
+   658→  cropHealthScore2: 'Crop Health',
+   659→  soilMoisture2: 'Soil Moisture',
+   660→  irrigationEfficiency: 'Irrigation Efficiency',
+   661→  aiInsights: 'AI Insights',
+   662→  insight1: 'Your crop health is currently stable. Continue regular monitoring.',
+   663→  insight2: 'Consider monitoring soil moisture in the next 2 days.',
+   664→  insight3: 'Weather conditions may affect irrigation planning this week.',
+   665→  insight4: 'Crop growth rate is above average for this season. Great job!',
+   666→  insight5: 'Pest risk is low this week due to dry conditions.',
+   667→  insight6: 'Consider applying organic compost to boost long-term soil health.',
+   668→  generateInsight: 'Generate New Insight',
+   669→
+   670→  alertsTitle: 'Smart Alerts',
+   671→  rainExpected: 'Rain expected in your area within the next 48 hours.',
+   672→  monitorSoil: 'Monitor soil moisture levels — recent dry spell detected.',
+   673→  checkPestSigns: 'Check crop leaves for early signs of pest infestation.',
+   674→  fertilizerReminder: 'Fertilizer planning reminder — schedule soil testing.',
+   675→  markAsRead: 'Mark as Read',
+   676→  markAllAsRead: 'Mark All as Read',
+   677→  noUnreadAlerts: 'No unread alerts! Your farm is all caught up.',
+   678→
+   679→  settingsTitle: 'Settings',
+   680→  changeLanguageOption: 'Change Language',
+   681→  editProfileOption: 'Edit Farmer Profile',
+   682→  resetData: 'Reset Demo Data',
+   683→  resetConfirm: 'This will clear all your saved data and return to the language selection screen. Are you sure?',
+   684→  confirmReset: 'Confirm Reset',
+   685→  cancelReset: 'Cancel',
+   686→
+   687→  // Voice Khata
+   688→  voiceKhata: 'Voice Khata',
+   689→  voiceKhataDesc: 'Voice-based farm accounting',
+   690→  addEntry: 'Add Entry',
+   691→  entryType: 'Entry Type',
+   692→  incomeLabel: 'Income',
+   693→  expenseLabel: 'Expense',
+   694→  category: 'Category',
+   695→  amount: 'Amount',
+   696→  description: 'Description',
+   697→  date: 'Date',
+   698→  totalIncome: 'Total Income',
+   699→  totalExpense: 'Total Expense',
+   700→  netProfit: 'Net Profit',
+   701→  recentEntries: 'Recent Entries',
+   702→  noEntries: 'No entries yet',
+   703→  catLabour: 'Labour',
+   704→  catFertilizer: 'Fertilizer',
+   705→  catSeeds: 'Seeds',
+   706→  catPesticides: 'Pesticides',
+   707→  catIrrigation: 'Irrigation',
+   708→  catTransport: 'Transport',
+   709→  catCropSale: 'Crop Sale',
+   710→  catOther: 'Other',
+   711→  deleteEntry: 'Delete',
+   712→  saveEntry: 'Save Entry',
+   713→
+   714→  // Farm Economics
+   715→  farmEconomics: 'Farm Economics',
+   716→  farmEconomicsDesc: 'Income, expense & profit tracking',
+   717→  seasonEconomics: 'Season Economics',
+   718→  incomeVsExpense: 'Income vs Expense',
+   719→  categoryBreakdown: 'Category Breakdown',
+   720→  totalSpend: 'Total Spending',
+   721→  totalEarned: 'Total Earned',
+   722→  netReturn: 'Net Return',
+   723→
+   724→  // Bajar Bhav (Market Prices)
+   725→  bajarBhav: 'Market Prices',
+   726→  bajarBhavDesc: 'Live mandi prices & trends',
+   727→  commodity: 'Commodity',
+   728→  minPrice: 'Min Price',
+   729→  maxPrice: 'Max Price',
+   730→  modalPrice: 'Modal Price',
+   731→  priceSource: 'Source',
+   732→  lastUpdated: 'Last Updated',
+   733→  priceTrend: 'Price Trend',
+   734→  trendingUp: 'Trending Up',
+   735→  trendingDown: 'Trending Down',
+   736→  stable: 'Stable',
+   737→  transportCost: 'Transport Cost',
+   738→  estNetReturn: 'Estimated Net Return',
+   739→  calculateReturn: 'Calculate Net Return',
+   740→  marketAdvice: 'Market data is for reference. Verify with local mandi.',
+   741→
+   742→  // Risk Radar
+   743→  riskRadar: 'Risk Radar',
+   744→  riskRadarDesc: 'Monitor farm risks',
+   745→  rainRisk: 'Rain Risk',
+   746→  waterStressRisk: 'Water Stress',
+   747→  diseaseRisk: 'Disease Risk',
+   748→  heatRisk: 'Heat Risk',
+   749→  costRisk: 'Cost Risk',
+   750→  insuranceReady: 'Insurance Readiness',
+   751→  low: 'Low',
+   752→  medium: 'Medium',
+   753→  high: 'High',
+   754→  riskAdvice: 'Risk-based farming advice',
+   755→
+   756→  // What-If Simulator
+   757→  whatIfSimulator: 'What-If Simulator',
+   758→  whatIfDesc: 'Compare crop decisions',
+   759→  compareCrops: 'Compare Crops',
+   760→  estimatedProfit: 'Estimated Profit',
+   761→  estimatedCost: 'Estimated Cost',
+   762→  recommendation: 'Recommendation',
+   763→  simulate: 'Simulate',
+   764→  cropA: 'Crop A',
+   765→  cropB: 'Crop B',
+   766→  selectCropA: 'Select Crop A',
+   767→  selectCropB: 'Select Crop B',
+   768→  investmentPerAcre: 'Investment per Acre',
+   769→  expectedYield: 'Expected Yield',
+   770→  marketPricePer: 'Market Price per Quintal',
+   771→  cropAProfit: 'Crop A Profit',
+   772→  cropBProfit: 'Crop B Profit',
+   773→  betterChoice: 'Better Choice',
+   774→
+   775→  // PMFBY Schemes
+   776→  pmfbySchemes: 'PMFBY & Schemes',
+   777→  pmfbyDesc: 'Insurance & govt schemes',
+   778→  schemeInfo: 'Scheme Information',
+   779→  eligibility: 'Eligibility',
+   780→  requiredDocs: 'Required Documents',
+   781→  deadlines: 'Deadlines',
+   782→  officialPortal: 'Official Portal',
+   783→  pmfbyTitle: 'Pradhan Mantri Fasal Bima Yojana',
+   784→  pmfbyDesc2: 'Crop insurance by Government of India',
+   785→  cropInsurance: 'Crop Insurance',
+   786→  kisanCreditCard: 'Kisan Credit Card',
+   787→  subsidySchemes: 'Subsidy Schemes',
+   788→  applyOnline: 'Apply Online',
+   789→  viewDetails: 'View Details',
+   790→  pmfbyNote: 'Insurance does not guarantee claim. Verify with official sources.',
+   791→
+   792→  // Farm Goals
+   793→  farmGoals: 'Farm Goals',
+   794→  farmGoalsDesc: 'Track seasonal income targets',
+   795→  seasonalTarget: 'Seasonal Income Target',
+   796→  currentProgress: 'Current Progress',
+   797→  remainingAmount: 'Remaining Amount',
+   798→  setGoal: 'Set Goal',
+   799→  editGoal: 'Edit Goal',
+   800→  goalAmount: 'Goal Amount (₹)',
+   801→  onTrackMsg: 'You are on track to meet your goal!',
+   802→  behindMsg: 'You are behind your target. Review expenses.',
+   803→
+   804→  // Next Best Action
+   805→  nextBestAction: 'Next Best Action',
+   806→  nextBestActionDesc: 'AI-suggested priority action',
+   807→  priorityAction: 'Priority Action',
+   808→  reason: 'Reason',
+   809→  weatherContext: 'Weather Context',
+   810→  action1: 'Monitor soil moisture levels',
+   811→  action1Reason: 'Rain expected Thursday. Check soil before and after rainfall.',
+   812→  action2: 'Apply second dose of fertilizer',
+   813→  action2Reason: 'Crop is in active growth phase. Balanced NPK now will boost yield.',
+   814→  action3: 'Check crop leaves for early pest signs',
+   815→  action3Reason: 'Warm, humid conditions increase pest risk this week.',
+   816→
+   817→  // Enhanced Dashboard
+   818→  farmBriefing: 'Farm Briefing',
+   819→  riskSummary: 'Risk Summary',
+   820→  quickActions: 'Quick Actions',
+   821→
+   822→  // Voice Khata Mic
+   823→  tapToSpeak: 'Tap to Speak',
+   824→  listening: 'Listening...',
+   825→  voiceError: 'Voice not supported',
+   826→  couldNotHear: 'Could not hear. Try again.',
+   827→  recordingStopped: 'Recording stopped',
+   828→  voiceDetected: 'Voice detected!',
+   829→  speakNow: 'Speak now...',
+   830→
+   831→  // Monthly Photo Tracker
+   832→  monthlyPhotoTracker: 'Monthly Photo Tracker',
+   833→  monthlyPhotoTrackerDesc: 'Track crop growth with 4 photos every month',
+   834→  week1: 'Week 1',
+   835→  week2: 'Week 2',
+   836→  week3: 'Week 3',
+   837→  week4: 'Week 4',
+   838→  takePhoto: 'Take Photo',
+   839→  photoTaken: 'Photo Taken',
+   840→  noPhotoYet: 'No photo yet',
+   841→  scheduledDate: 'Scheduled Date',
+   842→  capturePhoto: 'Capture Crop Photo',
+   843→  photoHistory: 'Photo History',
+   844→  photosThisMonth: 'Photos This Month',
+   845→  monthlyProgress: 'Monthly Progress',
+   846→  allPhotosDone: 'All 4 photos captured this month!',
+   847→  photosRemaining: 'photos remaining',
+   848→  viewPhotoTracker: 'View Photo Tracker',
+   849→  cropGrowthTimeline: 'Crop Growth Timeline',
+   850→
+   851→  // AI Decision Explainer (Simulator)
+   852→  aiDecisionExplainer: 'AI Decision Explainer',
+   853→  aiDecisionDesc: 'Understand why AI recommends this farming decision',
+   854→  yourCrop: 'Your Crop',
+   855→  whyThisDecision: 'Why This Decision?',
+   856→  aiConfidence: 'AI Confidence',
+   857→  marketAnalysis: 'Market Analysis',
+   858→  riskFactors: 'Risk Factors',
+   859→  seasonContext: 'Season Context',
+   860→  getAiAnalysis: 'Get AI Analysis',
+   861→  aiReasonTitle: 'AI Reasoning',
+   862→  aiReasonDetail: 'Detailed reasoning behind this recommendation',
+   863→  investmentDetails: 'Investment Details',
+   864→  expectedYieldDetails: 'Expected Yield',
+   865→  marketPriceDetails: 'Market Price Analysis',
+   866→  waterRequirement: 'Water Requirement',
+   867→  soilSuitability: 'Soil Suitability',
+   868→  bestPractice: 'Best Practice',
+   869→  disclaimer: 'This is AI-generated advice. Consult a local expert for critical decisions.',
+   870→
+   871→  // Expert Consultation
+   872→  expertConsultation: 'Expert Consultation',
+   873→  expertConsultationDesc: 'Connect with agricultural experts for personalized advice',
+   874→  consultExpert: 'Consult an Expert',
+   875→  expertSpecialty: 'Specialty',
+   876→  expertAvailable: 'Available Now',
+   877→  callExpert: 'Call Expert',
+   878→  expertNote: 'Experts available Mon-Sat, 9AM-6PM',
+   879→  bookConsultation: 'Book Consultation',
+   880→
+   881→  // Krushi Kendra
+   882→  nearbyKrushiKendra: 'Nearby Krushi Kendra',
+   883→  krushiKendraDesc: 'Agricultural input centers near you for seeds, fertilizers & pesticides',
+   884→  krushiKendraAddress: 'Address',
+   885→  krushiKendraPhone: 'Phone',
+   886→  krushiKendraHours: 'Hours',
+   887→  krushiKendraServices: 'Services',
+   888→  krushiKendraList: 'Agricultural Centers Near You',
+   889→  findNearest: 'Find Nearest Center',
+   890→  directions: 'Get Directions',
+   891→
+   892→  // Farm Memory
+   893→  farmMemory: 'Farm Memory',
+   894→  farmMemoryDesc: 'Tell us about your farm in detail',
+   895→  tellUsAboutFarm: 'Tell us about your farm',
+   896→  soilType: 'Soil Type',
+   897→  soilTypePlaceholder: 'e.g. Loamy, Black, Sandy',
+   898→  irrigationSource: 'Irrigation Source',
+   899→  irrigationSourcePlaceholder: 'e.g. Well, Canal, Drip',
+   900→  farmingExperience: 'Farming Experience',
+   901→  farmingExperiencePlaceholder: 'e.g. 15 years',
+   902→  ownOrLeased: 'Land Ownership',
+   903→  ownLand: 'Own Land',
+   904→  leasedLand: 'Leased Land',
+   905→  lastCrop: 'Last Harvested Crop',
+   906→  lastCropPlaceholder: 'e.g. Cotton, Wheat',
+   907→  expectedHarvestMonth: 'Expected Harvest Month',
+   908→  expectedHarvestPlaceholder: 'e.g. March 2025',
+   909→  livestockCount: 'Livestock Count',
+   910→  livestockCountPlaceholder: 'e.g. 2 cows, 5 goats',
+   911→  fertilizerBrand: 'Preferred Fertilizer Brand',
+   912→  fertilizerBrandPlaceholder: 'e.g. IFFCO, Tata Kisan',
+   913→  seedSource: 'Seed Source',
+   914→  seedSourcePlaceholder: 'e.g. Local market, Govt. center',
+   915→  saveFarmMemory: 'Save Farm Memory',
+   916→  farmMemorySaved: 'Farm memory saved!',
+   917→  editFarmMemory: 'Edit Farm Memory',
+   918→  soilLoamy: 'Loamy',
+   919→  soilClay: 'Clay',
+   920→  soilSandy: 'Sandy',
+   921→  soilBlack: 'Black (Regur)',
+   922→  soilRed: 'Red Soil',
+   923→  irrigationWell: 'Well/Borewell',
+   924→  irrigationCanal: 'Canal',
+   925→  irrigationRain: 'Rainfed Only',
+   926→  irrigationDrip: 'Drip Irrigation',
+   927→  seedSourceLocal: 'Local Market',
+   928→  seedSourceGovt: 'Govt. Center',
+   929→  seedSourcePrivate: 'Private Dealer',
+   930→  seedSourceOwn: 'Own Saved Seeds',
+   931→  farmMemoryComplete: 'Your farm profile is complete!',
+   932→  farmMemorySection: 'Farm Details',
+   933→  yearOfFarming: 'years of farming',
+   934→
+   935→  // Farmer Photo
+   936→  changePhoto: 'Change Photo',
+   937→  uploadPhotoLabel: 'Upload or take a photo',
+   938→  removePhoto: 'Remove Photo',
+   939→  takeSelfie: 'Take Selfie',
+   940→  profilePhoto: 'Profile Photo',
+   941→
+   942→  // Chatbot Voice
+   943→  voiceChat: 'Voice Chat',
+   944→  voiceChatDesc: 'Talk to AI Assistant',
+   945→  tapMicToTalk: 'Tap mic to talk',
+   946→  listeningChat: 'Listening... speak now',
+   947→  voiceMessageSent: 'Voice message sent',
+   948→  startVoiceChat: 'Start voice chat',
+   949→  stopVoiceChat: 'Stop voice chat',
+   950→
+   951→  // Season Score Card
+   952→  seasonScoreCard: 'Season Score Card',
+   953→  seasonScoreCardDesc: 'Track your seasonal farming performance',
+   954→  currentSeason: 'Current Season',
+   955→  seasonPerformance: 'Season Performance',
+   956→  overallScore: 'Overall Score',
+   957→  cropHealthScore: 'Crop Health',
+   958→  irrigationScore: 'Irrigation',
+   959→  pestManagementScore: 'Pest Management',
+   960→  soilHealthScore: 'Soil Health',
+   961→  profitScore: 'Profitability',
+   962→  timelyActionsScore: 'Timely Actions',
+   963→  excellent: 'Excellent',
+   964→  good: 'Good',
+   965→  average: 'Average',
+   966→  needsImprovement: 'Needs Improvement',
+   967→  seasonHighlights: 'Season Highlights',
+   968→  seasonAlerts: 'Season Alerts',
+   969→  rabiSeason: 'Rabi 2025-26',
+   970→  kharifSeason: 'Kharif 2025',
+   971→  seasonTip: 'Season Tip',
+   972→  seasonBreakdown: 'Score Breakdown',
+   973→  scoreOutOf: '/100',
+   974→  viewSeasonCard: 'View Season Card',
+   975→  downloadScorecardPdf: 'Download Scorecard PDF',
+   976→  downloadScorecardDesc: 'Save your season performance report',
+   977→  shareScorecard: 'Share',
+   978→  pdfGenerating: 'Generating PDF...',
+   979→  copiedToClipboard: 'Copied to clipboard!',
+   980→  shareNotSupported: 'Share not supported',
+   981→  scorecardGeneratedDate: 'Generated on',
+   982→  poweredBy: 'Powered by KisanPilot AI',
+   983→
+   984→  // Last Season Review
+   985→  lastSeasonReview: 'Last Season Review',
+   986→  lastSeasonReviewDesc: 'Tell us about your previous farming season',
+   987→  lastSeasonCrop: 'Last Season Crop',
+   988→  lastSeasonCropPlaceholder: "Select last season's crop",
+   989→  lastSeasonCropWheat: 'Wheat',
+   990→  lastSeasonCropCotton: 'Cotton',
+   991→  lastSeasonCropSoybean: 'Soybean',
+   992→  lastSeasonCropRice: 'Rice',
+   993→  lastSeasonCropSugarcane: 'Sugarcane',
+   994→  lastSeasonCropOnion: 'Onion',
+   995→  lastSeasonCropOther: 'Other',
+   996→  lastSeasonYield: 'Yield per Acre',
+   997→  lastSeasonYieldPlaceholder: 'e.g. 15 quintals/acre',
+   998→  lastSeasonIncome: 'Total Income',
+   999→  lastSeasonIncomePlaceholder: 'e.g. ₹50,000',
+  1000→  lastSeasonExpense: 'Total Expense',
+  1001→  lastSeasonExpensePlaceholder: 'e.g. ₹25,000',
+  1002→  lastSeasonMajorProblem: 'Major Problem Faced',
+  1003→  lastSeasonMajorProblemPlaceholder: 'Select main problem',
+  1004→  problemPest: 'Pest Attack',
+  1005→  problemWater: 'Water Shortage',
+  1006→  problemMarket: 'Low Market Price',
+  1007→  problemDisease: 'Crop Disease',
+  1008→  problemWeather: 'Weather Damage',
+  1009→  problemLabor: 'Labor Shortage',
+  1010→  problemNone: 'No Major Problem',
+  1011→  lastSeasonPestIssue: 'Pest/Disease Details',
+  1012→  lastSeasonPestIssuePlaceholder: 'Which pest or disease?',
+  1013→  lastSeasonSatisfaction: 'Satisfaction Level',
+  1014→  lastSeasonSatisfactionPlaceholder: 'How satisfied were you?',
+  1015→  satisfactionVerySatisfied: 'Very Satisfied',
+  1016→  satisfactionSatisfied: 'Satisfied',
+  1017→  satisfactionNeutral: 'Neutral',
+  1018→  satisfactionDissatisfied: 'Dissatisfied',
+  1019→  satisfactionVeryDissatisfied: 'Very Dissatisfied',
+  1020→  lastSeasonLesson: 'Key Learning',
+  1021→  lastSeasonLessonPlaceholder: 'What did you learn from last season?',
+  1022→  lastSeasonCropDamage: 'Crop Damage %',
+  1023→  lastSeasonCropDamagePlaceholder: 'e.g. 10%',
+  1024→
+  1025→  // Voice Chat in Chatbot
+  1026→  micButton: 'Mic',
+  1027→  stopTalking: 'Stop',
+  1028→
+  1029→  // Enhanced Chatbot Responses
+  1030→  suggestion5: 'What is my last month transaction?',
+  1031→  suggestion6: 'Is everything OK with my farm?',
+  1032→  suggestion7: 'What should I do today?',
+  1033→  suggestion8: 'Tell me about soil health',
+  1034→  chatGreeting: '🌱 Namaste! I\'m your KisanPilot AI assistant. I can help with crop care, irrigation, pest management, market prices, insurance, and much more. Ask me anything about your farm!',
+  1035→  chatThankYou: '🙏 You\'re welcome! Happy farming! If you need any more help, I\'m always here.',
+  1036→  chatFarmStatusResponse: '🌾 **Farm Status Report:**\n\n✅ **Last Crop:** {crop}\n🧪 **Soil Type:** {soil}\n😊 **Last Season Satisfaction:** {satisfaction}\n\n📊 Overall, your farm appears to be in stable condition. Keep monitoring your crops regularly and maintain proper irrigation. For a detailed score, check the Season Score Card feature!',
+  1037→  chatFarmStatusDefault: '🌾 Your farm status looks stable based on current conditions. To get a personalized report, please fill in your Farm Memory details first. Go to the Farm Memory section from the dashboard to set up your farm profile.',
+  1038→  chatTransactionResponse: '💰 **Last Month Transaction Summary:**\n\n💵 **Total Income:** {income} ({incCount} entries)\n💸 **Total Expense:** {expense} ({expCount} entries)\n📊 **{netLabel}:** {net}\n📝 **Total Transactions:** {total}\n\n💡 Tip: Check the Voice Khata feature for detailed entry-by-entry records and category breakdowns.',
+  1039→  chatTransactionNoData: '📝 No transactions found for last month. Start adding your income and expense entries using the **Voice Khata** feature! You can add entries by voice or manually. This will help you track your farm economics.',
+  1040→  chatSoilResponse: '🧪 **Soil Health Guide:**\n\n1. **Get a soil test done** at your nearest Krushi Kendra or agriculture office — it costs only ₹50-200.\n2. **Check pH level** — most crops prefer 6.0-7.5 pH.\n3. **Add organic matter** — compost, vermicompost, or farmyard manure improves soil structure.\n4. **Crop rotation** prevents soil depletion.\n5. **Avoid excess chemical fertilizers** — they degrade soil health over time.\n6. **Mulching** helps retain moisture and prevents erosion.\n\n💡 Healthy soil = Healthy crops = Better income!',
+  1041→  chatSeedResponse: '🌱 **Seed & Sowing Guide:**\n\n1. **Always buy certified seeds** from Govt. centers or authorized dealers.\n2. **Treat seeds** before sowing — use Trichoderma or Carbendazim solution.\n3. **Check sowing season** — each crop has an ideal window (e.g., Wheat: Oct-Nov, Cotton: Jun-Jul).\n4. **Seed rate matters** — follow recommended seed rate per acre for optimum plant population.\n5. **Seed depth** — sow at the right depth (generally 3-5 cm for most crops).\n6. **Maintain spacing** for proper aeration and sunlight.\n\n📅 Check with your local agriculture office for the current season\'s recommended varieties.',
+  1042→  chatHarvestResponse: '🌾 **Harvest Readiness Guide:**\n\n1. **Grain moisture** should be below 14% for most crops.\n2. **Color change** — leaves turn yellow/brown when crop matures.\n3. **Grain hardness** — bite test: if grain is hard, it\'s ready.\n4. **Days after flowering** — Wheat: ~120 days, Cotton: ~160 days, Rice: ~110 days.\n5. **Weather window** — plan harvest during clear, dry weather.\n6. **Post-harvest** — dry grains properly before storage to avoid fungal growth.\n\n💡 Harvesting at the right time maximizes quality and market price!',
+  1043→  chatInsuranceResponse: '🛡 **Crop Insurance & Schemes:**\n\n**PMFBY (Pradhan Mantri Fasal Bima Yojana):**\n• Premium: Only 2% for Kharif, 1.5% for Rabi crops\n• Covers: Natural calamities, pests, diseases\n• Apply through: Your local bank or CSC center\n• Deadline: Before sowing season starts\n\n**Kisan Credit Card (KCC):**\n• Loan up to ₹3 lakh at 4% interest (subsidized)\n• Covers crop, animal husbandry, and fishery\n• Apply at any nationalized bank\n\n💡 Visit the PMFBY & Schemes section for full details and eligibility!',
+  1044→  chatLoanResponse: '🏦 **Loan & Credit Options:**\n\n**Kisan Credit Card (KCC):**\n• Up to ₹3 lakh at 4% interest\n• No collateral needed for loans up to ₹1.6 lakh\n• Repayment: After harvest\n\n**Crop Loan:**\n• Available from nationalized banks & cooperative banks\n• Interest subvention: 2% prompt repayment discount\n\n**Government Subsidies:**\n• Interest subsidy up to 3% on crop loans\n• Processing fee waiver in some states\n\n📞 Visit your nearest bank branch with Aadhaar card and land records.',
+  1045→  chatSubsidyResponse: '🏛 **Government Schemes for Farmers:**\n\n1. **PM-KISAN** — ₹6,000/year direct income support\n2. **PMFBY** — Crop insurance at low premium\n3. **Soil Health Card Scheme** — Free soil testing\n4. **e-NAM** — Online national agriculture market\n5. **PM Krishi Sinchai Yojana** — Irrigation subsidy\n6. **Kisan Credit Card** — Low-interest crop loan\n\n📱 Register at: pmkisan.gov.in or visit your nearest CSC center for assistance.',
+  1046→  chatOrganicResponse: '🌿 **Organic Farming Guide:**\n\n**Benefits:** Better soil health, premium market prices, sustainable farming.\n\n**Getting Started:**\n1. **Composting** — Turn crop residue + cow dung into nutrient-rich compost\n2. **Vermicompost** — Use earthworms for faster decomposition\n3. **Neem-based pesticides** — Natural pest control\n4. **Cow urine (Gomutra)** — Acts as growth promoter & pest deterrent\n5. **Green manuring** — Grow dhaincha/sunhemp and plow back into soil\n6. **Crop rotation** — Alternate legumes with cereals\n\n💰 Organic produce fetches 20-40% premium price in markets!',
+  1047→  chatDiseaseResponse: '🦠 **Disease Management:**\n\n**Common Crop Diseases:**\n• **Blight** (potato/tomato) — Brown spots, spreading rapidly\n• **Rust** (wheat) — Orange-brown pustules on leaves\n• **Powdery Mildew** — White powder on leaves\n• **Root Rot** — Wilting, yellowing from base\n\n**Prevention:**\n1. Use disease-resistant seed varieties\n2. Maintain proper spacing for air circulation\n3. Avoid waterlogging — improves root health\n4. Apply Trichoderma or Pseudomonas as preventive spray\n5. Remove and destroy infected plants immediately\n\n⚠️ For severe infection, consult your nearest Krushi Kendra.',
+  1048→  chatMarketResponse: '🏪 **Market Price Guide:**\n\n📊 Check the **Market Prices (Bajar Bhav)** feature for live mandi prices.\n\n**Tips for Better Prices:**\n1. **Timing matters** — Prices often drop right after harvest season\n2. ** graded produce** — Get your crop graded for better rates\n3. **Multiple mandis** — Compare prices across nearby mandis\n4. **Direct selling** — Skip middlemen for better margins\n5. **e-NAM portal** — Sell online at national level\n6. **Storage** — If prices are low, store and sell later\n\n💡 Check transport costs before choosing a distant mandi!',
+  1049→  chatNextActionResponse: '✨ **Recommended Action for Today:**\n\n📋 **Priority 1:** Check soil moisture levels — use the finger test (insert 2-3 inches into soil).\n📋 **Priority 2:** Walk through your field and check for early pest signs on leaves.\n📋 **Priority 3:** Review weather forecast — plan irrigation accordingly.\n\n💡 For personalized AI recommendations, check the **Next Best Action** feature on your dashboard!',
+  1050→  chatScorecardResponse: '🏆 **Season Score Card:**\n\n📊 Your season performance is tracked across 6 key metrics:\n• Crop Health\n• Irrigation Management\n• Pest Management\n• Soil Health\n• Profitability\n• Timely Actions\n\nCheck the **Season Score Card** feature to see your detailed scores, highlights, alerts, and download a PDF report!',
+  1051→  chatWeedResponse: '🌿 **Weed Management:**\n\n**Types of Weeds:**\n• **Grassy weeds** — resemble crop seedlings\n• **Broadleaf weeds** — wider leaves, easier to identify\n• **Sedges** — triangular stems, thrive in wet soil\n\n**Control Methods:**\n1. **Manual weeding** — First 30 days after sowing is critical\n2. **Hoeing** — Loosens soil + removes weeds\n3. **Mulching** — Blocks weed seed germination\n4. **Herbicide** — Use recommended pre-emergence herbicide if needed\n\n💡 Timely weeding in the first month can increase yield by 15-25%!',
+  1052→  chatTechResponse: '🚜 **Modern Farming Technology:**\n\n**Available Technologies:**\n1. **Drones** — Crop health monitoring, spraying pesticides over large areas\n2. **Soil moisture sensors** — Real-time irrigation planning\n3. **Mobile apps** — Weather alerts, market prices, expert advice\n4. **Solar pumps** — Cost-effective irrigation solution\n5. **Micro-irrigation** — Drip/sprinkler for water efficiency\n6. **AI advisory** — Like KisanPilot! Smart farming decisions\n\n💰 Government subsidies (up to 50%) available for drip irrigation and solar pumps!',
+  1053→  chatCropRotationResponse: '🔄 **Crop Rotation Guide:**\n\n**Why Rotate?** Prevents soil depletion, breaks pest cycles, improves yield.\n\n**Recommended Rotations:**\n• **Year 1:** Cereal (Wheat/Rice)\n• **Year 2:** Legume (Gram/Soybean) — fixes nitrogen naturally\n• **Year 3:** Cash crop (Cotton/Sugarcane)\n• **Year 4:** Oilseed (Groundnut/Mustard)\n\n**Benefits:**\n✅ 10-20% yield improvement\n✅ Reduced fertilizer need by 25%\n✅ Fewer pest problems\n✅ Better soil structure\n\n💡 Legumes in rotation can save ₹2,000-4,000/acre in fertilizer costs!',
+  1054→  chatHelpResponse: '🤖 **I can help you with:**\n\n💧 **Irrigation** — When and how much to water\n🐛 **Pest Management** — Identify and control pests\n🧪 **Fertilizer** — NPK guidance and schedules\n🌦 **Weather** — Farming advice based on weather\n💰 **Transactions** — View your monthly income/expense\n🌾 **Farm Status** — Overall farm health check\n🌱 **Seeds & Sowing** — Best practices for planting\n🛡 **Insurance** — PMFBY and KCC details\n🏪 **Market Prices** — Mandi rates and selling tips\n🌿 **Organic Farming** — Chemical-free methods\n📉 **Loan & Subsidy** — Government schemes\n\nJust type or ask your question — in English, Hindi, or Marathi!',
+  1055→};
+  1056→
+  1057→const hi: Translations = {
+  1058→  chooseYourLanguage: 'अपनी भाषा चुनें',
+  1059→  languageSubtitle: [
+  1060→    'खेती के लिए सही समय पर स्मार्ट निर्णय।',
+  1061→  ],
+  1062→  marathi: 'Marathi – मराठी',
+  1063→  hindi: 'Hindi – हिंदी',
+  1064→  english: 'English – English',
+  1065→
+  1066→  setupProfile: 'अपना खेत प्रोफ़ाइल सेट करें',
+  1067→  setupProfileSubtitle: 'हमें अपने खेत के बारे में बताएं ताकि हम आपकी बेहतर मदद कर सकें।',
+  1068→  farmerName: 'किसान का नाम',
+  1069→  farmerNamePlaceholder: 'अपना नाम दर्ज करें',
+  1070→  villageName: 'गाँव का नाम',
+  1071→  villageNamePlaceholder: 'गाँव का नाम दर्ज करें',
+  1072→  farmSize: 'खेत का आकार',
+  1073→  lessThanOneAcre: '1 एकड़ से कम',
+  1074→  oneToFiveAcres: '1–5 एकड़',
+  1075→  fiveToTenAcres: '5–10 एकड़',
+  1076→  moreThanTenAcres: '10 एकड़ से अधिक',
+  1077→  mainCrop: 'मुख्य फसल',
+  1078→  selectCrop: 'फसल चुनें',
+  1079→  cropWheat: 'गेहूं',
+  1080→  cropRice: 'चावल',
+  1081→  cropCotton: 'कपास',
+  1082→  cropSoybean: 'सोयाबीन',
+  1083→  cropSugarcane: 'गन्ना',
+  1084→  cropTomato: 'टमाटर',
+  1085→  cropOnion: 'प्याज',
+  1086→  cropOther: 'अन्य',
+  1087→  saveAndContinue: 'सहेजें और जारी रखें',
+  1088→  back: 'वापस',
+  1089→  nameRequired: 'किसान का नाम आवश्यक है',
+  1090→  villageRequired: 'गाँव का नाम आवश्यक है',
+  1091→
+  1092→  welcomeBack: 'वापसी पर स्वागत है',
+  1093→  exploreFeatures: 'किसानपायलट सुविधाएं देखें',
+  1094→  village: 'गाँव',
+  1095→  mainCrop: 'मुख्य फसल',
+  1096→  farmSizeLabel: 'खेत का आकार',
+  1097→  farmStatus: 'खेत की स्थिति',
+  1098→  good: 'अच्छी',
+  1099→  aiChatbot: 'AI चैटबॉट',
+  1100→  aiChatbotDesc: 'अपने खेती के सवाल पूछें',
+  1101→  myFarm: 'मेरा खेत',
+  1102→  myFarmDesc: 'खेत का विवरण देखें और संपादित करें',
+  1103→  cropDoctor: 'फसल डॉक्टर',
+  1104→  cropDoctorDesc: 'फसल की सेहत की जांच करें',
+  1105→  weather: 'मौसम',
+  1106→  weatherDesc: 'स्थानीय मौसम अपडेट',
+  1107→  farmInsights: 'खेत अंतर्दृष्टि',
+  1108→  farmInsightsDesc: 'AI संचालित विश्लेषण',
+  1109→  smartAlerts: 'स्मार्ट अलर्ट',
+  1110→  smartAlertsDesc: 'महत्वपूर्ण सूचनाएं',
+  1111→  changeLanguage: 'भाषा बदलें',
+  1112→  settings: 'सेटिंग्स',
+  1113→  dashboard: 'डैशबोर्ड',
+  1114→  yourPersonalAi: 'खेती के लिए आपका व्यक्तिगत AI सहायक',
+  1115→  smarterDecisions: 'खेती के लिए सही समय पर स्मार्ट निर्णय।',
+  1116→  tagline: 'खेती के लिए सही समय पर स्मार्ट निर्णय।',
+  1117→
+  1118→  aiAssistant: 'किसानपायलट AI सहायक',
+  1119→  typeMessage: 'अपना खेती का सवाल टाइप करें...',
+  1120→  send: 'भेजें',
+  1121→  backToDashboard: 'डैशबोर्ड पर वापस',
+  1122→  quickSuggestions: 'त्वरित सुझाव',
+  1123→  suggestion1: 'मुझे अपनी फसल को कब पानी देना चाहिए?',
+  1124→  suggestion2: 'मैं मिट्टी की सेहत कैसे सुधार सकता हूं?',
+  1125→  suggestion3: 'पत्तियां पीली होने पर मुझे क्या करना चाहिए?',
+  1126→  suggestion4: 'मैं अपनी फसल की सुरक्षा कीटों से कैसे करूं?',
+  1127→  waterResponse: '💧 **सिंचाई मार्गदर्शन:** फसलों को सुबह जल्द या शाम को देर में पानी दें ताकि वाष्पीकरण कम हो। मिट्टी की नमी की जांच करने के लिए अपनी उंगली 2-3 इंच मिट्टी में डालें — अगर सूखी लगे तो पानी देने का समय है। अधिकांश फसलों को प्रति सप्ताह 1-2 इंच पानी की जरूरत होती है। ड्रिप सिंचाई का उपयोग बेहतर दक्षता के लिए करें।',
+  1128→  yellowLeavesResponse: '🍂 **पीली पत्तियां — संभावित कारण:**\n\n1. **पोषक तत्व की कमी:** नाइट्रोजन, आयरन या मैग्नीशियम की कमी पीलेपन का कारण हो सकती है।\n2. **ज्यादा पानी:** जड़ें दम घोंट रही हों सकती हैं। पानी भरे मिट्टी की जांच करें।\n3. **कीट या रोग:** पत्तियों पर धब्बे, जाल या कीटों की जांच करें।\n4. **प्राकृतिक उम्र बढ़ना:** निचली पत्तियां स्वाभाविक रूप से पीली होती हैं।\n\n**सुझाव:** मिट्टी की जल निकासी की जांच करें, कीटों के लिए पत्तियों की निकटता से जांच करें।',
+  1129→  pestResponse: '🐛 **कीट प्रबंधन:**\n\n1. **कीट की पहचान करें:** पत्तियों, तनों और मिट्टी पर कीटों या नुकसान के चिन्हों की जांच करें।\n2. **नियमित निगरानी:** हर 2-3 दिन में फसलों की जांच करें।\n3. **प्राकृतिक तरीके:** नीम ऑयल स्प्रे का उपयोग करें, लेडीबग जैसे लाभकारी कीट प्रस्तुत करें।\n4. **समन्वित कीट प्रबंधन (IPM):** सांस्कृतिक, जैविक और रासायनिक तरीकों को मिलाएं।\n5. **स्थानीय विशेषज्ञ से परामर्श करें:** संक्रमण गंभीर हो तो कृषि विशेषज्ञ से मिलें।',
+  1130→  fertilizerResponse: '🧪 **उर्वरक और पोषक तत्व मार्गदर्शन:**\n\n1. **मिट्टी परीक्षण:** स्थानीय प्रयोगशाला में मिट्टी का परीक्षण करवाएं।\n2. **संतुलित NPK:** नाइट्रोजन, फॉस्फोरस और पोटैशियम के संतुलित अनुपात वाले उर्वरकों का उपयोग करें।\n3. **जैविक विकल्प:** कम्पोस्ट, वर्मीकम्पोस्ट या गोबर खाद पर विचार करें।\n4. **सूक्ष्म पोषक तत्व:** जिंक, आयरन और बोरॉन न भूलें।\n5. **उर्वरक का समय:** सक्रिय विकास चरणों के दौरान उर्वरक डालें।',
+  1131→  weatherResponse: '🌦 **मौसम और खेती:**\n\nवर्तमान पूर्वानुमान के आधार पर अपनी खेती गतिविधियों की योजना बनाएं:\n\n- बारिश की उम्मीद हो तो सिंचाई टालें।\n- उच्च नमी फंगल रोग का जोखिम बढ़ाती है।\n- 20 किमी/घंटा से अधिक हवा लंबी फसलों को नुकसान पहुंचा सकती है।\n- शांत, सूखे दिनों पर छिड़काव की योजना बनाएं।\n- अधिकांश फसलें 15°C से ऊपर अच्छी तरह अंकुरित होती हैं।',
+  1132→  defaultResponse: '🌱 मैं आपका किसानपायलट AI सहायक हूं। मैं फसल देखभाल, सिंचाई, कीट, मिट्टी की सेहत और खेती के निर्णयों में आपकी मदद कर सकता हूं। अपने खेत के बारे में कुछ भी पूछें!',
+  1133→
+  1134→  cropDoctorTitle: 'फसल डॉक्टर',
+  1135→  cropDoctorSubtitle: 'AI आधारित स्वास्थ्य विश्लेषण के लिए फसल की तस्वीर अपलोड करें',
+  1136→  uploadPhoto: 'फसल की तस्वीर अपलोड करें',
+  1137→  uploadPhotoDesc: 'तस्वीर लें या गैलरी से चुनें',
+  1138→  analyzeCrop: 'फसल का विश्लेषण करें',
+  1139→  analyzing: 'AI से आपकी फसल का विश्लेषण हो रहा है…',
+  1140→  cropHealthScore: 'फसल स्वास्थ्य स्कोर',
+  1141→  possibleObservation: 'संभावित निरीक्षण',
+  1142→  recommendations: 'सिफारिशें',
+  1143→  rec1: 'मिट्टी में पोषक तत्व का स्तर जांचें',
+  1144→  rec2: 'पत्तियों के रंग बदलने पर नजर रखें',
+  1145→  rec3: 'उचित सिंचाई सुनिश्चित करें',
+  1146→  rec4: 'पुष्टि के लिए स्थानीय कृषि विशेषज्ञ से मिलें',
+  1147→  analyzeAnother: 'दूसरी तस्वीर विश्लेषण करें',
+  1148→  mildNutrientStress: 'हल्के पोषक तत्व तनाव के संकेत पाए गए।',
+  1149→
+  1150→  weatherTitle: 'मौसम और खेत पूर्वानुमान',
+  1151→  currentWeather: 'वर्तमान मौसम',
+  1152→  temperature: 'तापमान',
+  1153→  condition: 'स्थिति',
+  1154→  partlyCloudy: 'आंशिक बादल',
+  1155→  humidity: 'नमी',
+  1156→  wind: 'हवा',
+  1157→  rainChance: 'बारिश की संभावना',
+  1158→  fiveDayForecast: '5 दिन का पूर्वानुमान',
+  1159→  farmingAdvice: 'खेती सलाह',
+  1160→  rainAdvice: 'इस हफ्ते बारिश संभव है। बारिश से पहले अनावश्यक सिंचाई से बचें।',
+  1161→  monday: 'सोमवार',
+  1162→  tuesday: 'मंगलवार',
+  1163→  wednesday: 'बुधवार',
+  1164→  thursday: 'गुरुवार',
+  1165→  friday: 'शुक्रवार',
+  1166→
+  1167→  myFarmTitle: 'मेरा खेत',
+  1168→  farmDetails: 'खेत का विवरण',
+  1169→  editProfile: 'प्रोफ़ाइल संपादित करें',
+  1170→  saveChanges: 'परिवर्तन सहेजें',
+  1171→  cancel: 'रद्द करें',
+  1172→  cropHealth: 'फसल स्वास्थ्य',
+  1173→  soilMoisture: 'मिट्टी की नमी',
+  1174→  irrigationStatus: 'सिंचाई स्थिति',
+  1175→  moderate: 'मध्यम',
+  1176→  onTrack: 'ठीक है',
+  1177→  farmStatusSection: 'खेत की स्थिति',
+  1178→
+  1179→  insightsTitle: 'खेत अंतर्दृष्टि',
+  1180→  cropHealthScore2: 'फसल स्वास्थ्य',
+  1181→  soilMoisture2: 'मिट्टी की नमी',
+  1182→  irrigationEfficiency: 'सिंचाई दक्षता',
+  1183→  aiInsights: 'AI अंतर्दृष्टि',
+  1184→  insight1: 'आपकी फसल की सेहत वर्तमान में स्थिर है। नियमित निगरानी जारी रखें।',
+  1185→  insight2: 'अगले 2 दिनों में मिट्टी की नमी की निगरानी पर विचार करें।',
+  1186→  insight3: 'इस हफ्ते मौसम की स्थितियां सिंचाई योजना को प्रभावित कर सकती हैं।',
+  1187→  insight4: 'फसल की वृद्धि दर इस मौसम के लिए औसत से अधिक है। बहुत अच्छे!',
+  1188→  insight5: 'सूखी स्थितियों के कारण इस हफ्ते कीट जोखिम कम है।',
+  1189→  insight6: 'दीर्घकालिक मिट्टी की सेहत बढ़ाने के लिए जैविक कम्पोस्ट लगाने पर विचार करें।',
+  1190→  generateInsight: 'नई अंतर्दृष्टि उत्पन्न करें',
+  1191→
+  1192→  alertsTitle: 'स्मार्ट अलर्ट',
+  1193→  rainExpected: 'अगले 48 घंटों में आपके क्षेत्र में बारिश की उम्मीद है।',
+  1194→  monitorSoil: 'मिट्टी की नमी स्तर की निगरानी करें — हाल की सूखी अवधि पाई गई।',
+  1195→  checkPestSigns: 'फसल की पत्तियों पर कीट संक्रमण के शुरुआती लक्षणों की जांच करें।',
+  1196→  fertilizerReminder: 'उर्वरक योजना अनुस्मारक — मिट्टी परीक्षण निर्धारित करें।',
+  1197→  markAsRead: 'पढ़ा गया चिन्हित करें',
+  1198→  markAllAsRead: 'सभी पढ़े गए चिन्हित करें',
+  1199→  noUnreadAlerts: 'कोई अनपढ़ अलर्ट नहीं! आपका खेत अपडेट है।',
+  1200→
+  1201→  settingsTitle: 'सेटिंग्स',
+  1202→  changeLanguageOption: 'भाषा बदलें',
+  1203→  editProfileOption: 'किसान प्रोफ़ाइल संपादित करें',
+  1204→  resetData: 'डेमो डेटा रीसेट करें',
+  1205→  resetConfirm: 'यह आपका सारा डेटा मिटा देगा और भाषा चयन स्क्रीन पर लौट जाएगा। क्या आप सुनिश्चित हैं?',
+  1206→  confirmReset: 'रीसेट की पुष्टि करें',
+  1207→  cancelReset: 'रद्द करें',
+  1208→
+  1209→  // Voice Khata
+  1210→  voiceKhata: 'वॉइस खाता',
+  1211→  voiceKhataDesc: 'आवाज़ आधारित खेत लेखांकन',
+  1212→  addEntry: 'प्रविष्टि जोड़ें',
+  1213→  entryType: 'प्रविष्टि प्रकार',
+  1214→  incomeLabel: 'आय',
+  1215→  expenseLabel: 'खर्चा',
+  1216→  category: 'श्रेणी',
+  1217→  amount: 'राशि',
+  1218→  description: 'विवरण',
+  1219→  date: 'तारीख',
+  1220→  totalIncome: 'कुल आय',
+  1221→  totalExpense: 'कुल खर्चा',
+  1222→  netProfit: 'शुद्ध लाभ',
+  1223→  recentEntries: 'हाल की प्रविष्टियाँ',
+  1224→  noEntries: 'अभी कोई प्रविष्टि नहीं',
+  1225→  catLabour: 'मजदूरी',
+  1226→  catFertilizer: 'उर्वरक',
+  1227→  catSeeds: 'बीज',
+  1228→  catPesticides: 'कीटनाशक',
+  1229→  catIrrigation: 'सिंचाई',
+  1230→  catTransport: 'परिवहन',
+  1231→  catCropSale: 'फसल बिक्री',
+  1232→  catOther: 'अन्य',
+  1233→  deleteEntry: 'हटाएं',
+  1234→  saveEntry: 'प्रविष्टि सहेजें',
+  1235→
+  1236→  // Farm Economics
+  1237→  farmEconomics: 'खेत अर्थव्यवस्था',
+  1238→  farmEconomicsDesc: 'आय, खर्चा और लाभ ट्रैकिंग',
+  1239→  seasonEconomics: 'मौसम अर्थव्यवस्था',
+  1240→  incomeVsExpense: 'आय बनाम खर्चा',
+  1241→  categoryBreakdown: 'श्रेणी विवरण',
+  1242→  totalSpend: 'कुल खर्च',
+  1243→  totalEarned: 'कुल आय',
+  1244→  netReturn: 'शुद्ध लाभ',
+  1245→
+  1246→  // Bajar Bhav (Market Prices)
+  1247→  bajarBhav: 'बाजार भाव',
+  1248→  bajarBhavDesc: 'लाइव मंडी भाव और रुझान',
+  1249→  commodity: 'कमोडिटी',
+  1250→  minPrice: 'न्यूनतम भाव',
+  1251→  maxPrice: 'अधिकतम भाव',
+  1252→  modalPrice: 'मॉडल भाव',
+  1253→  priceSource: 'स्रोत',
+  1254→  lastUpdated: 'अंतिम अपडेट',
+  1255→  priceTrend: 'भाव रुझान',
+  1256→  trendingUp: 'बढ़ रहा',
+  1257→  trendingDown: 'घट रहा',
+  1258→  stable: 'स्थिर',
+  1259→  transportCost: 'परिवहन लागत',
+  1260→  estNetReturn: 'अनुमानित शुद्ध लाभ',
+  1261→  calculateReturn: 'शुद्ध लाभ गणना',
+  1262→  marketAdvice: 'बाजार डेटा संदर्भ के लिए है। स्थानीय मंडी से सत्यापित करें।',
+  1263→
+  1264→  // Risk Radar
+  1265→  riskRadar: 'जोखिम रडार',
+  1266→  riskRadarDesc: 'खेत जोखिम पर नजर रखें',
+  1267→  rainRisk: 'बारिश जोखिम',
+  1268→  waterStressRisk: 'जल तनाव',
+  1269→  diseaseRisk: 'रोग जोखिम',
+  1270→  heatRisk: 'गर्मी जोखिम',
+  1271→  costRisk: 'लागत जोखिम',
+  1272→  insuranceReady: 'बीमा तैयारी',
+  1273→  low: 'कम',
+  1274→  medium: 'मध्यम',
+  1275→  high: 'उच्च',
+  1276→  riskAdvice: 'जोखिम आधारित खेती सलाह',
+  1277→
+  1278→  // What-If Simulator
+  1279→  whatIfSimulator: 'क्या-यदि सिम्युलेटर',
+  1280→  whatIfDesc: 'फसल निर्णयों की तुलना',
+  1281→  compareCrops: 'फसलों की तुलना',
+  1282→  estimatedProfit: 'अनुमानित लाभ',
+  1283→  estimatedCost: 'अनुमानित लागत',
+  1284→  recommendation: 'सिफारिश',
+  1285→  simulate: 'सिम्युलेट करें',
+  1286→  cropA: 'फसल अ',
+  1287→  cropB: 'फसल ब',
+  1288→  selectCropA: 'फसल अ चुनें',
+  1289→  selectCropB: 'फसल ब चुनें',
+  1290→  investmentPerAcre: 'प्रति एकड़ निवेश',
+  1291→  expectedYield: 'अपेक्षित उपज',
+  1292→  marketPricePer: 'प्रति क्विंटल बाजार भाव',
+  1293→  cropAProfit: 'फसल अ लाभ',
+  1294→  cropBProfit: 'फसल ब लाभ',
+  1295→  betterChoice: 'बेहतर विकल्प',
+  1296→
+  1297→  // PMFBY Schemes
+  1298→  pmfbySchemes: 'पीएमएफबीवाई और योजनाएं',
+  1299→  pmfbyDesc: 'बीमा और सरकारी योजनाएं',
+  1300→  schemeInfo: 'योजना जानकारी',
+  1301→  eligibility: 'पात्रता',
+  1302→  requiredDocs: 'आवश्यक दस्तावेज',
+  1303→  deadlines: 'समय सीमा',
+  1304→  officialPortal: 'आधिकारिक पोर्टल',
+  1305→  pmfbyTitle: 'प्रधानमंत्री फसल बीमा योजना',
+  1306→  pmfbyDesc2: 'भारत सरकार द्वारा फसल बीमा',
+  1307→  cropInsurance: 'फसल बीमा',
+  1308→  kisanCreditCard: 'किसान क्रेडिट कार्ड',
+  1309→  subsidySchemes: 'सब्सिडी योजनाएं',
+  1310→  applyOnline: 'ऑनलाइन आवेदन',
+  1311→  viewDetails: 'विवरण देखें',
+  1312→  pmfbyNote: 'बीमा दावे की गारंटी नहीं देता। आधिकारिक स्रोतों से सत्यापित करें।',
+  1313→
+  1314→  // Farm Goals
+  1315→  farmGoals: 'खेत लक्ष्य',
+  1316→  farmGoalsDesc: 'मौसमिक आय लक्ष्य ट्रैक करें',
+  1317→  seasonalTarget: 'मौसमिक आय लक्ष्य',
+  1318→  currentProgress: 'वर्तमान प्रगति',
+  1319→  remainingAmount: 'शेष राशि',
+  1320→  setGoal: 'लक्ष्य सेट करें',
+  1321→  editGoal: 'लक्ष्य संपादित करें',
+  1322→  goalAmount: 'लक्ष्य राशि',
+  1323→  onTrackMsg: 'आप अपने लक्ष्य को पूरा करने के रास्ते पर हैं!',
+  1324→  behindMsg: 'आप अपने लक्ष्य से पीछे हैं। खर्चों की समीक्षा करें।',
+  1325→
+  1326→  // Next Best Action
+  1327→  nextBestAction: 'अगला सर्वोत्तम कार्य',
+  1328→  nextBestActionDesc: 'AI-सुझावित प्राथमिक कार्य',
+  1329→  priorityAction: 'प्राथमिक कार्य',
+  1330→  reason: 'कारण',
+  1331→  weatherContext: 'मौसम संदर्भ',
+  1332→  action1: 'मिट्टी की नमी स्तर की निगरानी करें',
+  1333→  action1Reason: 'गुरुवार को बारिश की उम्मीद। बारिश से पहले और बाद मिट्टी जांचें।',
+  1334→  action2: 'उर्वरक की दूसरी खुराक डालें',
+  1335→  action2Reason: 'फसल सक्रिय विकास चरण में है। अभी संतुलित NPK उपज बढ़ाएगी।',
+  1336→  action3: 'फसल की पत्तियों में कीट के शुरुआती लक्षण जांचें',
+  1337→  action3Reason: 'गर्म, नमी वाली स्थितियां इस हफ्ते कीट जोखिम बढ़ाती हैं।',
+  1338→
+  1339→  // Enhanced Dashboard
+  1340→  farmBriefing: 'खेत संक्षिप्त जानकारी',
+  1341→  riskSummary: 'जोखिम सारांश',
+  1342→  quickActions: 'त्वरित कार्य',
+  1343→
+  1344→  // Voice Khata Mic
+  1345→  tapToSpeak: 'बोलने के लिए टैप करें',
+  1346→  listening: 'सुन रहा है...',
+  1347→  voiceError: 'आवाज़ समर्थित नहीं',
+  1348→  couldNotHear: 'सुनाई नहीं दिया। फिर कोशिश करें।',
+  1349→  recordingStopped: 'रिकॉर्डिंग बंद',
+  1350→  voiceDetected: 'आवाज़ पहचाना गया!',
+  1351→  speakNow: 'अभी बोलें...',
+  1352→
+  1353→  // Monthly Photo Tracker
+  1354→  monthlyPhotoTracker: 'मासिक फोटो ट्रैकर',
+  1355→  monthlyPhotoTrackerDesc: 'हर महीने 4 फोटो से फसल की वृद्धि ट्रैक करें',
+  1356→  week1: 'सप्ताह 1',
+  1357→  week2: 'सप्ताह 2',
+  1358→  week3: 'सप्ताह 3',
+  1359→  week4: 'सप्ताह 4',
+  1360→  takePhoto: 'फोटो लें',
+  1361→  photoTaken: 'फोटो लिया गया',
+  1362→  noPhotoYet: 'अभी तक कोई फोटो नहीं',
+  1363→  scheduledDate: 'निर्धारित तारीख',
+  1364→  capturePhoto: 'फसल का फोटो लें',
+  1365→  photoHistory: 'फोटो इतिहास',
+  1366→  photosThisMonth: 'इस महीने के फोटो',
+  1367→  monthlyProgress: 'मासिक प्रगति',
+  1368→  allPhotosDone: 'इस महीने सभी 4 फोटो लिए गए!',
+  1369→  photosRemaining: 'फोटो बाकी',
+  1370→  viewPhotoTracker: 'फोटो ट्रैकर देखें',
+  1371→  cropGrowthTimeline: 'फसल वृद्धि समयरेखा',
+  1372→
+  1373→  // AI Decision Explainer
+  1374→  aiDecisionExplainer: 'AI निर्णय व्याख्याता',
+  1375→  aiDecisionDesc: 'समझें AI ने यह खेती निर्णय क्यों अनुशंसित किया',
+  1376→  yourCrop: 'आपकी फसल',
+  1377→  whyThisDecision: 'यह निर्णय क्यों?',
+  1378→  aiConfidence: 'AI विश्वास',
+  1379→  marketAnalysis: 'बाजार विश्लेषण',
+  1380→  riskFactors: 'जोखिम कारक',
+  1381→  seasonContext: 'मौसम संदर्भ',
+  1382→  getAiAnalysis: 'AI विश्लेषण प्राप्त करें',
+  1383→  aiReasonTitle: 'AI तर्क',
+  1384→  aiReasonDetail: 'इस सिफारिश के पीछे विस्तृत तर्क',
+  1385→  investmentDetails: 'निवेश विवरण',
+  1386→  expectedYieldDetails: 'अपेक्षित उपज',
+  1387→  marketPriceDetails: 'बाजार भाव विश्लेषण',
+  1388→  waterRequirement: 'पानी की आवश्यकता',
+  1389→  soilSuitability: 'मिट्टी उपयुक्तता',
+  1390→  bestPractice: 'सर्वोत्तम अभ्यास',
+  1391→  disclaimer: 'यह AI-जनित सलाह है। महत्वपूर्ण निर्णयों के लिए स्थानीय विशेषज्ञ से परामर्श करें।',
+  1392→
+  1393→  // Expert Consultation
+  1394→  expertConsultation: 'विशेषज्ञ परामर्श',
+  1395→  expertConsultationDesc: 'व्यक्तिगत सलाह के लिए कृषि विशेषज्ञों से जुड़ें',
+  1396→  consultExpert: 'विशेषज्ञ से परामर्श करें',
+  1397→  expertSpecialty: 'विशेषता',
+  1398→  expertAvailable: 'अभी उपलब्ध',
+  1399→  callExpert: 'विशेषज्ञ को कॉल करें',
+  1400→  expertNote: 'विशेषज्ञ सोम-शनि, सुबह 9-शाम 6 बजे उपलब्ध',
+  1401→  bookConsultation: 'परामर्श बुक करें',
+  1402→
+  1403→  // Krushi Kendra
+  1404→  nearbyKrushiKendra: 'निकटतम कृषि केंद्र',
+  1405→  krushiKendraDesc: 'बीज, उर्वरक और कीटनाशक के लिए आपके पास कृषि इनपुट केंद्र',
+  1406→  krushiKendraAddress: 'पता',
+  1407→  krushiKendraPhone: 'फोन',
+  1408→  krushiKendraHours: 'समय',
+  1409→  krushiKendraServices: 'सेवाएं',
+  1410→  krushiKendraList: 'आपके पास कृषि केंद्र',
+  1411→  findNearest: 'निकटतम केंद्र खोजें',
+  1412→  directions: 'दिशा-निर्देश प्राप्त करें',
+  1413→
+  1414→  // Farm Memory
+  1415→  farmMemory: 'खेत स्मृति',
+  1416→  farmMemoryDesc: 'अपने खेत के बारे में विस्तार से बताएं',
+  1417→  tellUsAboutFarm: 'अपने खेत के बारे में बताएं',
+  1418→  soilType: 'मिट्टी का प्रकार',
+  1419→  soilTypePlaceholder: 'जैसे दोमट, काली, बलुई',
+  1420→  irrigationSource: 'सिंचाई का स्रोत',
+  1421→  irrigationSourcePlaceholder: 'जैसे कुआं, नहर, ड्रिप',
+  1422→  farmingExperience: 'खेती का अनुभव',
+  1423→  farmingExperiencePlaceholder: 'जैसे 15 वर्ष',
+  1424→  ownOrLeased: 'ज़मीन का स्वामित्व',
+  1425→  ownLand: 'अपनी ज़मीन',
+  1426→  leasedLand: 'किराये की ज़मीन',
+  1427→  lastCrop: 'पिछली कटाई फसल',
+  1428→  lastCropPlaceholder: 'जैसे कपास, गेहूं',
+  1429→  expectedHarvestMonth: 'अपेक्षित कटाई का महीना',
+  1430→  expectedHarvestPlaceholder: 'जैसे मार्च 2025',
+  1431→  livestockCount: 'पशुओं की संख्या',
+  1432→  livestockCountPlaceholder: 'जैसे 2 गाय, 5 बकरी',
+  1433→  fertilizerBrand: 'पसंदीदा उर्वरक ब्रांड',
+  1434→  fertilizerBrandPlaceholder: 'जैसे इफ्को, टाटा किसान',
+  1435→  seedSource: 'बीज का स्रोत',
+  1436→  seedSourcePlaceholder: 'जैसे स्थानीय बाजार, सरकारी केंद्र',
+  1437→  saveFarmMemory: 'खेत स्मृति सहेजें',
+  1438→  farmMemorySaved: 'खेत स्मृति सहेजी गई!',
+  1439→  editFarmMemory: 'खेत स्मृति संपादित करें',
+  1440→  soilLoamy: 'दोमट',
+  1441→  soilClay: 'चिकनी मिट्टी',
+  1442→  soilSandy: 'बलुई',
+  1443→  soilBlack: 'काली (रेगुर)',
+  1444→  soilRed: 'लाल मिट्टी',
+  1445→  irrigationWell: 'कुआं/बोरवेल',
+  1446→  irrigationCanal: 'नहर',
+  1447→  irrigationRain: 'केवल बारिश पर निर्भर',
+  1448→  irrigationDrip: 'ड्रिप सिंचाई',
+  1449→  seedSourceLocal: 'स्थानीय बाजार',
+  1450→  seedSourceGovt: 'सरकारी केंद्र',
+  1451→  seedSourcePrivate: 'प्राइवेट डीलर',
+  1452→  seedSourceOwn: 'अपने बचाए बीज',
+  1453→  farmMemoryComplete: 'आपका खेत प्रोफ़ाइल पूरा है!',
+  1454→  farmMemorySection: 'खेत विवरण',
+  1455→  yearOfFarming: 'वर्ष की खेती',
+  1456→
+  1457→  // Farmer Photo
+  1458→  changePhoto: 'फोटो बदलें',
+  1459→  uploadPhotoLabel: 'फोटो अपलोड करें या लें',
+  1460→  removePhoto: 'फोटो हटाएं',
+  1461→  takeSelfie: 'सेल्फी लें',
+  1462→  profilePhoto: 'प्रोफ़ाइल फोटो',
+  1463→
+  1464→  // Chatbot Voice
+  1465→  voiceChat: 'वॉइस चैट',
+  1466→  voiceChatDesc: 'AI सहायक से बात करें',
+  1467→  tapMicToTalk: 'बोलने के लिए माइक टैप करें',
+  1468→  listeningChat: 'सुन रहा है... बोलें',
+  1469→  voiceMessageSent: 'वॉइस मैसेज भेजा गया',
+  1470→  startVoiceChat: 'वॉइस चैट शुरू करें',
+  1471→  stopVoiceChat: 'वॉइस चैट बंद करें',
+  1472→
+  1473→  // Season Score Card
+  1474→  seasonScoreCard: 'सीज़न स्कोर कार्ड',
+  1475→  seasonScoreCardDesc: 'अपनी मौसमी खेती प्रदर्शन ट्रैक करें',
+  1476→  currentSeason: 'वर्तमान मौसम',
+  1477→  seasonPerformance: 'मौसम प्रदर्शन',
+  1478→  overallScore: 'कुल स्कोर',
+  1479→  cropHealthScore: 'फसल स्वास्थ्य',
+  1480→  irrigationScore: 'सिंचाई',
+  1481→  pestManagementScore: 'कीट प्रबंधन',
+  1482→  soilHealthScore: 'मिट्टी स्वास्थ्य',
+  1483→  profitScore: 'लाभपरकता',
+  1484→  timelyActionsScore: 'समय पर कार्य',
+  1485→  excellent: 'उत्कृष्ट',
+  1486→  good: 'अच्छा',
+  1487→  average: 'औसत',
+  1488→  needsImprovement: 'सुधार आवश्यक',
+  1489→  seasonHighlights: 'मौसम की उपलब्धियां',
+  1490→  seasonAlerts: 'मौसम अलर्ट',
+  1491→  rabiSeason: 'रबी 2025-26',
+  1492→  kharifSeason: 'खरीफ 2025',
+  1493→  seasonTip: 'मौसम सुझाव',
+  1494→  seasonBreakdown: 'स्कोर विवरण',
+  1495→  scoreOutOf: '/100',
+  1496→  viewSeasonCard: 'सीज़न कार्ड देखें',
+  1497→  downloadScorecardPdf: 'स्कोरकार्ड PDF डाउनलोड करें',
+  1498→  downloadScorecardDesc: 'अपना मौसमी प्रदर्शन रिपोर्ट सेव करें',
+  1499→  shareScorecard: 'शेयर करें',
+  1500→  pdfGenerating: 'PDF बना रहा है...',
+  1501→  copiedToClipboard: 'क्लिपबोर्ड पर कॉपी हो गया!',
+  1502→  shareNotSupported: 'शेयर समर्थित नहीं है',
+  1503→  scorecardGeneratedDate: 'तैयार किया गया',
+  1504→  poweredBy: 'KisanPilot AI द्वारा संचालित',
+  1505→
+  1506→  // Last Season Review
+  1507→  lastSeasonReview: 'पिछले मौसम की समीक्षा',
+  1508→  lastSeasonReviewDesc: 'अपने पिछले खेती मौसम के बारे में बताएं',
+  1509→  lastSeasonCrop: 'पिछले मौसम की फसल',
+  1510→  lastSeasonCropPlaceholder: 'पिछले मौसम की फसल चुनें',
+  1511→  lastSeasonCropWheat: 'गेहूं',
+  1512→  lastSeasonCropCotton: 'कपास',
+  1513→  lastSeasonCropSoybean: 'सोयाबीन',
+  1514→  lastSeasonCropRice: 'चावल',
+  1515→  lastSeasonCropSugarcane: 'गन्ना',
+  1516→  lastSeasonCropOnion: 'प्याज',
+  1517→  lastSeasonCropOther: 'अन्य',
+  1518→  lastSeasonYield: 'प्रति एकड़ उपज',
+  1519→  lastSeasonYieldPlaceholder: 'जैसे 15 क्विंटल/एकड़',
+  1520→  lastSeasonIncome: 'कुल आय',
+  1521→  lastSeasonIncomePlaceholder: 'जैसे ₹50,000',
+  1522→  lastSeasonExpense: 'कुल खर्च',
+  1523→  lastSeasonExpensePlaceholder: 'जैसे ₹25,000',
+  1524→  lastSeasonMajorProblem: 'प्रमुख समस्या',
+  1525→  lastSeasonMajorProblemPlaceholder: 'मुख्य समस्या चुनें',
+  1526→  problemPest: 'कीट का हमला',
+  1527→  problemWater: 'पानी की कमी',
+  1528→  problemMarket: 'कम बाजार भाव',
+  1529→  problemDisease: 'फसल रोग',
+  1530→  problemWeather: 'मौसम का नुकसान',
+  1531→  problemLabor: 'मजदूरों की कमी',
+  1532→  problemNone: 'कोई बड़ी समस्या नहीं',
+  1533→  lastSeasonPestIssue: 'कीट/रोग विवरण',
+  1534→  lastSeasonPestIssuePlaceholder: 'कौन सा कीट या रोग?',
+  1535→  lastSeasonSatisfaction: 'संतुष्टि स्तर',
+  1536→  lastSeasonSatisfactionPlaceholder: 'आप कितने संतुष्ट थे?',
+  1537→  satisfactionVerySatisfied: 'बहुत संतुष्ट',
+  1538→  satisfactionSatisfied: 'संतुष्ट',
+  1539→  satisfactionNeutral: 'सामान्य',
+  1540→  satisfactionDissatisfied: 'असंतुष्ट',
+  1541→  satisfactionVeryDissatisfied: 'बहुत असंतुष्ट',
+  1542→  lastSeasonLesson: 'मुख्य सीख',
+  1543→  lastSeasonLessonPlaceholder: 'पिछले मौसम से आपने क्या सीखा?',
+  1544→  lastSeasonCropDamage: 'फसल नुकसान %',
+  1545→  lastSeasonCropDamagePlaceholder: 'जैसे 10%',
+  1546→
+  1547→  // Voice Chat in Chatbot
+  1548→  micButton: 'माइक',
+  1549→  stopTalking: 'बंद करें',
+  1550→
+  1551→  // Enhanced Chatbot Responses
+  1552→  suggestion5: 'पिछले महीने का लेनदेन क्या है?',
+  1553→  suggestion6: 'मेरा खेत ठीक तो है?',
+  1554→  suggestion7: 'मुझे आज क्या करना चाहिए?',
+  1555→  suggestion8: 'मिट्टी की सेहत के बारे में बताएं',
+  1556→  chatGreeting: '🌱 नमस्ते! मैं आपका किसानपायलट AI सहायक हूं। मैं फसल देखभाल, सिंचाई, कीट प्रबंधन, बाजार भाव, बीमा और बहुत कुछ में आपकी मदद कर सकता हूं। अपने खेत के बारे में कुछ भी पूछें!',
+  1557→  chatThankYou: '🙏 आपका स्वागत है! खुश किसानी! अगर आपको और मदद चाहिए तो मैं हमेशा यहीं हूं।',
+  1558→  chatFarmStatusResponse: '🌾 **खेत स्थिति रिपोर्ट:**\n\n✅ **पिछली फसल:** {crop}\n🧪 **मिट्टी का प्रकार:** {soil}\n😊 **पिछले मौसम की संतुष्टि:** {satisfaction}\n\n📊 समग्र रूप से, आपका खेत स्थिर स्थिति में प्रतीत हो रहा है। नियमित निगरानी जारी रखें और उचित सिंचाई बनाए रखें। विस्तृत स्कोर के लिए सीज़न स्कोर कार्ड देखें!',
+  1559→  chatFarmStatusDefault: '🌾 वर्तमान स्थितियों के आधार पर आपकी खेत स्थिति स्थिर दिखती है। व्यक्तिगत रिपोर्ट प्राप्त करने के लिए कृपया पहले अपनी खेत स्मृति विवरण भरें। डैशबोर्ड से खेत स्मृति सेक्शन पर जाएं।',
+  1560→  chatTransactionResponse: '💰 **पिछले महीने का लेनदेन सारांश:**\n\n💵 **कुल आय:** {income} ({incCount} प्रविष्टियां)\n💸 **कुल खर्च:** {expense} ({expCount} प्रविष्टियां)\n📊 **{netLabel}:** {net}\n📝 **कुल लेनदेन:** {total}\n\n💡 सुझाव: विस्तृत रिकॉर्ड के लिए वॉइस खाता फीचर देखें।',
+  1561→  chatTransactionNoData: '📝 पिछले महीने कोई लेनदेन नहीं मिला। **वॉइस खाता** फीचर से अपनी आय और खर्च प्रविष्टियां जोड़ें!',
+  1562→  chatSoilResponse: '🧪 **मिट्टी स्वास्थ्य गाइड:**\n\n1. नजदीकी कृषि केंद्र पर **मिट्टी परीक्षण** करवाएं — ₹50-200 लागत।\n2. **pH स्तर** जांचें — अधिकांश फसलें 6.0-7.5 pH पसंद करती हैं।\n3. **जैविक पदार्थ** जोड़ें — कम्पोस्ट या गोबर खाद।\n4. **फसल रोटेशन** मिट्टी की क्षरण रोकता है।\n5. अधिक रासायनिक खत से बचें।\n\n💡 स्वस्थ मिट्टी = स्वस्थ फसल = बेहतर आय!',
+  1563→  chatSeedResponse: '🌱 **बीज और बुवाई गाइड:**\n\n1. हमेशा **प्रमाणित बीज** खरीदें।\n2. बुवाई से पहले **बीज उपचार** करें।\n3. **बुवाई का मौसम** देखें — गेहूं: अक्टूबर-नवंबर।\n4. सही **बीज दर** बनाए रखें।\n5. सही **गहराई** पर बोएं।\n6. उचित **दूरी** बनाए रखें।',
+  1564→  chatHarvestResponse: '🌾 **कटाई तैयारी गाइड:**\n\n1. **अनाज की नमी** 14% से कम होनी चाहिए।\n2. **रंग बदलाव** — पत्तियां पीली/भूरी होती हैं।\n3. **अनाज कठोरता** — दांत से काटकर जांचें।\n4. **फूलने के बाद दिन** — गेहूं: ~120 दिन।\n5. **मौसम** — साफ, शुष्क मौसम में कटाई करें।\n6. भंडारण से पहले **अनाज सूखा करें**।',
+  1565→  chatInsuranceResponse: '🛡 **फसल बीमा और योजनाएं:**\n\n**PMFBY:**\n• प्रीमियम: खरीफ 2%, रबी 1.5%\n• कवर: प्राकृतिक आपदा, कीट, रोग\n• बुवाई से पहले आवेदन करें\n\n**किसान क्रेडिट कार्ड:**\n• ₹3 लाख तक 4% ब्याज पर\n\n💡 पूरी जानकारी के लिए PMFBY & Schemes सेक्शन देखें!',
+  1566→  chatLoanResponse: '🏦 **ऋण विकल्प:**\n\n**किसान क्रेडिट कार्ड:**\n• ₹3 लाख तक 4% ब्याज\n• ₹1.6 लाख तक बिना जमानत\n\n**सरकारी सब्सिडी:**\n• फसल ऋण पर 2% ब्याज सब्सिडी\n\n📞 आधार कार्ड और भूमि रिकॉर्ड लेकर बैंक जाएं।',
+  1567→  chatSubsidyResponse: '🏛 **किसानों के लिए सरकारी योजनाएं:**\n\n1. **PM-KISAN** — साल में ₹6,000 सीधी आय सहायता\n2. **PMFBY** — कम प्रीमियम पर फसल बीमा\n3. **मिट्टी स्वास्थ्य कार्ड** — मुफ्त मिट्टी परीक्षण\n4. **e-NAM** — ऑनलाइन राष्ट्रीय कृषि बाजार\n5. **PM कृषि सिंचाई योजना** — सिंचाई सब्सिडी\n\n📱 pmkisan.gov.in पर रजिस्टर करें।',
+  1568→  chatOrganicResponse: '🌿 **जैविक खेती गाइड:**\n\n**फायदे:** बेहतर मिट्टी, प्रीमियम भाव, सस्टेनेबल खेती।\n\n1. **कम्पोस्ट** — फसल अवशेष + गोबर से बनाएं\n2. **वर्मीकम्पोस्ट** — एर्थवर्म से तेज़ी से बनाएं\n3. **नीम आधारित कीटनाशक** — प्राकृतिक कीट नियंत्रण\n4. **हरी खाद** — धैंचा/सूरजमुखी उगाकर मिट्टी में गलाएं\n5. **फसल रोटेशन** — दलहन और अनाज बारी-बारी लगाएं\n\n💰 जैविक उत्पाद 20-40% अधिक भाव पर बिकता है!',
+  1569→  chatDiseaseResponse: '🦠 **रोग प्रबंधन:**\n\n**सामान्य फसल रोग:**\n• **ब्लाइट** — भूरे धब्बे\n• **रस्ट** — सुनहरे-भूरे दाने\n• **पाउडरी मिल्ड्यू** — सफेद पाउडर\n• **रूट रॉट** — पत्तियां पीली\n\n**रोकथाम:**\n1. रोग प्रतिरोधी किस्में उपयोग करें\n2. उचित दूरी बनाए रखें\n3. जल जमाव से बचें\n4. ट्राइकोडर्मा स्प्रे करें\n5. संक्रमित पौधे हटाएं',
+  1570→  chatMarketResponse: '🏪 **बाजार भाव गाइड:**\n\n**बेहतर भाव के टिप्स:**\n1. समय सही चुनें — कटाई के बाद भाव गिरता है\n2. **ग्रेडिंग** कराएं — बेहतर दर मिलते हैं\n3. कई **मंडियों** में भाव तुलना करें\n4. **e-NAM पोर्टल** पर ऑनलाइन बेचें\n5. भाव कम हो तो **भंडारण** करें\n\n💡 बाजार भाव सुविधा के लिए Market Prices फीचर देखें!',
+  1571→  chatNextActionResponse: '✨ **आज के लिए अनुशंसित कार्य:**\n\n📋 **प्राथमिकता 1:** मिट्टी की नमी जांचें।\n📋 **प्राथमिकता 2:** फसल की पत्तियों पर कीट के संकेत देखें।\n📋 **प्राथमिकता 3:** मौसम पूर्वानुमान देखें।\n\n💡 व्यक्तिगत सुझाव के लिए **Next Best Action** फीचर देखें!',
+  1572→  chatScorecardResponse: '🏆 **सीज़न स्कोर कार्ड:**\n\n📊 6 मुख्य मैट्रिक्स पर आपका प्रदर्शन ट्रैक किया जाता है:\n• फसल स्वास्थ्य, सिंचाई, कीट प्रबंधन\n• मिट्टी स्वास्थ्य, लाभपरकता, समय पर कार्य\n\n**Season Score Card** फीचर देखें और PDF डाउनलोड करें!',
+  1573→  chatWeedResponse: '🌿 **खरपतवार प्रबंधन:**\n\n**नियंत्रण विधियां:**\n1. **मैन्युअल निराई** — बुवाई के बाद पहले 30 दिन महत्वपूर्ण\n2. **कुदाल** — मिट्टी ढीली + खरपतवार हटाता है\n3. **मल्चिंग** — खरपतवार अंकुरण रोकता है\n4. **शाकनाशी** — सिफारिशित हर्बिसाइड\n\n💡 समय पर निराई से उपज 15-25% बढ़ सकती है!',
+  1574→  chatTechResponse: '🚜 **आधुनिक खेती तकनीक:**\n\n1. **ड्रोन** — फसल स्वास्थ्य निगरानी, कीटनाशक छिड़काव\n2. **मिट्टी नमी सेंसर** — रियल-टाइम सिंचाई\n3. **मोबाइल ऐप्स** — मौसम, बाजार, सलाह\n4. **सोलर पंप** — सस्ती सिंचाई\n5. **माइक्रो सिंचाई** — ड्रिप/स्प्रिंकलर\n\n💰 सरकारी सब्सिडी ड्रिप और सोलर पंप पर!',
+  1575→  chatCropRotationResponse: '🔄 **फसल रोटेशन गाइड:**\n\n**लाभ:** मिट्टी सुधार, कीट चक्र तोड़ें, उपज बढ़ाएं।\n\n**सुझावित रोटेशन:**\n• **साल 1:** अनाज (गेहूं/चावल)\n• **साल 2:** दलहन (चना/सोयाबीन)\n• **साल 3:** नकदी फसल (कपास/गन्ना)\n• **साल 4:** तिलहन (मूंगफली/सरसों)\n\n✅ 10-20% उपज वृद्धि, 25% कम खर्चा!',
+  1576→  chatHelpResponse: '🤖 **मैं इनमें मदद कर सकता हूं:**\n\n💧 सिंचाई | 🐛 कीट प्रबंधन | 🧪 खत\n🌦 मौसम | 💰 लेनदेन | 🌾 खेत स्थिति\n🌱 बीज | 🛡 बीमा | 🏪 बाजार भाव\n🌿 जैविक खेती | 📉 ऋण और सब्सिडी\n\nअंग्रेजी, हिंदी या मराठी में पूछें!',
+  1577→};
+  1578→
+  1579→const mr: Translations = {
+  1580→  chooseYourLanguage: 'आपली भाषा निवडा',
+  1581→  languageSubtitle: [
+  1582→    'किसानांसाठी स्मार्ट निर्णय, योग्य वेळी.',
+  1583→  ],
+  1584→  marathi: 'Marathi – मराठी',
+  1585→  hindi: 'Hindi – हिंदी',
+  1586→  english: 'English – English',
+  1587→
+  1588→  setupProfile: 'तुमचे शेत प्रोफाइल सेट करा',
+  1589→  setupProfileSubtitle: 'आम्ही तुम्हाला चांगल्या प्रकारे मदत करू शकू यासाठी आपल्या शेताबद्दल सांगा.',
+  1590→  farmerName: 'शेतकऱ्याचे नाव',
+  1591→  farmerNamePlaceholder: 'आपले नाव लिहा',
+  1592→  villageName: 'गावाचे नाव',
+  1593→  villageNamePlaceholder: 'गावाचे नाव लिहा',
+  1594→  farmSize: 'शेताचे आकार',
+  1595→  lessThanOneAcre: '1 एकरपेक्षा कमी',
+  1596→  oneToFiveAcres: '1–5 एकर',
+  1597→  fiveToTenAcres: '5–10 एकर',
+  1598→  moreThanTenAcres: '10 एकरपेक्षा जास्त',
+  1599→  mainCrop: 'मुख्य पीक',
+  1600→  selectCrop: 'पीक निवडा',
+  1601→  cropWheat: 'गहू',
+  1602→  cropRice: 'तांदूळ',
+  1603→  cropCotton: 'कापूस',
+  1604→  cropSoybean: 'सोयाबीन',
+  1605→  cropSugarcane: 'ऊस',
+  1606→  cropTomato: 'टोमॅटो',
+  1607→  cropOnion: 'कांदा',
+  1608→  cropOther: 'इतर',
+  1609→  saveAndContinue: 'जतन करा आणि पुढे जा',
+  1610→  back: 'मागे',
+  1611→  nameRequired: 'शेतकऱ्याचे नाव आवश्यक आहे',
+  1612→  villageRequired: 'गावाचे नाव आवश्यक आहे',
+  1613→
+  1614→  welcomeBack: 'पुन्हा स्वागत आहे',
+  1615→  exploreFeatures: 'किसानपायलट वैशिष्ट्ये शोधा',
+  1616→  village: 'गाव',
+  1617→  mainCrop: 'मुख्य पीक',
+  1618→  farmSizeLabel: 'शेताचे आकार',
+  1619→  farmStatus: 'शेताची स्थिती',
+  1620→  good: 'चांगली',
+  1621→  aiChatbot: 'AI चॅटबॉट',
+  1622→  aiChatbotDesc: 'तुमचे शेतीचे प्रश्न विचारा',
+  1623→  myFarm: 'माझे शेत',
+  1624→  myFarmDesc: 'शेताची माहिती पहा आणि संपादित करा',
+  1625→  cropDoctor: 'पीक डॉक्टर',
+  1626→  cropDoctorDesc: 'पिकाच्या आरोग्याची तपासणी करा',
+  1627→  weather: 'हवामान',
+  1628→  weatherDesc: 'स्थानिक हवामान अपडेट',
+  1629→  farmInsights: 'शेत अंतर्दृष्टी',
+  1630→  farmInsightsDesc: 'AI आधारित विश्लेषण',
+  1631→  smartAlerts: 'स्मार्ट अलर्ट',
+  1632→  smartAlertsDesc: 'महत्त्वाच्या सूचना',
+  1633→  changeLanguage: 'भाषा बदला',
+  1634→  settings: 'सेटिंग्ज',
+  1635→  dashboard: 'डॅशबोर्ड',
+  1636→  yourPersonalAi: 'शेतीसाठी तुमचा वैयक्तिक AI सहायक',
+  1637→  smarterDecisions: 'किसानांसाठी स्मार्ट निर्णय, योग्य वेळी.',
+  1638→  tagline: 'शेतीसाठी योग्य वेळी स्मार्ट निर्णय.',
+  1639→
+  1640→  aiAssistant: 'किसानपायलट AI सहायक',
+  1641→  typeMessage: 'तुमचा शेतीचा प्रश्न टाइप करा...',
+  1642→  send: 'पाठवा',
+  1643→  backToDashboard: 'डॅशबोर्डवर परत जा',
+  1644→  quickSuggestions: 'द्रुत सूचना',
+  1645→  suggestion1: 'माझ्या पिकाला कधी पाणी द्यावे?',
+  1646→  suggestion2: 'मी मातीचे आरोग्य कसे सुधारू शकतो?',
+  1647→  suggestion3: 'पाने पिवळी झाल्यास मला काय करावे?',
+  1648→  suggestion4: 'मी माझ्या पिकाचे कीड-मुक्यांपासून संरक्षण कसे करू?',
+  1649→  waterResponse: '💧 **सिंचाई मार्गदर्शन:** पिकांना पहाटे लवकर किंवा संध्याकाळी उशिरा पाणी द्यावे जेणेकरून बाष्पीभवन कमी होईल. मातीची ओलावा तपासण्यासाठी तुमची बोटे मातीत 2-3 इंच घाला — जर कोरडी वाटत असेल तर पाणी देण्याची वेळ आली आहे. बहुतेक पिकांना दर आठवड्याला 1-2 इंच पाणी हवे असते. ड्रिप सिंचाई वापरा.',
+  1650→  yellowLeavesResponse: '🍂 **पिवळी पाने — संभाव्य कारणे:**\n\n1. **पोषक तत्वांची कमी:** नायट्रोजन, लोह किंवा मॅग्नेशियमची कमी पिवळेपणाचे कारण असू शकते.\n2. **जास्त पाणी:** मुळे दम चोकून आहेत. पाणी साचलेली माती तपासा.\n3. **कीड किंवा रोग:** पानांवर डाग, जाळे किंवा कीड तपसा.\n4. **नैसर्गिक वाढ:** खालची पाने नैसर्गिकरित्या पिवळी होतात.\n\n**सूचना:** मातीची पाण्याची निकास तपसा, कीडीसाठी पानांची बारीक तपासणी करा.',
+  1651→  pestResponse: '🐛 **कीट व्यवस्थापन:**\n\n1. **कीड ओळखा:** पानां, खेकड्यांवर आणि मातीत कीड किंवा नुकसानाचे चिन्ह तपसा.\n2. **नियमित निरीक्षण:** दर 2-3 दिवसांत पिकांची तपासणी करा.\n3. **नैसर्गिक पद्धती:** नीम तेल स्प्रे वापरा, लेडीबग सारखे उपयुक्त कीड आणा.\n4. **एकत्रित कीट व्यवस्थापन (IPM):** सांस्कृतिक, जैविक आणि रासायनिक पद्धती एकत्र करा.\n5. **स्थानिक तज्ञांशी सल्ला घ्या:** संक्रमण गंभीर असल्यास कृषी तज्ञांशी भेटा.',
+  1652→  fertilizerResponse: '🧪 **खत आणि पोषक तत्व मार्गदर्शन:**\n\n1. **माती चाचणी:** स्थानिक प्रयोगशाळेत मातीची चाचणी करा.\n2. **संतुलित NPK:** नायट्रोजन, फॉस्फरस आणि पोटॅशियमच्या संतुलित प्रमाणाची खते वापरा.\n3. **जैविक पर्याय:** कम्पोस्ट, वर्मीकम्पोस्ट किंवा शेळी खाद वापरा.\n4. **सूक्ष्म पोषक तत्वे:** झिंक, लोह आणि बोरॉन विसरू नका.\n5. **खतांचा वेळ:** सक्रिय वाढीच्या टप्प्यात खते टाका.',
+  1653→  weatherResponse: '🌦 **हवामान आणि शेती:**\n\nवर्तमान अंदाजानुसार तुमच्या शेती कृतींचे नियोजन करा:\n\n- पावसाची शक्यता असल्यास सिंचाई विलंबित करा.\n- उच्च ओलावा बुरशी रोगाचा धोका वाढवतो.\n- 20 किमी/तासापेक्षा जास्त वारा उंच पिकांना नुकसान करू शकतो.\n- शांत, कोरड्या दिवशी फवारणीचे नियोजन करा.\n- बहुतेक पिके 15°C पेक्षा वर चांगल्या प्रकारे अंकुरित होतात.',
+  1654→  defaultResponse: '🌱 मी तुमचा किसानपायलट AI सहायक आहे. मी पीक काळजी, सिंचाई, कीड, मातीचे आरोग्य आणि शेती निर्णयांमध्ये तुम्हाला मदत करू शकतो. तुमच्या शेताबद्दल काहीही विचारा!',
+  1655→
+  1656→  cropDoctorTitle: 'पीक डॉक्टर',
+  1657→  cropDoctorSubtitle: 'AI आधारित आरोग्य विश्लेषणासाठी पिकाचा फोटो अपलोड करा',
+  1658→  uploadPhoto: 'पिकाचा फोटो अपलोड करा',
+  1659→  uploadPhotoDesc: 'फोटो काढा किंवा गॅलरीतून निवडा',
+  1660→  analyzeCrop: 'पिकाचे विश्लेषण करा',
+  1661→  analyzing: 'AI सह तुमचे पिक विश्लेषित केले जात आहे…',
+  1662→  cropHealthScore: 'पीक आरोग्य गुण',
+  1663→  possibleObservation: 'संभाव्य निरीक्षण',
+  1664→  recommendations: 'शिफारसी',
+  1665→  rec1: 'मातीतील पोषक तत्व पातळी तपसा',
+  1666→  rec2: 'पानांच्या रंग बदलावर लक्ष ठेवा',
+  1667→  rec3: 'योग्य सिंचाई सुनिश्चित करा',
+  1668→  rec4: 'पुष्टीकरणासाठी स्थानिक कृषी तज्ञांशी भेटा',
+  1669→  analyzeAnother: 'दुसरा फोटो विश्लेषित करा',
+  1670→  mildNutrientStress: 'हलके पोषक तत्व ताणाचे चिन्ह आढळले.',
+  1671→
+  1672→  weatherTitle: 'हवामान आणि शेत अंदाज',
+  1673→  currentWeather: 'सध्याचे हवामान',
+  1674→  temperature: 'तापमान',
+  1675→  condition: 'स्थिती',
+  1676→  partlyCloudy: 'अंशतः ढगाळ',
+  1677→  humidity: 'ओलावा',
+  1678→  wind: 'वारा',
+  1679→  rainChance: 'पावसाची शक्यता',
+  1680→  fiveDayForecast: '5 दिवसांचा अंदाज',
+  1681→  farmingAdvice: 'शेती सल्ला',
+  1682→  rainAdvice: 'या आठवड्यात पाऊस शक्य आहे. पावसापूर्वी अनावश्यक सिंचाई टाळा.',
+  1683→  monday: 'सोमवार',
+  1684→  tuesday: 'मंगळवार',
+  1685→  wednesday: 'बुधवार',
+  1686→  thursday: 'गुरुवार',
+  1687→  friday: 'शुक्रवार',
+  1688→
+  1689→  myFarmTitle: 'माझे शेत',
+  1690→  farmDetails: 'शेताची माहिती',
+  1691→  editProfile: 'प्रोफाइल संपादित करा',
+  1692→  saveChanges: 'बदल जतन करा',
+  1693→  cancel: 'रद्द करा',
+  1694→  cropHealth: 'पीक आरोग्य',
+  1695→  soilMoisture: 'मातीचा ओलावा',
+  1696→  irrigationStatus: 'सिंचाई स्थिती',
+  1697→  moderate: 'मध्यम',
+  1698→  onTrack: 'योग्य आहे',
+  1699→  farmStatusSection: 'शेताची स्थिती',
+  1700→
+  1701→  insightsTitle: 'शेत अंतर्दृष्टी',
+  1702→  cropHealthScore2: 'पीक आरोग्य',
+  1703→  soilMoisture2: 'मातीचा ओलावा',
+  1704→  irrigationEfficiency: 'सिंचाई दक्षता',
+  1705→  aiInsights: 'AI अंतर्दृष्टी',
+  1706→  insight1: 'तुमचे पीक आरोग्य सध्या स्थिर आहे. नियमित निरीक्षण सुरू ठेवा.',
+  1707→  insight2: 'पुढील 2 दिवसांत मातीच्या ओलाव्याचे निरीक्षण करा.',
+  1708→  insight3: 'या आठवड्यात हवामानाच्या परिस्थिती सिंचाई नियोजनावर परिणाम करू शकतात.',
+  1709→  insight4: 'या हंगामात पिकाची वाढीचा दर सरासरीपेक्षा जास्त आहे. छान!',
+  1710→  insight5: 'कोरड्या परिस्थितीमुळे या आठवड्यात कीडीचा धोका कमी आहे.',
+  1711→  insight6: 'दीर्घकालीन मातीचे आरोग्य सुधारण्यासाठी जैविक कम्पोस्ट टाकण्यावर विचार करा.',
+  1712→  generateInsight: 'नवीन अंतर्दृष्टी निर्माण करा',
+  1713→
+  1714→  alertsTitle: 'स्मार्ट अलर्ट',
+  1715→  rainExpected: 'पुढील 48 तासांत तुमच्या भागात पाऊस येण्याची शक्यता आहे.',
+  1716→  monitorSoil: 'मातीच्या ओलाव्याच्या पातळीवर लक्ष ठेवा — अलीकडील कोरडा काळ आढळला.',
+  1717→  checkPestSigns: 'पिकाच्या पानांवर कीड संक्रमणाची सुरुवातीची लक्षणे तपसा.',
+  1718→  fertilizerReminder: 'खत नियोजन स्मरणपत्र — माती चाचणी शेड्यूल करा.',
+  1719→  markAsRead: 'वाचले चिन्हांकित करा',
+  1720→  markAllAsRead: 'सर्व वाचले चिन्हांकित करा',
+  1721→  noUnreadAlerts: 'कोणतेही न वाचलेले अलर्ट नाही! तुमचे शेत अपडेट आहे.',
+  1722→
+  1723→  settingsTitle: 'सेटिंग्ज',
+  1724→  changeLanguageOption: 'भाषा बदला',
+  1725→  editProfileOption: 'शेतकऱ्याचे प्रोफाइल संपादित करा',
+  1726→  resetData: 'डेमो डेटा रीसेट करा',
+  1727→  resetConfirm: 'हे तुमचा सर्व डेटा हटवेल आणि भाषा निवड स्क्रीनवर परत जाईल. तुम्हाला खात्री आहे का?',
+  1728→  confirmReset: 'रीसेट पुष्टी करा',
+  1729→  cancelReset: 'रद्द करा',
+  1730→
+  1731→  // Voice Khata
+  1732→  voiceKhata: 'व्हॉइस खाता',
+  1733→  voiceKhataDesc: 'आवाज आधारित शेत लेखापालन',
+  1734→  addEntry: 'प्रविष्टी जोडा',
+  1735→  entryType: 'प्रविष्टी प्रकार',
+  1736→  incomeLabel: 'उत्पन्न',
+  1737→  expenseLabel: 'खर्च',
+  1738→  category: 'श्रेणी',
+  1739→  amount: 'रक्कम',
+  1740→  description: 'वर्णन',
+  1741→  date: 'दिनांक',
+  1742→  totalIncome: 'एकूण उत्पन्न',
+  1743→  totalExpense: 'एकूण खर्च',
+  1744→  netProfit: 'एकूण नफा',
+  1745→  recentEntries: 'अलीकडील प्रविष्ट्या',
+  1746→  noEntries: 'अद्याप प्रविष्ट्या नाहीत',
+  1747→  catLabour: 'मजुरी',
+  1748→  catFertilizer: 'खत',
+  1749→  catSeeds: 'बियाणे',
+  1750→  catPesticides: 'कीडनाशक',
+  1751→  catIrrigation: 'सिंचाई',
+  1752→  catTransport: 'वाहतूक',
+  1753→  catCropSale: 'पीक विक्री',
+  1754→  catOther: 'इतर',
+  1755→  deleteEntry: 'हटवा',
+  1756→  saveEntry: 'प्रविष्टी जतन करा',
+  1757→
+  1758→  // Farm Economics
+  1759→  farmEconomics: 'शेत अर्थव्यवस्था',
+  1760→  farmEconomicsDesc: 'उत्पन्न, खर्च व नफा मागोवा',
+  1761→  seasonEconomics: 'हंगाम अर्थव्यवस्था',
+  1762→  incomeVsExpense: 'उत्पन्न व खर्च',
+  1763→  categoryBreakdown: 'श्रेणी विभाजन',
+  1764→  totalSpend: 'एकूण खर्च',
+  1765→  totalEarned: 'एकूण मिळवले',
+  1766→  netReturn: 'एकूण परतावा',
+  1767→
+  1768→  // Bajar Bhav (Market Prices)
+  1769→  bajarBhav: 'बाजारभाव',
+  1770→  bajarBhavDesc: 'थेट मांडी भाव व ट्रेंड',
+  1771→  commodity: 'वस्तू',
+  1772→  minPrice: 'किमान भाव',
+  1773→  maxPrice: 'कमाल भाव',
+  1774→  modalPrice: 'मॉडल भाव',
+  1775→  priceSource: 'स्रोत',
+  1776→  lastUpdated: 'शेवटी अपडेट',
+  1777→  priceTrend: 'भाव ट्रेंड',
+  1778→  trendingUp: 'वर चढतोय',
+  1779→  trendingDown: 'खाली उतरतोय',
+  1780→  stable: 'स्थिर',
+  1781→  transportCost: 'वाहतूक खर्च',
+  1782→  estNetReturn: 'अंदाजे एकूण परतावा',
+  1783→  calculateReturn: 'एकूण परतावा मोजा',
+  1784→  marketAdvice: 'बाजार डेटा संदर्भासाठी आहे. स्थानिक मांडीतून सत्यापित करा.',
+  1785→
+  1786→  // Risk Radar
+  1787→  riskRadar: 'धोका रडार',
+  1788→  riskRadarDesc: 'शेत धोक्यांवर नजर ठेवा',
+  1789→  rainRisk: 'पावसाचा धोका',
+  1790→  waterStressRisk: 'पाणी तणाव',
+  1791→  diseaseRisk: 'रोगाचा धोका',
+  1792→  heatRisk: 'उष्णतेचा धोका',
+  1793→  costRisk: 'खर्चाचा धोका',
+  1794→  insuranceReady: 'विमा तयारी',
+  1795→  low: 'कमी',
+  1796→  medium: 'मध्यम',
+  1797→  high: 'जास्त',
+  1798→  riskAdvice: 'धोका आधारित शेती सल्ला',
+  1799→
+  1800→  // What-If Simulator
+  1801→  whatIfSimulator: 'जर-तर-सिम्युलेटर',
+  1802→  whatIfDesc: 'पीक निर्णयांची तुलना',
+  1803→  compareCrops: 'पिकांची तुलना',
+  1804→  estimatedProfit: 'अंदाजे नफा',
+  1805→  estimatedCost: 'अंदाजे खर्च',
+  1806→  recommendation: 'शिफारस',
+  1807→  simulate: 'सिम्युलेट करा',
+  1808→  cropA: 'पीक अ',
+  1809→  cropB: 'पीक ब',
+  1810→  selectCropA: 'पीक अ निवडा',
+  1811→  selectCropB: 'पीक ब निवडा',
+  1812→  investmentPerAcre: 'एकरी गुंतवणूक',
+  1813→  expectedYield: 'अपेक्षित उत्पादन',
+  1814→  marketPricePer: 'क्विंटल बाजारभाव',
+  1815→  cropAProfit: 'पीक अ नफा',
+  1816→  cropBProfit: 'पीक ब नफा',
+  1817→  betterChoice: 'चांगला पर्याय',
+  1818→
+  1819→  // PMFBY Schemes
+  1820→  pmfbySchemes: 'पीएमएफबीवाय आणि योजना',
+  1821→  pmfbyDesc: 'विमा आणि सरकारी योजना',
+  1822→  schemeInfo: 'योजना माहिती',
+  1823→  eligibility: 'पात्रता',
+  1824→  requiredDocs: 'आवश्यक दस्तावेज',
+  1825→  deadlines: 'अंतिम तारीख',
+  1826→  officialPortal: 'अधिकृत पोर्टल',
+  1827→  pmfbyTitle: 'प्रधानमंत्री फसल बीमा योजना',
+  1828→  pmfbyDesc2: 'भारत सरकारचे पीक विमा',
+  1829→  cropInsurance: 'पीक विमा',
+  1830→  kisanCreditCard: 'शेतकरी क्रेडिट कार्ड',
+  1831→  subsidySchemes: 'अनुदान योजना',
+  1832→  applyOnline: 'ऑनलाइन अर्ज',
+  1833→  viewDetails: 'तपशील पहा',
+  1834→  pmfbyNote: 'विमा दाव्याची हमी देत नाही. अधिकृत स्रोतांकडून सत्यापित करा.',
+  1835→
+  1836→  // Farm Goals
+  1837→  farmGoals: 'शेत लक्ष्ये',
+  1838→  farmGoalsDesc: 'हंगामी उत्पन्न लक्ष्य मागवा',
+  1839→  seasonalTarget: 'हंगामी उत्पन्न लक्ष्य',
+  1840→  currentProgress: 'सध्याची प्रगती',
+  1841→  remainingAmount: 'शिल्लक रक्कम',
+  1842→  setGoal: 'लक्ष्य ठेवा',
+  1843→  editGoal: 'लक्ष्य संपादित करा',
+  1844→  goalAmount: 'लक्ष्य रक्कम',
+  1845→  onTrackMsg: 'तुम्ही तुमच्या लक्ष्यावर आहात!',
+  1846→  behindMsg: 'तुम्ही लक्ष्यापाठी आहात. खर्चाचा आढावा घ्या.',
+  1847→
+  1848→  // Next Best Action
+  1849→  nextBestAction: 'पुढील सर्वोत्तम कृती',
+  1850→  nextBestActionDesc: 'AI-सूचना प्राथमिक कृती',
+  1851→  priorityAction: 'प्राथमिक कृती',
+  1852→  reason: 'कारण',
+  1853→  weatherContext: 'हवामान संदर्भ',
+  1854→  action1: 'मातीच्या ओलाव्याची पातळी निरीक्षण करा',
+  1855→  action1Reason: 'गुरुवारी पाऊस अपेक्षित. पावसापूर्वी आणि नंतर माती तपसा.',
+  1856→  action2: 'खताची दुसरी डोस टाका',
+  1857→  action2Reason: 'पीक सक्रिय वाढीच्या टप्प्यात आहे. सध्याचे संतुलित NPK उत्पादन वाढवेल.',
+  1858→  action3: 'पिकाच्या पानांवर कीडीची सुरुवाती लक्षणे तपसा',
+  1859→  action3Reason: 'उष्ण, ओली परिस्थिती या आठवड्यात कीडीचा धोका वाढवतात.',
+  1860→
+  1861→  // Enhanced Dashboard
+  1862→  farmBriefing: 'शेत संक्षिप्त माहिती',
+  1863→  riskSummary: 'धोका सारांश',
+  1864→  quickActions: 'द्रुत कृत्या',
+  1865→
+  1866→  // Voice Khata Mic
+  1867→  tapToSpeak: 'बोलण्यासाठी टॅप करा',
+  1868→  listening: 'ऐकत आहे...',
+  1869→  voiceError: 'आवाज समर्थित नाही',
+  1870→  couldNotHear: 'ऐकू आले नाही. पुन्हा प्रयत्न करा.',
+  1871→  recordingStopped: 'रेकॉर्डिंग थांबले',
+  1872→  voiceDetected: 'आवाज ओळखला!',
+  1873→  speakNow: 'आता बोला...',
+  1874→
+  1875→  // Monthly Photo Tracker
+  1876→  monthlyPhotoTracker: 'मासिक फोटो ट्रॅकर',
+  1877→  monthlyPhotoTrackerDesc: 'दर महिना 4 फोटोंनी पीकाची वाढ ट्रॅक करा',
+  1878→  week1: 'आठवडा 1',
+  1879→  week2: 'आठवडा 2',
+  1880→  week3: 'आठवडा 3',
+  1881→  week4: 'आठवडा 4',
+  1882→  takePhoto: 'फोटो काढा',
+  1883→  photoTaken: 'फोटो घेतला',
+  1884→  noPhotoYet: 'अद्याप फोटो नाही',
+  1885→  scheduledDate: 'निर्धारित दिनांक',
+  1886→  capturePhoto: 'पिकाचा फोटो काढा',
+  1887→  photoHistory: 'फोटो इतिहास',
+  1888→  photosThisMonth: 'या महिन्यातील फोटो',
+  1889→  monthlyProgress: 'मासिक प्रगती',
+  1890→  allPhotosDone: 'या महिन्यातील सर्व 4 फोटो घेतले!',
+  1891→  photosRemaining: 'फोटो शिल्लक',
+  1892→  viewPhotoTracker: 'फोटो ट्रॅकर पहा',
+  1893→  cropGrowthTimeline: 'पिकाची वाढ टाइमलाइन',
+  1894→
+  1895→  // AI Decision Explainer
+  1896→  aiDecisionExplainer: 'AI निर्णय स्पष्टीकारक',
+  1897→  aiDecisionDesc: 'AI ने हा शेती निर्णय का शिफारस केला ते समझा',
+  1898→  yourCrop: 'तुमचे पीक',
+  1899→  whyThisDecision: 'हा निर्णाय का?',
+  1900→  aiConfidence: 'AI विश्वास',
+  1901→  marketAnalysis: 'बाजार विश्लेषण',
+  1902→  riskFactors: 'धोका घटक',
+  1903→  seasonContext: 'हंगाम संदर्भ',
+  1904→  getAiAnalysis: 'AI विश्लेषण मिळवा',
+  1905→  aiReasonTitle: 'AI तर्क',
+  1906→  aiReasonDetail: 'या शिफारसींमागचे तपशीलवार तर्क',
+  1907→  investmentDetails: 'गुंतवणूक तपशील',
+  1908→  expectedYieldDetails: 'अपेक्षित उत्पादन',
+  1909→  marketPriceDetails: 'बाजार भाव विश्लेषण',
+  1910→  waterRequirement: 'पाण्याची गरज',
+  1911→  soilSuitability: 'मातीची योग्यता',
+  1912→  bestPractice: 'सर्वोत्तम पद्धत',
+  1913→  disclaimer: 'हे AI-निर्मित सल्ला आहे. महत्त्वाच्या निर्णयांसाठी स्थानिक तज्ञांशी भेटा.',
+  1914→
+  1915→  // Expert Consultation
+  1916→  expertConsultation: 'तज्ञ परामर्श',
+  1917→  expertConsultationDesc: 'वैयक्तिक सल्ल्यासाठी कृषी तज्ञांशी जोडा',
+  1918→  consultExpert: 'तज्ञांशी भेटा',
+  1919→  expertSpecialty: 'विशेषता',
+  1920→  expertAvailable: 'आता उपलब्ध',
+  1921→  callExpert: 'तज्ञांना कॉल करा',
+  1922→  expertNote: 'तज्ञ सोम-शनि, सकाळी 9-संध्या. 6 वाजेपर्यंत उपलब्ध',
+  1923→  bookConsultation: 'परामर्श बुक करा',
+  1924→
+  1925→  // Krushi Kendra
+  1926→  nearbyKrushiKendra: 'जवळचे कृषी केंद्र',
+  1927→  krushiKendraDesc: 'बियाणे, खते आणि कीडनाशकांसाठी तुमच्या जवळची कृषी इनपुट केंद्रे',
+  1928→  krushiKendraAddress: 'पत्ता',
+  1929→  krushiKendraPhone: 'फोन',
+  1930→  krushiKendraHours: 'वेळ',
+  1931→  krushiKendraServices: 'सेवा',
+  1932→  krushiKendraList: 'तुमच्या जवळ कृषी केंद्रे',
+  1933→  findNearest: 'जवळचे केंद्र शोधा',
+  1934→  directions: 'दिशा मिळवा',
+  1935→
+  1936→  // Farm Memory
+  1937→  farmMemory: 'शेत स्मृती',
+  1938→  farmMemoryDesc: 'तुमच्या शेताबद्दल तपशीलवार सांगा',
+  1939→  tellUsAboutFarm: 'तुमच्या शेताबद्दल सांगा',
+  1940→  soilType: 'मातीचा प्रकार',
+  1941→  soilTypePlaceholder: 'उदा. दोमट, काळी, वाळू',
+  1942→  irrigationSource: 'सिंचाई स्रोत',
+  1943→  irrigationSourcePlaceholder: 'उदा. विहिर, कालवा, ड्रिप',
+  1944→  farmingExperience: 'शेतीचा अनुभव',
+  1945→  farmingExperiencePlaceholder: 'उदा. 15 वर्षे',
+  1946→  ownOrLeased: 'जमीन मालकी',
+  1947→  ownLand: 'स्वतःची जमीन',
+  1948→  leasedLand: 'किराय्याची जमीन',
+  1949→  lastCrop: 'शेवटची कापलेली पीक',
+  1950→  lastCropPlaceholder: 'उदा. कापूस, गहू',
+  1951→  expectedHarvestMonth: 'अपेक्षित कापणीचा महिना',
+  1952→  expectedHarvestPlaceholder: 'उदा. मार्च 2025',
+  1953→  livestockCount: 'पशुसंख्या',
+  1954→  livestockCountPlaceholder: 'उदा. 2 गायी, 5 शेळ्या',
+  1955→  fertilizerBrand: 'पसंदीदा खत ब्रँड',
+  1956→  fertilizerBrandPlaceholder: 'उदा. इफ्को, टाटा किसान',
+  1957→  seedSource: 'बियाणे स्रोत',
+  1958→  seedSourcePlaceholder: 'उदा. स्थानिक बाजार, सरकारी केंद्र',
+  1959→  saveFarmMemory: 'शेत स्मृती जतन करा',
+  1960→  farmMemorySaved: 'शेत स्मृती जतन झाली!',
+  1961→  editFarmMemory: 'शेत स्मृती संपादित करा',
+  1962→  soilLoamy: 'दोमट',
+  1963→  soilClay: 'चिकणमाती',
+  1964→  soilSandy: 'वाळू',
+  1965→  soilBlack: 'काळी (रेगुर)',
+  1966→  soilRed: 'लाल माती',
+  1967→  irrigationWell: 'विहिर/बोअरवेल',
+  1968→  irrigationCanal: 'कालवा',
+  1969→  irrigationRain: 'फक्त पावसावर अवलंबून',
+  1970→  irrigationDrip: 'ड्रिप सिंचाई',
+  1971→  seedSourceLocal: 'स्थानिक बाजार',
+  1972→  seedSourceGovt: 'सरकारी केंद्र',
+  1973→  seedSourcePrivate: 'प्रायव्हेट डीलर',
+  1974→  seedSourceOwn: 'स्वतःचे जतन केलेले बियाणे',
+  1975→  farmMemoryComplete: 'तुमचे शेत प्रोफाइल पूर्ण आहे!',
+  1976→  farmMemorySection: 'शेत तपशील',
+  1977→  yearOfFarming: 'वर्षांची शेती',
+  1978→
+  1979→  // Farmer Photo
+  1980→  changePhoto: 'फोटो बदला',
+  1981→  uploadPhotoLabel: 'फोटो अपलोड करा किंवा घ्या',
+  1982→  removePhoto: 'फोटो काढा',
+  1983→  takeSelfie: 'सेल्फी घ्या',
+  1984→  profilePhoto: 'प्रोफाइल फोटो',
+  1985→
+  1986→  // Chatbot Voice
+  1987→  voiceChat: 'व्हॉइस चॅट',
+  1988→  voiceChatDesc: 'AI सहाय्यकाशी बोला',
+  1989→  tapMicToTalk: 'बोलण्यासाठी माइक टॅप करा',
+  1990→  listeningChat: 'ऐकत आहे... बोला',
+  1991→  voiceMessageSent: 'व्हॉइस मेसेज पाठवला',
+  1992→  startVoiceChat: 'व्हॉइस चॅट सुरू करा',
+  1993→  stopVoiceChat: 'व्हॉइस चॅट बंद करा',
+  1994→
+  1995→  // Season Score Card
+  1996→  seasonScoreCard: 'हंगाम स्कोअर कार्ड',
+  1997→  seasonScoreCardDesc: 'तुमचे हंगामी शेती कामगिरी ट्रॅक करा',
+  1998→  currentSeason: 'सध्याचा हंगाम',
+  1999→  seasonPerformance: 'हंगाम कामगिरी',
+  2000→  overallScore: 'एकूण स्कोअर',
+
+[showing lines 1-2000 of 2114; use offset=2001 with limit to continue reading]
