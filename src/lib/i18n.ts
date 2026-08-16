@@ -557,6 +557,7 @@ export interface Translations {
   voiceParsed: string;
   currentMonth: string;
   pastMonth: string;
+  manageFamilyMembers: string;
 }
 
 const en: Translations = {
@@ -1106,6 +1107,7 @@ const en: Translations = {
   voiceParsed: 'Parsed: ₹{amount} - {type} - {category}',
   currentMonth: 'Current Month',
   pastMonth: 'Past Month',
+  manageFamilyMembers: 'Manage your family members',
 };
 
 const hi: Translations = {
@@ -1655,6 +1657,7 @@ const hi: Translations = {
   voiceParsed: 'पार्स: ₹{amount} - {type} - {category}',
   currentMonth: 'वर्तमान महीना',
   pastMonth: 'पिछला महीना',
+  manageFamilyMembers: 'अपने परिवार के सदस्य प्रबंधित करें',
 };
 
 const mr: Translations = {
@@ -2204,6 +2207,7 @@ const mr: Translations = {
   voiceParsed: 'पार्स: ₹{amount} - {type} - {category}',
   currentMonth: 'सध्याचा महिना',
   pastMonth: 'मागील महिना',
+  manageFamilyMembers: 'तुमच्या कुटुंबातील सदस्य व्यवस्थापित करा',
 };
 
 const translations: Record<Language, Translations> = { en, hi, mr };

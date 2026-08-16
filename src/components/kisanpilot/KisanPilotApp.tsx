@@ -18,7 +18,7 @@ import SeasonScoreCardScreen from './screens/SeasonScoreCardScreen';
 // ============================================================
 // Types
 // ============================================================
-export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction' | 'phototracker' | 'farmmemory' | 'seasonscorecard';
+export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction' | 'phototracker' | 'farmmemory' | 'seasonscorecard' | 'familymembers';
 
 export interface FarmerProfile {
   name: string;
@@ -161,6 +161,7 @@ export default function KisanPilotApp() {
           {screen === 'phototracker' && <MonthlyPhotoTrackerScreen key="phototracker" />}
           {screen === 'farmmemory' && <FarmMemoryScreen key="farmmemory" />}
           {screen === 'seasonscorecard' && <SeasonScoreCardScreen key="seasonscorecard" />}
+          {screen === 'familymembers' && <FamilyMembersScreen key="familymembers" />}
         </AnimatePresence>
       </div>
     </AppContext.Provider>
@@ -1114,9 +1115,48 @@ function ChatbotScreen() {
     if (lower.includes('pest') || lower.includes('insect') || lower.includes('कीट') || lower.includes('bug')) {
       return t.pestResponse;
     }
-    // Fertilizer / Nutrient
-    if (lower.includes('fertilizer') || lower.includes('nutrient') || lower.includes('उर्वरक') || lower.includes('पोषक') || lower.includes('खत')) {
-      return t.fertilizerResponse;
+    // Fertilizer / Nutrient - Crop specific recommendations
+    if (lower.includes('fertilizer') || lower.includes('nutrient') || lower.includes('उर्वरक') || lower.includes('पोषक') || lower.includes('खत') || lower.includes('which fertilizer') || lower.includes('what fertilizer') || lower.includes('best fertilizer') || lower.includes('कौन सा खत') || lower.includes('कौन से खत') || lower.includes('कोणते खत') || lower.includes('खत लगाना') || lower.includes('dawai') || lower.includes('दवाई')) {
+      // Get user's crop and soil data
+      const profileData = localStorage.getItem('kp_profile');
+      const farmMemData = localStorage.getItem('kp_farm_memory');
+      let userCrop = '';
+      let userSoil = '';
+
+      if (profileData) {
+        try { const p: any = JSON.parse(profileData); userCrop = p.mainCrop || ''; } catch {}
+      }
+      if (farmMemData) {
+        try { const fm: any = JSON.parse(farmMemData); userSoil = fm.soilType || ''; } catch {}
+      }
+
+      const cropLower = userCrop.toLowerCase();
+
+      // Crop-specific fertilizer recommendations
+      if (cropLower.includes('cotton') || cropLower.includes('कपास') || cropLower.includes('कापूस')) {
+        return `🧪 **Fertilizer Guide for Cotton (कपास):**\n\n🌱 **Recommended Fertilizers:**\n• **Basal Dose:** 50kg NPK 10:26:26 per acre at sowing\n• **Top Dressing 1:** 25kg Urea per acre at 30 days\n• **Top Dressing 2:** 25kg Urea per acre at 60 days\n• **Micronutrients:** Zinc Sulphate 25kg/acre + Boron 2kg/acre\n\n💡 **Best Brands:** IFFCO, KRIBHCO, Chambal, NFL\n📦 **Organic Option:** 5 tonnes Farmyard Manure + 500kg Neem Cake per acre\n\n⚠️ **For ${userSoil || 'your soil'} soil:** Apply gypsum 2-3 quintals/acre if saline. Cotton responds well to phosphorus — ensure proper P application.`;
+      }
+      if (cropLower.includes('wheat') || cropLower.includes('गेहूं') || cropLower.includes('गहू')) {
+        return `🧪 **Fertilizer Guide for Wheat (गेहूं):**\n\n🌱 **Recommended Fertilizers:**\n• **Basal Dose:** 60kg DAP + 20kg MOP per acre at sowing\n• **Top Dressing:** 40kg Urea per acre at crown root stage (25-30 days)\n• **2nd Top Dressing:** 20kg Urea per acre at booting stage\n• **Micronutrients:** Zinc Sulphate 25kg/acre (if deficient)\n\n💡 **Best Brands:** IFFCO, Coromandel, Paradeep Phosphates\n📦 **Organic Option:** 6-8 tonnes FYM per acre + Azotobacter seed treatment\n\n⚠️ **For ${userSoil || 'your soil'} soil:** Wheat needs well-drained soil. In sandy soil, split urea into 3 doses to prevent leaching.`;
+      }
+      if (cropLower.includes('rice') || cropLower.includes('चावल') || cropLower.includes('तांदूळ') || cropLower.includes('धान')) {
+        return `🧪 **Fertilizer Guide for Rice (धान/चावल):**\n\n🌱 **Recommended Fertilizers:**\n• **Basal Dose:** 50kg DAP + 30kg MOP per acre at transplanting\n• **Top Dressing 1:** 35kg Urea per acre at tillering (15-20 days)\n• **Top Dressing 2:** 35kg Urea per acre at panicle initiation\n• **Micronutrients:** Zinc Sulphate 25kg/acre (critical for rice!)\n\n💡 **Best Brands:** IFFCO, Chambal, Zuari, RCF\n📦 **Organic Option:** Azolla in standing water (reduces N need by 30%), FYM 5 tonnes/acre\n\n⚠️ **For ${userSoil || 'your soil'} soil:** In waterlogged conditions, use slow-release urea (neem-coated). Rice is sensitive to zinc deficiency — leaves show white spots if lacking.`;
+      }
+      if (cropLower.includes('sugarcane') || cropLower.includes('गन्ना') || cropLower.includes('ऊस')) {
+        return `🧪 **Fertilizer Guide for Sugarcane (गन्ना):**\n\n🌱 **Recommended Fertilizers:**\n• **Basal Dose:** 80kg DAP + 60kg MOP per acre at planting\n• **Top Dressing:** 80kg Urea per acre at 45 days (split into 2 doses)\n• **2nd Top Dressing:** 40kg Urea at 90 days\n• **Micronutrients:** Ferrous Sulphate 30kg/acre + Zinc 20kg/acre\n\n💡 **Best Brands:** IFFCO, Coromandel, NFL\n📦 **Organic Option:** 10 tonnes FYM + pressmud (filter cake from sugar factory) 5 tonnes/acre\n\n⚠️ **For ${userSoil || 'your soil'} soil:** Sugarcane is a heavy feeder! Apply trash mulching after harvest to return nutrients. Don't forget potash — deficiency causes poor juice quality.`;
+      }
+      if (cropLower.includes('soybean') || cropLower.includes('सोयाबीन')) {
+        return `🧪 **Fertilizer Guide for Soybean (सोयाबीन):**\n\n🌱 **Recommended Fertilizers:**\n• **Basal Dose:** 40kg DAP per acre at sowing (soybean fixes its own N!)\n• **Top Dressing:** 20kg MOP per acre if soil potassium is low\n• **Micronutrients:** Molybdenum is critical! Apply 500g/acre as seed treatment\n• **Phosphorus:** 40kg SSP or 20kg DAP per acre\n\n💡 **Best Brands:** IFFCO, KRIBHCO, Coromandel\n📦 **Organic Option:** Rhizobium seed inoculation (essential!) + FYM 4 tonnes/acre\n\n⚠️ **For ${userSoil || 'your soil'} soil:** Soybean is a legume — it fixes nitrogen from air! Don't apply excess nitrogen fertilizer — it reduces nodulation. Focus on phosphorus and molybdenum.`;
+      }
+      if (cropLower.includes('onion') || cropLower.includes('प्याज') || cropLower.includes('कांदा')) {
+        return `🧪 **Fertilizer Guide for Onion (प्याज):**\n\n🌱 **Recommended Fertilizers:**\n• **Basal Dose:** 40kg DAP + 30kg MOP per acre at transplanting\n• **Top Dressing 1:** 25kg Urea per acre at 30 days\n• **Top Dressing 2:** 25kg Urea per acre at 45 days\n• **Micronutrients:** Sulphur 20kg/acre (improves pungency & yield!)\n\n💡 **Best Brands:** IFFCO, Chambal, RCF\n📦 **Organic Option:** FYM 8-10 tonnes/acre + neem cake 200kg/acre (helps against soil-borne diseases)\n\n⚠️ **For ${userSoil || 'your soil'} soil:** Onion has shallow roots — apply fertilizers in bands near the root zone. Stop nitrogen 3 weeks before harvest for better storage quality.`;
+      }
+      if (cropLower.includes('tomato') || cropLower.includes('टमाटर')) {
+        return `🧪 **Fertilizer Guide for Tomato (टमाटर):**\n\n🌱 **Recommended Fertilizers:**\n• **Basal Dose:** 50kg DAP + 40kg MOP per acre at transplanting\n• **Top Dressing 1:** 30kg Urea at 30 days after transplanting\n• **Top Dressing 2:** 20kg Urea at first flowering\n• **Calcium:** 5kg Calcium Nitrate (prevents blossom end rot!)\n\n💡 **Best Brands:** IFFCO, Coromandel, Chambal\n📦 **Organic Option:** FYM 8 tonnes/acre + vermicompost 2 tonnes/acre + bio-fertilizer (PSB)\n\n⚠️ **For ${userSoil || 'your soil'} soil:** Tomatoes need calcium! Blossom end rot (black bottom on fruit) is caused by calcium deficiency. Use bone meal or calcium nitrate. Maintain soil pH 6.0-6.8.`;
+      }
+
+      // Default generic response when crop not recognized
+      return `🧪 **Fertilizer Guide (General):**\n\n${userCrop ? `🌾 **For your crop (${userCrop}):**\n\n` : ''}**Recommended Schedule:**\n• **Basal Dose:** Apply DAP 40kg + MOP 20kg per acre at sowing\n• **Top Dressing:** Urea 40kg per acre in 2 splits (at 30 & 60 days)\n• **Micronutrients:** Zinc Sulphate 20kg/acre + Boron 2kg/acre\n${userSoil ? `\n🧪 **For ${userSoil} soil:**\n` : '\n🧪 **Soil Recommendation:**\n'}• Get a soil test done at Krushi Kendra (₹50-200)\n• Maintain pH 6.0-7.5 for most crops\n• Add organic matter — FYM 5-8 tonnes/acre annually\n\n💡 **Best Fertilizer Brands:** IFFCO, KRIBHCO, Chambal, Coromandel, Paradeep Phosphates\n📦 **Government Subsidy:** 50-75% subsidy on bio-fertilizers at agriculture offices!\n\n📌 **Tip:** Set your crop in Profile → we can give you specific fertilizer recommendations!`;
     }
     // Weather
     if (lower.includes('weather') || lower.includes('मौसम') || lower.includes('हवामान') || lower.includes('rain') || lower.includes('बारिश') || lower.includes('बारसात')) {
@@ -2167,6 +2207,279 @@ function AlertsScreen() {
 }
 
 // ============================================================
+// FAMILY MEMBERS SCREEN
+// ============================================================
+function FamilyMembersScreen() {
+  const { t, navigate, lang } = useApp();
+  const [familyMembers, setFamilyMembers] = useState<Array<{ id: number; name: string; relation: string; phone: string }>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kp_family_members');
+      if (saved) {
+        try { return JSON.parse(saved); } catch { /* ignore */ }
+      }
+    }
+    return [];
+  });
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [memberName, setMemberName] = useState('');
+  const [memberRelation, setMemberRelation] = useState('');
+  const [memberPhone, setMemberPhone] = useState('');
+  const [memberFormErrors, setMemberFormErrors] = useState<{ name?: string; phone?: string }>({});
+  const [toast, setToast] = useState<string | null>(null);
+
+  const saveFamilyMembers = (members: Array<{ id: number; name: string; relation: string; phone: string }>) => {
+    setFamilyMembers(members);
+    localStorage.setItem('kp_family_members', JSON.stringify(members));
+  };
+
+  const handleAddMember = () => {
+    const newErrors: { name?: string; phone?: string } = {};
+    if (!memberName.trim()) newErrors.name = t.memberName + ' ' + t.nameRequired;
+    if (!memberPhone.trim()) newErrors.phone = t.memberPhone + ' ' + t.nameRequired;
+    if (Object.keys(newErrors).length > 0) {
+      setMemberFormErrors(newErrors);
+      return;
+    }
+    const newMember = {
+      id: Date.now(),
+      name: memberName.trim(),
+      relation: memberRelation || t.relationOther,
+      phone: memberPhone.trim(),
+    };
+    const updated = [...familyMembers, newMember];
+    saveFamilyMembers(updated);
+    setMemberName('');
+    setMemberRelation('');
+    setMemberPhone('');
+    setMemberFormErrors({});
+    setShowAddMember(false);
+    setToast(t.memberAdded);
+    setTimeout(() => setToast(null), 2000);
+  };
+
+  const handleRemoveMember = (id: number) => {
+    const updated = familyMembers.filter(m => m.id !== id);
+    saveFamilyMembers(updated);
+    setToast(t.memberRemoved);
+    setTimeout(() => setToast(null), 2000);
+  };
+
+  const maskPhone = (phone: string) => {
+    if (phone.length <= 4) return '****' + phone.slice(-4);
+    return '****' + phone.slice(-4);
+  };
+
+  const getRelationEmoji = (relation: string) => {
+    if (relation === 'Wife' || relation === t.relationWife) return '👩';
+    if (relation === 'Son' || relation === t.relationSon) return '👦';
+    if (relation === 'Daughter' || relation === t.relationDaughter) return '👧';
+    if (relation === 'Father' || relation === t.relationFather) return '👴';
+    if (relation === 'Mother' || relation === t.relationMother) return '👵';
+    if (relation === 'Brother' || relation === t.relationBrother) return '👦';
+    return '👤';
+  };
+
+  const relations = [
+    { value: 'Wife', label: t.relationWife },
+    { value: 'Son', label: t.relationSon },
+    { value: 'Daughter', label: t.relationDaughter },
+    { value: 'Father', label: t.relationFather },
+    { value: 'Mother', label: t.relationMother },
+    { value: 'Brother', label: t.relationBrother },
+    { value: 'Other', label: t.relationOther },
+  ];
+
+  return (
+    <PageWrapper className="flex flex-col">
+      {/* Toast */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-2.5 rounded-full shadow-lg text-sm font-semibold"
+          >
+            {toast}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-green-100">
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+          <BackButton target="settings" label={t.back} />
+          <div className="flex-1 flex items-center gap-2 justify-center">
+            <span className="text-xl">👨‍👩‍👧‍👦</span>
+            <h1 className="text-lg font-bold text-green-800">{t.familyMembers}</h1>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+        {/* Subtitle */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-4 mb-5 border border-green-100"
+        >
+          <p className="text-sm text-green-700 leading-relaxed">
+            ✨ {t.familyMembersDesc} — {lang === 'hi' ? '4 सदस्य तक अपने फोन पर आपके खेत का डेटा एक्सेस कर सकते हैं।' : lang === 'mr' ? '4 सदस्यांपर्यंत तुमच्या फोनवर तुमचा शेत डेटा ऍक्सेस करू शकतात.' : 'Up to 4 members can access your farm data on their phones.'}
+          </p>
+        </motion.div>
+
+        {/* Add Member Button */}
+        {!showAddMember && familyMembers.length < 4 && (
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            onClick={() => setShowAddMember(true)}
+            className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg hover:from-green-700 hover:to-emerald-700 transition-all mb-5 flex items-center justify-center gap-2"
+          >
+            <span className="text-lg">➕</span>
+            {t.addMember}
+          </motion.button>
+        )}
+
+        {/* Max Members Warning */}
+        {familyMembers.length >= 4 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-5"
+          >
+            <p className="text-sm text-amber-700 font-medium text-center">
+              ⚠️ {t.maxMembersReached}
+            </p>
+          </motion.div>
+        )}
+
+        {/* Add Member Form */}
+        <AnimatePresence>
+          {showAddMember && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-5 overflow-hidden"
+            >
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">{t.addMember}</h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-gray-500 font-medium mb-1 block">{t.memberName}</label>
+                  <input
+                    type="text"
+                    value={memberName}
+                    onChange={e => setMemberName(e.target.value)}
+                    placeholder={t.memberNamePlaceholder}
+                    className={`w-full px-3 py-2.5 rounded-xl border ${memberFormErrors.name ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'} text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all`}
+                  />
+                  {memberFormErrors.name && <p className="text-xs text-red-500 mt-1">{memberFormErrors.name}</p>}
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 font-medium mb-1 block">{t.memberRelation}</label>
+                  <select
+                    value={memberRelation}
+                    onChange={e => setMemberRelation(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  >
+                    <option value="">{t.selectRelation}</option>
+                    {relations.map(r => (
+                      <option key={r.value} value={r.value}>{r.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 font-medium mb-1 block">{t.memberPhone}</label>
+                  <input
+                    type="tel"
+                    value={memberPhone}
+                    onChange={e => setMemberPhone(e.target.value)}
+                    placeholder={t.memberPhonePlaceholder}
+                    className={`w-full px-3 py-2.5 rounded-xl border ${memberFormErrors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'} text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all`}
+                  />
+                  {memberFormErrors.phone && <p className="text-xs text-red-500 mt-1">{memberFormErrors.phone}</p>}
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={() => { setShowAddMember(false); setMemberName(''); setMemberRelation(''); setMemberPhone(''); setMemberFormErrors({}); }}
+                    className="flex-1 py-2.5 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all"
+                  >
+                    {t.cancelMember}
+                  </button>
+                  <button
+                    onClick={handleAddMember}
+                    className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all"
+                  >
+                    {t.saveMember}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Members Count */}
+        {familyMembers.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mb-3"
+          >
+            <p className="text-xs text-gray-400 font-medium">{t.sharedWith} {familyMembers.length}/4</p>
+          </motion.div>
+        )}
+
+        {/* Member List */}
+        <div className="space-y-2">
+          {familyMembers.length === 0 && !showAddMember && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-center py-10"
+            >
+              <div className="text-5xl mb-4">👨‍👩‍👧‍👦</div>
+              <p className="text-gray-500 text-sm">{lang === 'hi' ? 'अभी तक कोई परिवार का सदस्य नहीं। अपने खेत का विवरण साझा करने के लिए सदस्य जोड़ें!' : lang === 'mr' ? 'अजून पर्यंत कुटुंबातील कोणताही सदस्य नाही. तुमची शेत माहिती शेअर करण्यासाठी सदस्य जोडा!' : 'No family members yet. Add members to share your farm details!'}</p>
+            </motion.div>
+          )}
+          {familyMembers.map((member, idx) => (
+            <motion.div
+              key={member.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.05 }}
+              className="flex items-center justify-between bg-white rounded-2xl px-4 py-3.5 shadow-sm border border-gray-100"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-lg flex-shrink-0">
+                  {getRelationEmoji(member.relation)}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-gray-800 truncate">{member.name}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">{member.relation}</span>
+                    <span className="text-xs text-gray-400">{maskPhone(member.phone)}</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => handleRemoveMember(member.id)}
+                className="text-xs text-red-400 hover:text-red-600 font-medium flex-shrink-0 ml-2 transition-colors px-2 py-1 rounded-lg hover:bg-red-50"
+              >
+                ✕
+              </button>
+            </motion.div>
+          ))}
+        </div>
+      </main>
+    </PageWrapper>
+  );
+}
+
+// ============================================================
 // SETTINGS SCREEN
 // ============================================================
 function SettingsScreen() {
@@ -2198,6 +2511,7 @@ function SettingsScreen() {
   const settings = [
     { icon: '🌐', label: t.changeLanguageOption, desc: getLanguageLabel(lang), action: handleChangeLanguage, color: 'bg-violet-100 text-violet-700' },
     { icon: '👨‍🌾', label: t.editProfileOption, desc: profile?.name || '', action: handleEditProfile, color: 'bg-amber-100 text-amber-700' },
+    { icon: '👨‍👩‍👧‍👦', label: t.familyMembers, desc: t.manageFamilyMembers, action: () => navigate('familymembers'), color: 'bg-green-100 text-green-700' },
     { icon: '🗑', label: t.resetData, desc: '', action: handleReset, color: 'bg-red-100 text-red-700' },
   ];
 

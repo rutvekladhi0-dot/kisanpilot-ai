@@ -389,3 +389,57 @@ Stage Summary:
 - Comprehensive farm report aggregates data from 5+ localStorage sources
 - Quick suggestions updated to data-driven queries
 - All existing functionality preserved
+
+---
+Task ID: 2
+Agent: General-Purpose Agent
+Task: Enhance fertilizer chatbot response with crop-specific recommendations
+
+Work Log:
+- Replaced generic fertilizer handler (`return t.fertilizerResponse`) in generateResponse() with data-driven version
+- New handler reads user's crop from `kp_profile` (localStorage) and soil type from `kp_farm_memory` (localStorage)
+- Added 7 crop-specific fertilizer recommendation blocks: Cotton, Wheat, Rice, Sugarcane, Soybean, Onion, Tomato
+- Each crop block includes: basal dose, top dressing schedule, micronutrients, best brands, organic options, soil-specific advice
+- Added 9 new keyword triggers for trilingual matching: 'which fertilizer', 'what fertilizer', 'best fertilizer', 'कौन सा खत', 'कौन से खत', 'कोणते खत', 'खत लगाना', 'dawai', 'दवाई'
+- Default fallback response when crop not recognized includes soil test advice, brand recommendations, subsidy info, and tip to set crop in Profile
+- All existing handlers unchanged, zero lint errors
+
+Stage Summary:
+- Fertilizer handler now provides specific per-crop recommendations (7 crops) with soil-aware advice
+- Reads real user data from localStorage (profile crop + farm memory soil type)
+- Expanded keyword matching for better trigger coverage across 3 languages
+
+---
+Task ID: 1
+Agent: General-Purpose Agent
+Task: Add Family Members settings screen for managing family members after initial profile setup
+
+Work Log:
+- Added `manageFamilyMembers: string` to Translations interface in i18n.ts
+- Added English value: `manageFamilyMembers: 'Manage your family members'`
+- Added Hindi value: `manageFamilyMembers: 'अपने परिवार के सदस्य प्रबंधित करें'`
+- Added Marathi value: `manageFamilyMembers: 'तुमच्या कुटुंबातील सदस्य व्यवस्थापित करा'`
+- Added `'familymembers'` to Screen type union in KisanPilotApp.tsx
+- Added `{screen === 'familymembers' && <FamilyMembersScreen key="familymembers" />}` route in AnimatePresence
+- Created full `FamilyMembersScreen` component before SettingsScreen with:
+  - Lazy state initialization from `kp_family_members` localStorage (avoids lint rule)
+  - BackButton to settings, title with 👨‍👩‍👧‍👦 icon
+  - Subtitle card with trilingual description about 4 member limit
+  - "Add Member" button (green gradient, hidden when form open or max reached)
+  - Expandable inline add form with: Name input, Relation dropdown (7 options using translated labels), Phone input, Save/Cancel
+  - Member cards with: relation emoji avatar, name, green relation badge, masked phone (****last4), remove button
+  - Max 4 members amber warning
+  - Success toast (AnimatePresence) after add/remove
+  - Empty state with illustration and trilingual text
+  - All framer-motion animations
+- Added Family Members option in SettingsScreen settings array (between Edit Profile and Reset)
+  - Icon: 👨‍👩‍👧‍👦, label: t.familyMembers, desc: t.manageFamilyMembers, color: bg-green-100 text-green-700
+  - Uses `navigate('familymembers')` (navigate already available in SettingsScreen)
+- Zero lint errors, zero runtime errors
+
+Stage Summary:
+- Family Members now accessible from Settings → Family Members at any time (not just during profile setup)
+- Data persists via shared localStorage key `kp_family_members` (same as ProfileScreen)
+- 1 new translation key added across 3 languages (total ~488+ keys)
+- Total screens: 22 (21 previous + 1 new familymembers)
+- Zero lint errors
