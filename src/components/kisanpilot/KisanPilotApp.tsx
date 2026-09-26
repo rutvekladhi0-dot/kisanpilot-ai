@@ -14,11 +14,14 @@ import NextBestActionScreen from './screens/NextBestActionScreen';
 import MonthlyPhotoTrackerScreen from './screens/MonthlyPhotoTrackerScreen';
 import FarmMemoryScreen from './screens/FarmMemoryScreen';
 import SeasonScoreCardScreen from './screens/SeasonScoreCardScreen';
+import KisanPilotShopApp from '@/components/shop/KisanPilotShopApp';
+import VehicleRentalScreen from './screens/VehicleRentalScreen';
+import StorageCenterScreen from './screens/StorageCenterScreen';
 
 // ============================================================
 // Types
 // ============================================================
-export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction' | 'phototracker' | 'farmmemory' | 'seasonscorecard' | 'familymembers';
+export type Screen = 'language' | 'profile' | 'dashboard' | 'chatbot' | 'myfarm' | 'cropdoctor' | 'weather' | 'insights' | 'alerts' | 'settings' | 'voicekhata' | 'farmeconomics' | 'bajarbhav' | 'riskradar' | 'simulator' | 'pmfby' | 'farmgoals' | 'nextbestaction' | 'phototracker' | 'farmmemory' | 'seasonscorecard' | 'familymembers' | 'shop' | 'vehiclerental' | 'storagecenter';
 
 export interface FarmerProfile {
   name: string;
@@ -162,6 +165,9 @@ export default function KisanPilotApp() {
           {screen === 'farmmemory' && <FarmMemoryScreen key="farmmemory" />}
           {screen === 'seasonscorecard' && <SeasonScoreCardScreen key="seasonscorecard" />}
           {screen === 'familymembers' && <FamilyMembersScreen key="familymembers" />}
+          {screen === 'shop' && <KisanPilotShopApp key="shop" onBackToFarm={() => navigate('dashboard')} />}
+          {screen === 'vehiclerental' && <VehicleRentalScreen key="vehiclerental" />}
+          {screen === 'storagecenter' && <StorageCenterScreen key="storagecenter" onBack={() => navigate('dashboard')} />}
         </AnimatePresence>
       </div>
     </AppContext.Provider>
@@ -173,8 +179,8 @@ export default function KisanPilotApp() {
 // ============================================================
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
-  exit: { opacity: 0, y: -20, transition: { duration: 0.2, ease: 'easeIn' } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' as const } },
+  exit: { opacity: 0, y: -20, transition: { duration: 0.2, ease: 'easeIn' as const } },
 };
 
 function PageWrapper({ children, className = '' }: { children: React.ReactNode; className?: string }) {
@@ -676,6 +682,27 @@ function DashboardScreen() {
   if (!profile) return null;
 
   const features = [
+    {
+      id: 'shop' as Screen,
+      icon: '🛒',
+      title: lang === 'mr' ? 'कृषी दुकान व खरेदी' : lang === 'hi' ? 'कृषि दुकान व ऑनलाइन शॉपिंग' : 'Krishi Shop & Marketplace',
+      desc: lang === 'mr' ? 'बियाणे, खते, कीटकनाशके व दैनंदिन वस्तू ९० मिनिटांत डिलिव्हरी' : lang === 'hi' ? 'बीज, उर्वरक, उपकरण व रोजमर्रा सामान ९० मिनट डिलीवरी' : 'Buy certified seeds, fertilizers, tools & daily essentials with 90m fast delivery',
+      color: 'from-emerald-600 to-green-700',
+    },
+    {
+      id: 'vehiclerental' as Screen,
+      icon: '🚜',
+      title: lang === 'mr' ? 'वाहन व ट्रॅक्टर भाडेतत्वावर' : lang === 'hi' ? 'वाहन व ट्रैक्टर रेंटल' : 'Travel & Vehicle Rental',
+      desc: lang === 'mr' ? 'आपले वाहन उपलब्ध नाही? ट्रॅक्टर, पिकअप व मालवाहतूक भाड्याने मिळवा' : lang === 'hi' ? 'आपका वाहन उपलब्ध नहीं? ट्रैक्टर, पिकअप व कृषि वाहन किराए पर लें' : 'Rent tractors, mini-trucks & farm transport when your vehicle is unavailable',
+      color: 'from-amber-600 to-orange-700',
+    },
+    {
+      id: 'storagecenter' as Screen,
+      icon: '🏢',
+      title: lang === 'mr' ? 'शीतगृह व धान्य गोदाम' : lang === 'hi' ? 'कोल्ड स्टोरेज व अनाज गोदाम' : 'Safe Storage & Cold Chain',
+      desc: lang === 'mr' ? 'आपल्या शेतीमालासाठी WDRA प्रमाणित शीतगृह आणि धान्य गोदामे शोधा व आरक्षित करा' : lang === 'hi' ? 'अपनी फसल के लिए WDRA प्रमाणित कोल्ड स्टोरेज व वैज्ञानिक गोदाम खोजें व बुक करें' : 'Discover trusted WDRA-certified cold storage & scientific grain godowns near you',
+      color: 'from-teal-800 to-emerald-900',
+    },
     { id: 'chatbot' as Screen, icon: '🤖', title: t.aiChatbot, desc: t.aiChatbotDesc, color: 'from-violet-500 to-purple-600' },
     { id: 'myfarm' as Screen, icon: '🌾', title: t.myFarm, desc: t.myFarmDesc, color: 'from-amber-500 to-orange-600' },
     { id: 'cropdoctor' as Screen, icon: '📷', title: t.cropDoctor, desc: t.cropDoctorDesc, color: 'from-rose-500 to-pink-600' },
@@ -712,6 +739,36 @@ function DashboardScreen() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('shop')}
+              className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs transition-all active:scale-95"
+              title="Krishi Dukan / Shop"
+            >
+              <span>🛒</span>
+              <span className="hidden sm:inline">
+                {lang === 'mr' ? 'कृषी दुकान' : lang === 'hi' ? 'कृषि दुकान' : 'Krishi Shop'}
+              </span>
+            </button>
+            <button
+              onClick={() => navigate('vehiclerental')}
+              className="flex items-center gap-1.5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs transition-all active:scale-95"
+              title="Travel & Vehicle Rental"
+            >
+              <span>🚜</span>
+              <span className="hidden sm:inline">
+                {lang === 'mr' ? 'वाहन भाड्याने' : lang === 'hi' ? 'वाहन रेंटल' : 'Rentals'}
+              </span>
+            </button>
+            <button
+              onClick={() => navigate('storagecenter')}
+              className="flex items-center gap-1.5 bg-gradient-to-r from-teal-700 to-emerald-800 hover:from-teal-800 hover:to-emerald-900 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs transition-all active:scale-95"
+              title="Safe Storage & Cold Chain"
+            >
+              <span>🏢</span>
+              <span className="hidden sm:inline">
+                {lang === 'mr' ? 'शीतगृह / गोदाम' : lang === 'hi' ? 'शीतगृह / गोदाम' : 'Storage'}
+              </span>
+            </button>
             <button
               onClick={() => navigate('settings')}
               className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
@@ -1267,7 +1324,7 @@ ${riskInfo || 'No major risks identified from your farm data.'}\n\n🔍 Check th
     }
     // Help / What can you do
     if (lower.includes('help') || lower.includes('what can you') || lower.includes('मदद') || lower.includes('क्या कर') || lower.includes('मदत')) {
-      return t.chatHelpResponse;
+      return t.chatHelpResponse || t.defaultResponse;
     }
     return t.defaultResponse;
   };

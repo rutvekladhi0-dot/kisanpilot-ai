@@ -97,7 +97,7 @@ function BackButton({ target, label }: { target: string; label: string }) {
   );
 }
 
-function SchemeCard({ scheme, t }: { scheme: Scheme; t: Record<string, string> }) {
+function SchemeCard({ scheme, t }: { scheme: Scheme; t: any }) {
   const [expanded, setExpanded] = useState(false);
   const [showToast, setShowToast] = useState(false);
 

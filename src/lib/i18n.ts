@@ -39,7 +39,6 @@ export interface Translations {
   welcomeBack: string;
   exploreFeatures: string;
   village: string;
-  mainCrop: string;
   farmSizeLabel: string;
   farmStatus: string;
   good: string;
@@ -432,18 +431,19 @@ export interface Translations {
   currentSeason: string;
   seasonPerformance: string;
   overallScore: string;
-  cropHealthScore: string;
+  seasonCropHealth: string;
   irrigationScore: string;
   pestManagementScore: string;
   soilHealthScore: string;
   profitScore: string;
   timelyActionsScore: string;
   excellent: string;
-  good: string;
+  seasonGood: string;
   average: string;
   needsImprovement: string;
   seasonHighlights: string;
   seasonAlerts: string;
+  chatHelpResponse?: string;
   rabiSeason: string;
   kharifSeason: string;
   seasonTip: string;
@@ -598,7 +598,6 @@ const en: Translations = {
   welcomeBack: 'Welcome back',
   exploreFeatures: 'Explore KisanPilot Features',
   village: 'Village',
-  mainCrop: 'Main Crop',
   farmSizeLabel: 'Farm Size',
   farmStatus: 'Farm Status',
   good: 'Good',
@@ -982,14 +981,14 @@ const en: Translations = {
   currentSeason: 'Current Season',
   seasonPerformance: 'Season Performance',
   overallScore: 'Overall Score',
-  cropHealthScore: 'Crop Health',
+  seasonCropHealth: 'Crop Health',
   irrigationScore: 'Irrigation',
   pestManagementScore: 'Pest Management',
   soilHealthScore: 'Soil Health',
   profitScore: 'Profitability',
   timelyActionsScore: 'Timely Actions',
   excellent: 'Excellent',
-  good: 'Good',
+  seasonGood: 'Good',
   average: 'Average',
   needsImprovement: 'Needs Improvement',
   seasonHighlights: 'Season Highlights',
@@ -1148,7 +1147,6 @@ const hi: Translations = {
   welcomeBack: 'वापसी पर स्वागत है',
   exploreFeatures: 'किसानपायलट सुविधाएं देखें',
   village: 'गाँव',
-  mainCrop: 'मुख्य फसल',
   farmSizeLabel: 'खेत का आकार',
   farmStatus: 'खेत की स्थिति',
   good: 'अच्छी',
@@ -1532,14 +1530,14 @@ const hi: Translations = {
   currentSeason: 'वर्तमान मौसम',
   seasonPerformance: 'मौसम प्रदर्शन',
   overallScore: 'कुल स्कोर',
-  cropHealthScore: 'फसल स्वास्थ्य',
+  seasonCropHealth: 'फसल स्वास्थ्य',
   irrigationScore: 'सिंचाई',
   pestManagementScore: 'कीट प्रबंधन',
   soilHealthScore: 'मिट्टी स्वास्थ्य',
   profitScore: 'लाभपरकता',
   timelyActionsScore: 'समय पर कार्य',
   excellent: 'उत्कृष्ट',
-  good: 'अच्छा',
+  seasonGood: 'अच्छा',
   average: 'औसत',
   needsImprovement: 'सुधार आवश्यक',
   seasonHighlights: 'मौसम की उपलब्धियां',
@@ -1698,7 +1696,6 @@ const mr: Translations = {
   welcomeBack: 'पुन्हा स्वागत आहे',
   exploreFeatures: 'किसानपायलट वैशिष्ट्ये शोधा',
   village: 'गाव',
-  mainCrop: 'मुख्य पीक',
   farmSizeLabel: 'शेताचे आकार',
   farmStatus: 'शेताची स्थिती',
   good: 'चांगली',
@@ -2082,14 +2079,14 @@ const mr: Translations = {
   currentSeason: 'सध्याचा हंगाम',
   seasonPerformance: 'हंगाम कामगिरी',
   overallScore: 'एकूण स्कोअर',
-  cropHealthScore: 'पीक आरोग्य',
+  seasonCropHealth: 'पीक आरोग्य',
   irrigationScore: 'सिंचाई',
   pestManagementScore: 'कीड व्यवस्थापन',
   soilHealthScore: 'माती आरोग्य',
   profitScore: 'नफा',
   timelyActionsScore: 'वेळेवर कृती',
   excellent: 'उत्कृष्ट',
-  good: 'चांगले',
+  seasonGood: 'चांगले',
   average: 'सरासरी',
   needsImprovement: 'सुधारा आवश्यक',
   seasonHighlights: 'हंगाम उल्लेखनीय',
